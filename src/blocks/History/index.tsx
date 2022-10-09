@@ -59,20 +59,23 @@ const Group = (props: { data: OSS.ObjectMeta }) => {
     return IMAGE_PATTERN.test(name);
   }, [name]);
 
-  const fileName = useMemo(() => {
+  const displayName = useMemo(() => {
     const segs = name.split('/');
     const fullName = decodeURIComponent(segs[segs.length - 1]);
-    // 移除上传的 YYYY_MM_DD_HH_mm_ss__ 前缀
-    const liteName = fullName.replace(
-      /\d{4}_\d{2}_\d{2}_\d{2}_\d{2}_\d{2}__/,
-      '',
-    );
+    // 移除上传的 charsIndex 前缀
+    const liteName = fullName.replace(/___(.*)___/, '');
     return liteName;
   }, [name]);
 
   const fileUrl = useMemo(() => {
-    return `${config?.current?.cdn ?? ''}/${name}`.replace('//', '/');
-  }, [config, name]);
+    return config?.current?.cdn
+      ? `${config?.current?.cdn ?? ''}/${
+          config.current.prefix
+        }${encodeURIComponent(
+          name.replace(config.current.prefix, ''),
+        )}`.replace('//', '/')
+      : url;
+  }, [config, name, url]);
 
   return (
     <div
@@ -121,7 +124,7 @@ const Group = (props: { data: OSS.ObjectMeta }) => {
             }}
             heading={6}
           >
-            {fileName}
+            {displayName}
           </Typography.Title>
           <span
             style={{

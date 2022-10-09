@@ -221,7 +221,7 @@ const Edit = (props: { init?: OSSItem; onFinish: () => void }) => {
           rules={[
             {
               validator(value, callback) {
-                if (ds.find((x) => x.alias === value)) {
+                if (!props.init && ds.find((x) => x.alias === value)) {
                   callback('已经存在同名的配置');
                 }
               },

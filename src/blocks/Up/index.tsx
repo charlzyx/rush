@@ -1,4 +1,4 @@
-import { useConfig } from '@/store';
+import { charsIndex, useConfig } from '@/store';
 import { useClient } from '@/utils/uploader';
 import { ProcessServer, Yap } from '@/utils/yap';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -42,9 +42,10 @@ export const Up = () => {
     ) => {
       if (!client) return;
       const { prefix, cdn } = config.current!;
-      const fileName = encodeURIComponent(
-        dayjs().format('YYYY_MM_DD_HH_mm_ss__') + file.name,
-      );
+      const fileName = `___${charsIndex(
+        dayjs().year() * 100 + dayjs().month(),
+      )}${charsIndex(+new Date())}___${file.name}`;
+
       const remotePath = `${prefix}/${fileName}`.replace('//', '/');
       let zipFile = file;
       if (IMAGE_PATTERN.test(fileName)) {

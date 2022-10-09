@@ -74,6 +74,11 @@ const getConfig = (): {
   };
 };
 
+/** 将时间戳, 转换成字符串靠前的值, 主要为了解决 oss 不能根据时间排序的问题 */
+export const charsIndex = (n: number) => {
+  return String.fromCharCode(Number.MAX_SAFE_INTEGER - n);
+};
+
 export const useConfig = () => {
   const [config, setConfig] = useState(getConfig());
   useEffect(() => {
