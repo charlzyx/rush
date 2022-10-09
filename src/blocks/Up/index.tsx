@@ -42,9 +42,13 @@ export const Up = () => {
     ) => {
       if (!client) return;
       const { prefix, cdn } = config.current!;
+      const now = dayjs();
+      const y = now.year();
+      const m = now.month();
+
       const fileName = `___${charsIndex(
-        dayjs().year() * 100 + dayjs().month(),
-      )}${charsIndex(+new Date())}___${file.name}`;
+        parseInt(`${y}${m < 10 ? `0${m}` : m}`),
+      )}${charsIndex(now.unix())}___${file.name}`;
 
       const remotePath = `${prefix}/${fileName}`.replace('//', '/');
       let zipFile = file;
