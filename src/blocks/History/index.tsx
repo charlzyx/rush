@@ -102,8 +102,8 @@ const Group = (props: { data: OSS.ObjectMeta }) => {
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'flex-end',
-          WebkitBackdropFilter: hover ? 'blur(0px)' : 'blur(4px)',
-          backdropFilter: hover ? 'blur(0px)' : 'blur(4px)',
+          WebkitBackdropFilter: hover ? 'blur(0px)' : 'blur(6px)',
+          backdropFilter: hover ? 'blur(0px)' : 'blur(6px)',
           padding: '16px 10px',
         }}
         onClick={() => (isImage ? setVisible(true) : null)}
@@ -112,7 +112,7 @@ const Group = (props: { data: OSS.ObjectMeta }) => {
           <Typography.Title
             style={{
               color: 'var(--color-text-1)',
-              textShadow: '0px 0px 10px var(--color-text-4)',
+              // textShadow: '0px 0px 10px var(--color-text-4)',
             }}
             ellipsis={{
               cssEllipsis: true,
