@@ -6,7 +6,7 @@
  */
 
 .filepond--root.filepond--hopper {
-	height: 732px !important;
+	/* height: 732px !important; */
   overflow-y: scroll;
 }
 .filepond--drop-label {
@@ -20,13 +20,13 @@
 
 .filepond--panel-root {
 	border-radius: 0;
-  background-color: var(--color-bg-2);
+  /* background-color: var(--color-bg-2); */
 }
 
 .filepond--item-panel {
-  background-color: rgb(var(--gray-2));
+  /* background-color: rgb(var(--gray-2)); */
 }
 
 .filepond--drip-blob {
-  background-color: rgb(var(--gray-2));
+  /* background-color: rgb(var(--gray-2)); */
 }

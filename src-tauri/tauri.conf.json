@@ -40,7 +40,7 @@
         "icons/icon.ico"
       ],
       "identifier": "yap.charlzyx.github",
-      "longDescription": "ali oss 文件上传",
+      "longDescription": "",
       "macOS": {
         "entitlements": null,
         "exceptionDomain": "",
@@ -58,7 +58,8 @@
       }
     },
     "security": {
-      "csp": ""
+      "csp": "",
+      "dangerousDisableAssetCspModification": true
     },
     "updater": {
       "active": true,
@@ -71,6 +72,7 @@
         "title": "Yap!",
         "width": 800,
         "height": 960,
+        "fileDropEnabled": false,
         "fullscreen": false,
         "resizable": false
       }
