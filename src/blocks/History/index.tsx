@@ -86,7 +86,7 @@ const Group = (props: { data: OSS.ObjectMeta }) => {
         overflow: 'hidden',
         transition: 'all ease-in-out 0.3s',
         width: '100%',
-        height: '124px',
+        height: '138px',
         backgroundColor: hover ? ` var(--color-bg-4)` : ` var(--color-bg-3)`,
         backgroundImage: isImage ? `url(${fileUrl})` : 'var(--color-bg-2)',
         backgroundSize: 'cover',
