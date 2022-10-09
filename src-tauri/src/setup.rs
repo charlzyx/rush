@@ -1,7 +1,7 @@
 use tauri::{App, Manager};
-use window_vibrancy::{apply_blur};
+use window_vibrancy::{apply_blur, apply_vibrancy, NSVisualEffectMaterial};
 
-/// setup
+// setup 
 pub fn init(app: &mut App) -> std::result::Result<(), Box<dyn std::error::Error>> {
     let win = app.get_window("main").unwrap();
 
