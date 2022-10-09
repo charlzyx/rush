@@ -1,5 +1,7 @@
 # CHANGELOG
 
+## v0.0.10
+feat: 🎸 修复windows /Mac 构建
 
 ## v0.0.9
 feat: 🎸 修复windows 构建,更新 logo
