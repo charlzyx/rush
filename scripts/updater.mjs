@@ -35,7 +35,7 @@ async function updater() {
   const updateData = {
     name,
     version: tag.name,
-    notes: updatelog(tag.name), // use UPDATE_LOG.md
+    notes: updatelog(tag.name), // use CHANGELOG.md
     pub_date: new Date().toISOString(),
     platforms: {
       win64: { signature: '', url: '' }, // compatible with older formats

@@ -33,7 +33,7 @@ async function release() {
 
   fs.writeFileSync('./package.json', JSON.stringify(packageJson, null, 2));
 
-  execSync('git add ./package.json ./UPDATE_LOG.md');
+  execSync('git add ./package.json ./CHANGELOG.md');
   execSync(`git commit -m "v${nextVersion}"`);
   execSync(`git tag -a v${nextVersion} -m "v${nextVersion}"`);
   execSync(`git push`);
