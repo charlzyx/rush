@@ -6,6 +6,7 @@
 #[cfg(target_os = "macos")]
 #[macro_use]
 extern crate objc;
+extern crate lazy_static;
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
@@ -13,11 +14,11 @@ fn greet(name: &str) -> String {
     format!("Hello, {}! You've been greeted from Rust!", name)
 }
 
-use std::{env, fs};
+use std::{env};
 
 #[cfg(target_os = "macos")]
 use tauri::Menu;
-use tauri::{api::path::app_dir, generate_handler, Window, WindowEvent};
+use tauri::{generate_handler, Window, WindowEvent};
 mod setup;
 mod window_ext;
 

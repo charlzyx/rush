@@ -114,7 +114,7 @@ const Page = (props: React.PropsWithChildren<{}>) => {
                   config?.setCurrent(v);
                 }}
                 value={config?.current?.accessKeyId}
-                options={config.list.map((item) => {
+                options={config?.list?.map((item) => {
                   return {
                     label: item.alias,
                     value: item.accessKeyId,

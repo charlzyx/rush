@@ -5,6 +5,7 @@ use webview2_com::Microsoft::Web::WebView2::Win32::{ICoreWebView2Controller2, CO
 use window_shadows::set_shadow;
 #[cfg(target_os = "windows")]
 use windows::core::Interface;
+#[cfg(target_os = "windows")]
 
 #[cfg(target_os = "macos")]
 #[allow(dead_code)]
@@ -110,18 +111,20 @@ impl WindowExt for Window {
 #[cfg(target_os = "windows")]
 impl WindowExt for Window {
     fn set_background(&self) {
+
         self.with_webview(|w| unsafe {
-            w.controller()
-                .cast::<ICoreWebView2Controller2>()
+            w.controller().CoreWebView2()
                 .map(|controller2| {
-                    controller2
-                        .SetDefaultBackgroundColor(COREWEBVIEW2_COLOR {
-                            R: 0,
-                            G: 0,
-                            B: 0,
-                            A: 255,
-                        })
-                        .ok();
+                    // TODO api change do nothings
+
+                    // controller2
+                    //     .SetDefaultBackgroundColor(COREWEBVIEW2_COLOR {
+                    //         R: 0,
+                    //         G: 0,
+                    //         B: 0,
+                    //         A: 255,
+                    //     })
+                    //     .ok();
                 })
                 .ok();
         })
@@ -129,6 +132,7 @@ impl WindowExt for Window {
     }
     fn set_transparent_titlebar(&self) {
         self.set_decorations(false).ok();
-        set_shadow(&self, true).ok();
+        // TODO api change do nothings
+        // set_shadow(&self, true).ok();
     }
 }

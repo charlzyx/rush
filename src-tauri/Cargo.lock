@@ -3718,6 +3718,7 @@ name = "yap"
 version = "0.0.0"
 dependencies = [
  "cocoa",
+ "lazy_static",
  "objc",
  "serde",
  "serde_json",
