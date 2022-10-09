@@ -1,0 +1,32 @@
+.filepond--credits {
+  display: none;
+}
+/**
+ * FilePond Custom Styles
+ */
+
+.filepond--root.filepond--hopper {
+	height: 732px !important;
+  overflow-y: scroll;
+}
+.filepond--drop-label {
+  color: --var(color-text-1) !important;
+  font-size: 1.2rem !important;
+}
+
+.filepond--label-action {
+	text-decoration-color: --var(color-text-2);
+}
+
+.filepond--panel-root {
+	border-radius: 0;
+  background-color: var(--color-bg-2);
+}
+
+.filepond--item-panel {
+  background-color: rgb(var(--gray-2));
+}
+
+.filepond--drip-blob {
+  background-color: rgb(var(--gray-2));
+}
