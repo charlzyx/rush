@@ -1,6 +1,9 @@
 # CHANGELOG
 
 
+## v0.0.9
+feat: 🎸 修复windows 构建,更新 logo
+
 ## v0.0.8
 
 fix: 🐛 修复时间戳生成逻辑
