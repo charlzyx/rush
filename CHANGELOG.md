@@ -1,5 +1,7 @@
 # CHANGELOG
 
+## v0.1.3
+feat: 🎸 成吨的优化, README 更新
 ## v0.1.2
 bug: ubuntu-latest 打包有问题, 'Error: No artifacts were found.' 暂不支持, 等 actions 修复
 
