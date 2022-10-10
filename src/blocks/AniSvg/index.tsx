@@ -1,10 +1,14 @@
-import { ReactComponent as Work } from './work.svg';
+import { ReactComponent as Brand } from './brand.svg';
 import { ReactComponent as Wait } from './wait.svg';
+import { ReactComponent as Work } from './work.svg';
 
+import { useThrottle } from 'ahooks';
+import React from 'react';
 import './ani.css';
-import React, { useEffect, useState } from 'react';
 
-const AbsoluteWrapper = (props: React.PropsWithChildren<{}>) => {
+const AbsoluteWrapper = (
+  props: React.PropsWithChildren<{ style?: React.CSSProperties }>,
+) => {
   return (
     <div
       style={{
@@ -13,8 +17,16 @@ const AbsoluteWrapper = (props: React.PropsWithChildren<{}>) => {
         left: 0,
         bottom: 0,
         right: 0,
-        background: 'rgba(255,255, 255, 0.3)',
+        transition: 'all ease 0.3s',
+        opacity: 1,
+        height: '83vh',
+        background: 'rgba(var(--gray-1), 0.9)',
+        WebkitBackdropFilter: 'blur(4px)',
+        backdropFilter: 'blur(4px)',
         padding: '100px',
+        transform: 'translate3d(0, 0, 0)',
+        zIndex: 100,
+        ...props.style,
       }}
     >
       {props.children}
@@ -23,29 +35,21 @@ const AbsoluteWrapper = (props: React.PropsWithChildren<{}>) => {
 };
 export const AniSvg = (props: {
   className?: string;
-  name?: 'work' | 'wait';
+  name?: 'work' | 'wait' | 'brand';
   opacity?: number;
   visible?: boolean;
   abs?: boolean;
 }) => {
-  const Comp = props.name === 'work' ? Work : Wait;
+  const Comp =
+    props.name === 'work' ? Work : props.name === 'brand' ? Brand : Wait;
   const Abs = props.abs ? AbsoluteWrapper : React.Fragment;
-  const [show, setShow] = useState(true);
 
-  useEffect(() => {
-    if (props.visible === false && show === true) {
-      setTimeout(() => {
-        setShow(false);
-      }, 300);
-    } else if (props.visible !== undefined) {
-      setShow(Boolean(props.visible));
-    }
-  }, [props.visible, show]);
+  const lazy = useThrottle(props.visible ?? true, { wait: 666 });
 
-  return show ? (
+  return lazy ? (
     <Abs>
       <Comp
-        style={{ opacity: props.visible !== false ? props.opacity || 1 : 0 }}
+        style={{ opacity: props.opacity || 1 }}
         className={`${props.className || ''} ooop`}
       ></Comp>
     </Abs>

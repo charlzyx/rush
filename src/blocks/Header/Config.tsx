@@ -9,11 +9,11 @@ export const Config = () => {
       onChange={(v) => {
         config?.setCurrent(v);
       }}
-      value={config?.current?.accessKeyId}
+      value={config?.current?.alias}
       options={config?.list?.map((item) => {
         return {
           label: item.alias,
-          value: item.accessKeyId,
+          value: item.alias,
         };
       })}
     ></Select>

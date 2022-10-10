@@ -5,6 +5,7 @@ import {
   Form,
   Grid,
   Input,
+  Message,
   Popconfirm,
   Space,
   Table,
@@ -13,6 +14,7 @@ import {
 } from '@arco-design/web-react';
 import { IconDelete, IconEdit, IconPlus } from '@arco-design/web-react/icon';
 import React, { useMemo, useRef, useState } from 'react';
+import { testConfig } from '@/utils/uploader';
 
 const pick = <T extends object>(o: T, ...keys: (keyof T)[]): Partial<T> => {
   return Object.keys(o).reduce((neo: any, key) => {
@@ -53,7 +55,7 @@ const OSSList = (porps: {
   setView: (view: 'list' | 'edit') => void;
 }) => {
   const [ds, setDs] = useStore<OSSItem[]>('list', []);
-  const [current, setCurrent] = useStore<OSSItem['accessKeyId']>('current');
+  const [current, setCurrent] = useStore<OSSItem['alias']>('current');
 
   const columns: TableColumnProps[] = useMemo(
     () => [
@@ -61,12 +63,12 @@ const OSSList = (porps: {
         title: '名称',
         dataIndex: 'alias',
         render(_, item) {
-          const actived = item.accessKeyId === current;
+          const actived = item.alias === current;
 
           return (
             <Button
               onClick={() => {
-                setCurrent(item.accessKeyId);
+                setCurrent(item.alias);
               }}
               size="small"
               type={actived ? 'primary' : 'text'}
@@ -110,9 +112,7 @@ const OSSList = (porps: {
                 cancelText="朕再想想"
                 onOk={() => {
                   setDs((list) => {
-                    const neo = list.filter(
-                      (x) => x.accessKeyId !== item.accessKeyId,
-                    );
+                    const neo = list.filter((x) => x.alias !== item.alias);
                     return neo;
                   });
                 }}
@@ -165,7 +165,10 @@ const OSSList = (porps: {
                 return (
                   <Grid.Col span={24 / 4} key={key}>
                     {key}:
-                    <Typography.Paragraph copyable ellipsis>
+                    <Typography.Paragraph
+                      copyable
+                      ellipsis={{ cssEllipsis: true, rows: 1 }}
+                    >
                       {(row as any)[key]}
                     </Typography.Paragraph>
                   </Grid.Col>
@@ -191,9 +194,13 @@ const Edit = (props: { init?: OSSItem; onFinish: () => void }) => {
       <Form
         initialValues={props.init}
         ref={formRef}
-        onSubmit={(neo) => {
+        onSubmit={async (neo) => {
+          const ok = await testConfig(neo);
+          if (!ok) {
+            return Message.error('配置测试链接失败, 请检查您的配置是否正确');
+          }
           const index = props.init
-            ? ds.findIndex((x) => x.accessKeyId === props.init?.accessKeyId)
+            ? ds.findIndex((x) => x.alias === props.init?.alias)
             : -1;
 
           if (index > -1) {

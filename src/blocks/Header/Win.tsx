@@ -1,6 +1,7 @@
 import React from 'react';
 import { IconClose, IconMax, IconSleep } from '@/assets/index';
 import { appWindow } from '@tauri-apps/api/window';
+import { AniSvg } from '@/blocks/AniSvg';
 import './icon.css';
 
 export const Win = () => {
@@ -10,7 +11,6 @@ export const Win = () => {
       style={{
         fontSize: '1.4rem',
         display: 'flex',
-        marginTop: -10,
         justifyContent: 'space-between',
         alignItems: 'center',
       }}
@@ -40,7 +40,7 @@ export const Win = () => {
         <IconMax className="arco-icon ani"></IconMax>
       </div>
       <div data-tauri-drag-region className="header-title">
-        Yap!
+        <AniSvg name="brand"></AniSvg>
       </div>
     </div>
   );

@@ -6,7 +6,7 @@
  */
 
 .filepond--root.filepond--hopper {
-	height: calc(100vh - 167px) !important;
+	height: calc(100vh - 168px) !important;
   position: relative;
 }
 .filepond--drop-label {

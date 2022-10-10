@@ -12,3 +12,25 @@ export const useClient = () => {
     region: config?.current?.region,
   });
 };
+
+export const testConfig = async (config: any) => {
+  const client = new OSS({
+    secure: true,
+    accessKeyId: config?.accessKeyId!,
+    accessKeySecret: config?.accessKeySecret!,
+    bucket: config?.bucket,
+    region: config?.region,
+  });
+  try {
+    await client.list(
+      {
+        prefix: config.prefix,
+        'max-keys': 1,
+      },
+      { timeout: 2000 },
+    );
+    return true;
+  } catch (error) {
+    return false;
+  }
+};

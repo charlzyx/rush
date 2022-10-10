@@ -1,4 +1,4 @@
-import { useConfig } from '@/store';
+import { useConfig, useStore } from '@/store';
 import { useClient } from '@/utils/uploader';
 import {
   Button,
@@ -6,6 +6,7 @@ import {
   Grid,
   Image,
   Message,
+  Radio,
   Space,
   Typography,
 } from '@arco-design/web-react';
@@ -13,17 +14,26 @@ import {
   IconArrowLeft,
   IconArrowRight,
   IconCopy,
+  IconExpand,
+  IconFullscreen,
+  IconFullscreenExit,
+  IconImage,
   IconLink,
+  IconMoon,
+  IconMosaic,
   IconRefresh,
+  IconShrink,
+  IconSun,
 } from '@arco-design/web-react/icon';
 import { useSize } from 'ahooks';
 import dayjs from 'dayjs';
 import copy from '@arco-design/web-react/es/_util/clipboard';
 import OSS from 'ali-oss';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { usePageLink } from './usePageLink';
 import { AniSvg } from '@/blocks/AniSvg';
 
+const RadioGroup = Radio.Group;
 const Row = Grid.Row;
 const Col = Grid.Col;
 
@@ -84,11 +94,14 @@ const useResponsiveSize = () => {
       setRow(nextRow);
     }
   }, [col, row, size?.height, size?.width]);
-  console.log('col, pageSize', { col, pageSize });
   return { col, pageSize };
 };
 
-const Group = (props: { data: OSS.ObjectMeta }) => {
+const Group = (props: {
+  data: OSS.ObjectMeta;
+  fit?: 'cover' | 'contain';
+  blur?: number;
+}) => {
   const config = useConfig();
   const [hover, setHover] = useState(false);
   const { name, url, lastModified } = props.data;
@@ -128,7 +141,7 @@ const Group = (props: { data: OSS.ObjectMeta }) => {
         height: '136px',
         backgroundColor: hover ? ` var(--color-bg-4)` : ` var(--color-bg-3)`,
         backgroundImage: isImage ? `url(${fileUrl})` : 'var(--color-bg-2)',
-        backgroundSize: 'cover',
+        backgroundSize: props.fit ?? 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
         border: '1px solid var(--color-border-1)',
@@ -144,8 +157,10 @@ const Group = (props: { data: OSS.ObjectMeta }) => {
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'flex-end',
-          WebkitBackdropFilter: hover ? 'blur(0px)' : 'blur(6px)',
-          backdropFilter: hover ? 'blur(0px)' : 'blur(6px)',
+          WebkitBackdropFilter: hover
+            ? 'blur(0px)'
+            : `blur(${props.blur ?? 6}px)`,
+          backdropFilter: hover ? 'blur(0px)' : `blur(${props.blur ?? 6}px)`,
           padding: '16px 10px',
         }}
         onClick={() => (isImage ? setVisible(true) : null)}
@@ -193,6 +208,8 @@ export const History = () => {
   const { isRoot, can, current, next, prev, setNext, reload } = usePageLink();
   const { col, pageSize } = useResponsiveSize();
   const [loading, setLoading] = useState(false);
+  const [blur, setBlur] = useStore('blur', false);
+  const [fit, setFit] = useStore<'cover' | 'contain'>('fit', 'cover');
 
   const groups = useMemo(() => {
     return objects.reduce((arr, item, idx) => {
@@ -245,20 +262,51 @@ export const History = () => {
       <div
         style={{
           display: 'flex',
-          justifyContent: 'flex-end',
+          justifyContent: 'space-between',
           paddingBottom: '16px',
         }}
       >
-        <Button
-          onClick={() => {
-            reload();
-          }}
-          type="outline"
-          size="small"
-          icon={<IconRefresh></IconRefresh>}
-        >
-          刷新
-        </Button>
+        <div>
+          <RadioGroup
+            value={fit}
+            onChange={(v) => setFit(v)}
+            type="button"
+            defaultValue="cover"
+          >
+            <Radio value="cover">
+              <IconFullscreen></IconFullscreen>
+            </Radio>
+            <Radio value="contain">
+              <IconFullscreenExit></IconFullscreenExit>
+            </Radio>
+          </RadioGroup>
+          <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
+          <RadioGroup
+            value={blur ? 'true' : 'false'}
+            onChange={(v) => setBlur(v === 'true')}
+            type="button"
+            defaultValue="true"
+          >
+            <Radio value="true">
+              <IconMosaic></IconMosaic>
+            </Radio>
+            <Radio value="false">
+              <IconImage></IconImage>
+            </Radio>
+          </RadioGroup>
+        </div>
+        <div style={{}}>
+          <Button
+            onClick={() => {
+              reload();
+            }}
+            type="outline"
+            size="small"
+            icon={<IconRefresh></IconRefresh>}
+          >
+            刷新
+          </Button>
+        </div>
       </div>
       <Space direction="vertical" style={{ width: '100%' }}>
         <div
@@ -277,14 +325,23 @@ export const History = () => {
                 {group.map((item) => {
                   return (
                     <Col key={item.url} span={24 / col}>
-                      <Group key={item.url} data={item}></Group>
+                      <Group
+                        key={item.url}
+                        fit={fit}
+                        blur={blur ? 4 : 0}
+                        data={item}
+                      ></Group>
                     </Col>
                   );
                 })}
               </Row>
             );
           })}
-          <AniSvg abs visible={loading} opacity={0.8}></AniSvg>
+          {groups.length === 0 ? (
+            <AniSvg name="wait" opacity={0.8}></AniSvg>
+          ) : (
+            <AniSvg name="wait" abs visible={loading} opacity={0.8}></AniSvg>
+          )}
         </div>
         <Space
           style={{

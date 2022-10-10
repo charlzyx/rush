@@ -28,7 +28,7 @@ export const store = {
   },
 };
 
-type Key = 'list' | 'current';
+type Key = 'list' | 'current' | 'blur' | 'fit';
 
 export const useStore = <S extends any>(key: Key, init?: S) => {
   const [state, setState] = useState<S>(store.get(key) ?? init);
@@ -64,9 +64,9 @@ const getConfig = (): {
 } => {
   const ds = store.get('list');
   const current = store.get('current');
-  const neo = ds?.find((x: any) => x.accessKeyId === current);
+  const now = ds?.find((x: OSSItem) => x.alias === current);
   return {
-    current: neo,
+    current: now,
     list: ds,
     setCurrent: (key: string) => {
       store.set('current', key);
@@ -83,7 +83,6 @@ export const useConfig = () => {
   const [config, setConfig] = useState(getConfig());
   useEffect(() => {
     ev.on('fresh', () => {
-      console.log('fressss!');
       setConfig(getConfig());
     });
   }, []);
