@@ -15,6 +15,7 @@ import { pic } from '@/svg';
 import dayjs from 'dayjs';
 import './up.css';
 import tiny from '@mxsir/image-tiny';
+import { AniSvg } from '@/blocks/AniSvg';
 
 const IMAGE_PATTERN = /\.(jpg|jpeg|png|gif|webp|svg)/;
 
@@ -98,7 +99,7 @@ export const Up = () => {
           }}
         >
           <Space direction="vertical" style={{ flex: 1 }}>
-            <Typography.Text bold>图片压缩质量</Typography.Text>
+            <Typography.Text bold>&nbsp;&nbsp;&nbsp; 压缩质量</Typography.Text>
             <Slider
               style={{ width: '400px' }}
               value={quality}
@@ -125,16 +126,21 @@ export const Up = () => {
         </Space>
       </Card>
 
-      <Yap
-        stylePanelAspectRatio={'4:3'}
-        ref={ref}
-        files={files}
-        onupdatefiles={setFiles}
-        allowMultiple={true}
-        server={{ process: uploading }}
-        name="files"
-        labelIdle={pic}
-      />
+      <div style={{ position: 'relative' }}>
+        <Yap
+          stylePanelAspectRatio={'4:3'}
+          ref={ref}
+          files={files}
+          onupdatefiles={setFiles}
+          allowMultiple={true}
+          server={{ process: uploading }}
+          name="files"
+          labelIdle={pic}
+        />
+        {files.length === 0 ? (
+          <AniSvg name="work" opacity={0.8} className="upload-empty"></AniSvg>
+        ) : null}
+      </div>
     </div>
   );
 };

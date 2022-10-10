@@ -16,14 +16,13 @@ import {
   IconLink,
   IconRefresh,
 } from '@arco-design/web-react/icon';
+import { useSize } from 'ahooks';
 import dayjs from 'dayjs';
 import copy from '@arco-design/web-react/es/_util/clipboard';
 import OSS from 'ali-oss';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { usePageLink } from './usePageLink';
-
-const col = 3;
-const pageSize = col * 5;
+import { AniSvg } from '@/blocks/AniSvg';
 
 const Row = Grid.Row;
 const Col = Grid.Col;
@@ -49,12 +48,52 @@ const Copyable = (props: { text: string }) => {
 };
 
 const IMAGE_PATTERN = /\.(jpg|jpeg|png|gif|webp)/;
+
+const xInRange = (x: number, range: [number, number]) => {
+  return x >= range[0] && x < range[1];
+};
+
+const computedCol = (x: number) => {
+  const isSmall = xInRange(x, [0, 600]);
+  const isMiddle = xInRange(x, [600, 960]);
+  const isLarge = xInRange(x, [960, 1400]);
+  const isMax = xInRange(x, [1400, Number.MAX_VALUE]);
+  return isSmall ? 2 : isMiddle ? 3 : isLarge ? 4 : isMax ? 6 : 3;
+};
+
+const computedRow = (h: number) => {
+  return Math.floor((h || 30 - 30) / 180);
+};
+
+const useResponsiveSize = () => {
+  const size = useSize(document.body);
+  const [col, setCol] = useState(computedCol(size?.width || 1));
+  const [row, setRow] = useState(computedRow(size?.height || 1));
+
+  const pageSize = useMemo(() => {
+    return col * row;
+  }, [col, row]);
+
+  useEffect(() => {
+    const nextCol = computedCol(size?.width || 1);
+    const nextRow = computedRow(size?.height || 1);
+    if (nextCol !== col) {
+      setCol(nextCol);
+    }
+    if (nextRow !== row) {
+      setRow(nextRow);
+    }
+  }, [col, row, size?.height, size?.width]);
+  console.log('col, pageSize', { col, pageSize });
+  return { col, pageSize };
+};
+
 const Group = (props: { data: OSS.ObjectMeta }) => {
   const config = useConfig();
   const [hover, setHover] = useState(false);
-  const { name, url, lastModified, type } = props.data;
-
+  const { name, url, lastModified } = props.data;
   const [visible, setVisible] = useState(false);
+
   const isImage = useMemo(() => {
     return IMAGE_PATTERN.test(name);
   }, [name]);
@@ -86,7 +125,7 @@ const Group = (props: { data: OSS.ObjectMeta }) => {
         overflow: 'hidden',
         transition: 'all ease-in-out 0.3s',
         width: '100%',
-        height: '138px',
+        height: '136px',
         backgroundColor: hover ? ` var(--color-bg-4)` : ` var(--color-bg-3)`,
         backgroundImage: isImage ? `url(${fileUrl})` : 'var(--color-bg-2)',
         backgroundSize: 'cover',
@@ -152,6 +191,8 @@ export const History = () => {
   const config = useConfig();
   const [objects, setObjects] = useState<OSS.ObjectMeta[]>([]);
   const { isRoot, can, current, next, prev, setNext, reload } = usePageLink();
+  const { col, pageSize } = useResponsiveSize();
+  const [loading, setLoading] = useState(false);
 
   const groups = useMemo(() => {
     return objects.reduce((arr, item, idx) => {
@@ -160,10 +201,11 @@ export const History = () => {
       arr[groupIdx].push(item);
       return arr;
     }, [] as OSS.ObjectMeta[][]);
-  }, [objects]);
+  }, [col, objects]);
 
   const load = useCallback(() => {
-    if (!client || !config) return;
+    if (!client || !config || pageSize <= 0) return;
+    setLoading(true);
     client
       .list(
         {
@@ -182,18 +224,21 @@ export const History = () => {
           dayjs(b.lastModified).isAfter(dayjs(a.lastModified)) ? 1 : -1,
         );
         setObjects(list);
+      })
+      .finally(() => {
+        setLoading(false);
       });
-  }, [client, config, current, isRoot, setNext]);
+  }, [client, config, current, isRoot, pageSize, setNext]);
 
   useEffect(() => {
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [current]);
+  }, [current, col, pageSize]);
 
   useEffect(() => {
     reload();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [config?.current?.alias]);
+  }, [config?.current?.alias, col, pageSize]);
 
   return (
     <Card bordered={false}>
@@ -209,6 +254,7 @@ export const History = () => {
             reload();
           }}
           type="outline"
+          size="small"
           icon={<IconRefresh></IconRefresh>}
         >
           刷新
@@ -218,6 +264,7 @@ export const History = () => {
         <div
           style={{
             marginRight: '-16px',
+            position: 'relative',
           }}
         >
           {groups.map((group, idx) => {
@@ -237,9 +284,13 @@ export const History = () => {
               </Row>
             );
           })}
+          <AniSvg abs visible={loading} opacity={0.8}></AniSvg>
         </div>
         <Space
           style={{
+            position: 'fixed',
+            right: '16px',
+            bottom: '16px',
             margin: '8px 0',
             width: '100%',
             display: 'flex',

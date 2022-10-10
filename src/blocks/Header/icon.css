@@ -1,0 +1,86 @@
+@keyframes fill-line {
+  from {
+    stroke-dashoffset: 100;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.ani path {
+  stroke-dasharray: 100;
+  stroke-dashoffset: 0;
+  animation: fill-line 20s ease infinite;
+}
+.ani:hover path {
+  stroke-dasharray: 0;
+  stroke-dashoffset: 0;
+  animation: none;
+}
+
+.icon-box:hover path {
+  /* stroke: rgb(var(--primary-6)); */
+}
+
+.icon-box svg {
+  width: 20px;
+}
+
+.icon-box {
+  transition: all ease 0.2s;
+  border-radius: 4px;
+  padding: 4px;
+  height: 32px;
+  width: 32px;
+  display: flex;
+  justify-content: center;
+  align-items: center
+}
+
+.header-title {
+  margin-left: 16px;
+  color: rgb(var(--primary-6));
+}
+
+.red {
+  border-color: rgba(236, 96, 80, 0);
+}
+.red path {
+  stroke: rgba(236, 96, 80, 0.8);
+}
+.red:hover {
+  background-color: rgba(236, 96, 80, 0.2);
+  border-color: rgba(236, 96, 80, 1);
+}
+.red:hover path {
+  stroke: rgba(236, 96, 80, 1);
+}
+
+
+.green {
+  border-color: rgba(67, 195, 65, 0);
+}
+.green path {
+  stroke: rgba(67, 195, 65, 0.8);
+}
+.green:hover {
+  background-color: rgba(67, 195, 65, 0.2);
+  border-color: rgba(67, 195, 65, 1);
+}
+.green:hover path {
+  stroke: rgba(67, 195, 65, 1);
+}
+
+.yellow {
+  border-color: rgba(240, 190, 58, 0);
+}
+.yellow path {
+  stroke: rgba(240, 190, 58, 0.8);
+}
+.yellow:hover {
+  background-color: rgba(240, 190, 58, 0.2);
+  border-color: rgba(240, 190, 58, 1);
+}
+.yellow:hover path {
+  stroke: rgba(240, 190, 58, 1);
+}

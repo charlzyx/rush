@@ -6,12 +6,47 @@
  */
 
 .filepond--root.filepond--hopper {
-	height: 732px !important;
-  overflow-y: scroll;
+	height: calc(100vh - 167px) !important;
+  position: relative;
 }
 .filepond--drop-label {
+  height: 100%;
+  position: absolute;
+  left: 30%;
+  right: 16px;
+  top: 0;
+  bottom: 0;
   color: --var(color-text-1) !important;
-  font-size: 1.2rem !important;
+  border-radius: 2px;
+  background-color: rgb(var(--primary-1));
+  border: 1px solid rgb(var(--primary-1));
+  transition: all ease-in-out 0.2s;
+}
+.filepond--drop-label:hover {
+  background-color: rgb(var(--primary-2));
+  border: 1px solid rgb(var(--primary-4));
+}
+
+.upload-empty {
+  position: absolute;
+  width: 30%;
+  right: 70%;
+  left: 0px;
+  top: -16px;
+  bottom: 0;
+}
+
+.filepond--list-scroller {
+  transform: translate3d(0px, 0px, 0px) !important;
+  height: 100% !important;
+  overflow-y: scroll;
+  /* background-color: rgb(var(--gray-2)); */
+  /* border: 1px solid green; */
+  position: absolute;
+  right: 70%;
+  left: 16px;
+  top: -16px;
+  bottom: 0;
 }
 
 .filepond--label-action {

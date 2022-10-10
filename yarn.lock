@@ -65,7 +65,7 @@
   resolved "https://mirrors.cloud.tencent.com/npm/@babel%2fcompat-data/-/compat-data-7.19.3.tgz#707b939793f867f5a73b2666e6d9a3396eb03151"
   integrity sha512-prBHMK4JYYK+wDjJF1q99KK4JLL+egWS4nmNqdlMUgCExMZ+iZW0hGhyC3VEbsPjvaN0TBhW//VIFwBrk8sEiw==
 
-"@babel/core@^7.16.0", "@babel/core@^7.18.13":
+"@babel/core@^7.16.0", "@babel/core@^7.18.13", "@babel/core@^7.18.5":
   version "7.19.3"
   resolved "https://mirrors.cloud.tencent.com/npm/@babel%2fcore/-/core-7.19.3.tgz#2519f62a51458f43b682d61583c3810e7dcee64c"
   integrity sha512-WneDJxdsjEvyKtXKsaBGbDeiyOjR5vYq4HcShxnIbG0qixpoHjI3MqeZM9NDvsojNCEBItQE4juOo/bU6e72gQ==
@@ -1090,7 +1090,7 @@
     debug "^4.1.0"
     globals "^11.1.0"
 
-"@babel/types@^7.18.10", "@babel/types@^7.18.6", "@babel/types@^7.18.9", "@babel/types@^7.19.0", "@babel/types@^7.19.3", "@babel/types@^7.4.4", "@babel/types@^7.7.0":
+"@babel/types@^7.18.10", "@babel/types@^7.18.4", "@babel/types@^7.18.6", "@babel/types@^7.18.9", "@babel/types@^7.19.0", "@babel/types@^7.19.3", "@babel/types@^7.4.4", "@babel/types@^7.7.0":
   version "7.19.3"
   resolved "https://mirrors.cloud.tencent.com/npm/@babel%2ftypes/-/types-7.19.3.tgz#fc420e6bbe54880bce6779ffaf315f5e43ec9624"
   integrity sha512-hGCaQzIY22DJlDh9CH7NOxgKkFjBk0Cw9xDO1Xmh2151ti7wiGfQ3LauXzL4HP1fmFlTX6XjpRETTpUcv7wQLw==
@@ -1376,10 +1376,100 @@
   resolved "https://mirrors.cloud.tencent.com/npm/@remix-run%2frouter/-/router-1.0.2.tgz#1c17eadb2fa77f80a796ad5ea9bf108e6993ef06"
   integrity sha512-GRSOFhJzjGN+d4sKHTMSvNeUPoZiDHWmRnXfzaxrqe7dE/Nzlc8BiMSJdLDESZlndM7jIUrZ/F4yWqVYlI0rwQ==
 
+"@rollup/pluginutils@^4.2.1":
+  version "4.2.1"
+  resolved "https://mirrors.cloud.tencent.com/npm/@rollup%2fpluginutils/-/pluginutils-4.2.1.tgz#e6c6c3aba0744edce3fb2074922d3776c0af2a6d"
+  integrity sha512-iKnFXr7NkdZAIHiIWE+BX5ULi/ucVFYWD6TbAV+rZctiRTY2PL6tsIKhoIOaoskiWAkgu+VsbXgUVDNLHf+InQ==
+  dependencies:
+    estree-walker "^2.0.1"
+    picomatch "^2.2.2"
+
 "@rushstack/eslint-patch@^1.1.0":
   version "1.2.0"
   resolved "https://mirrors.cloud.tencent.com/npm/@rushstack%2feslint-patch/-/eslint-patch-1.2.0.tgz#8be36a1f66f3265389e90b5f9c9962146758f728"
   integrity sha512-sXo/qW2/pAcmT43VoRKOJbDOfV3cYpq3szSVfIThQXNt+E4DfKj361vaAt3c88U5tPUxzEswam7GW48PJqtKAg==
+
+"@svgr/babel-plugin-add-jsx-attribute@^6.3.1":
+  version "6.3.1"
+  resolved "https://mirrors.cloud.tencent.com/npm/@svgr%2fbabel-plugin-add-jsx-attribute/-/babel-plugin-add-jsx-attribute-6.3.1.tgz#b9a5d84902be75a05ede92e70b338d28ab63fa74"
+  integrity sha512-jDBKArXYO1u0B1dmd2Nf8Oy6aTF5vLDfLoO9Oon/GLkqZ/NiggYWZA+a2HpUMH4ITwNqS3z43k8LWApB8S583w==
+
+"@svgr/babel-plugin-remove-jsx-attribute@^6.3.1":
+  version "6.3.1"
+  resolved "https://mirrors.cloud.tencent.com/npm/@svgr%2fbabel-plugin-remove-jsx-attribute/-/babel-plugin-remove-jsx-attribute-6.3.1.tgz#4877995452efc997b36777abe1fde9705ef78e8b"
+  integrity sha512-dQzyJ4prwjcFd929T43Z8vSYiTlTu8eafV40Z2gO7zy/SV5GT+ogxRJRBIKWomPBOiaVXFg3jY4S5hyEN3IBjQ==
+
+"@svgr/babel-plugin-remove-jsx-empty-expression@^6.3.1":
+  version "6.3.1"
+  resolved "https://mirrors.cloud.tencent.com/npm/@svgr%2fbabel-plugin-remove-jsx-empty-expression/-/babel-plugin-remove-jsx-empty-expression-6.3.1.tgz#2d67a0e92904c9be149a5b22d3a3797ce4d7b514"
+  integrity sha512-HBOUc1XwSU67fU26V5Sfb8MQsT0HvUyxru7d0oBJ4rA2s4HW3PhyAPC7fV/mdsSGpAvOdd8Wpvkjsr0fWPUO7A==
+
+"@svgr/babel-plugin-replace-jsx-attribute-value@^6.3.1":
+  version "6.3.1"
+  resolved "https://mirrors.cloud.tencent.com/npm/@svgr%2fbabel-plugin-replace-jsx-attribute-value/-/babel-plugin-replace-jsx-attribute-value-6.3.1.tgz#306f5247139c53af70d1778f2719647c747998ee"
+  integrity sha512-C12e6aN4BXAolRrI601gPn5MDFCRHO7C4TM8Kks+rDtl8eEq+NN1sak0eAzJu363x3TmHXdZn7+Efd2nr9I5dA==
+
+"@svgr/babel-plugin-svg-dynamic-title@^6.3.1":
+  version "6.3.1"
+  resolved "https://mirrors.cloud.tencent.com/npm/@svgr%2fbabel-plugin-svg-dynamic-title/-/babel-plugin-svg-dynamic-title-6.3.1.tgz#6ce26d34cbc93eb81737ef528528907c292e7aa2"
+  integrity sha512-6NU55Mmh3M5u2CfCCt6TX29/pPneutrkJnnDCHbKZnjukZmmgUAZLtZ2g6ZoSPdarowaQmAiBRgAHqHmG0vuqA==
+
+"@svgr/babel-plugin-svg-em-dimensions@^6.3.1":
+  version "6.3.1"
+  resolved "https://mirrors.cloud.tencent.com/npm/@svgr%2fbabel-plugin-svg-em-dimensions/-/babel-plugin-svg-em-dimensions-6.3.1.tgz#5ade2a724b290873c30529d1d8cd23523856287a"
+  integrity sha512-HV1NGHYTTe1vCNKlBgq/gKuCSfaRlKcHIADn7P8w8U3Zvujdw1rmusutghJ1pZJV7pDt3Gt8ws+SVrqHnBO/Qw==
+
+"@svgr/babel-plugin-transform-react-native-svg@^6.3.1":
+  version "6.3.1"
+  resolved "https://mirrors.cloud.tencent.com/npm/@svgr%2fbabel-plugin-transform-react-native-svg/-/babel-plugin-transform-react-native-svg-6.3.1.tgz#d654f509d692c3a09dfb475757a44bd9f6ad7ddf"
+  integrity sha512-2wZhSHvTolFNeKDAN/ZmIeSz2O9JSw72XD+o2bNp2QAaWqa8KGpn5Yk5WHso6xqfSAiRzAE+GXlsrBO4UP9LLw==
+
+"@svgr/babel-plugin-transform-svg-component@^6.3.1":
+  version "6.3.1"
+  resolved "https://mirrors.cloud.tencent.com/npm/@svgr%2fbabel-plugin-transform-svg-component/-/babel-plugin-transform-svg-component-6.3.1.tgz#21a285dbffdce9567c437ebf0d081bf9210807e6"
+  integrity sha512-cZ8Tr6ZAWNUFfDeCKn/pGi976iWSkS8ijmEYKosP+6ktdZ7lW9HVLHojyusPw3w0j8PI4VBeWAXAmi/2G7owxw==
+
+"@svgr/babel-preset@^6.4.0":
+  version "6.4.0"
+  resolved "https://mirrors.cloud.tencent.com/npm/@svgr%2fbabel-preset/-/babel-preset-6.4.0.tgz#b85bd1c64d03fcb3f930169541de4cf9ff4eaed9"
+  integrity sha512-Ytuh7N282fv2Cy1JePf6HZ29/G5Hb8mQAjx4iykPjvfFl9NK6o5lZavmewgjOGT8kNPtwgvheuOQn4CifHRUhQ==
+  dependencies:
+    "@svgr/babel-plugin-add-jsx-attribute" "^6.3.1"
+    "@svgr/babel-plugin-remove-jsx-attribute" "^6.3.1"
+    "@svgr/babel-plugin-remove-jsx-empty-expression" "^6.3.1"
+    "@svgr/babel-plugin-replace-jsx-attribute-value" "^6.3.1"
+    "@svgr/babel-plugin-svg-dynamic-title" "^6.3.1"
+    "@svgr/babel-plugin-svg-em-dimensions" "^6.3.1"
+    "@svgr/babel-plugin-transform-react-native-svg" "^6.3.1"
+    "@svgr/babel-plugin-transform-svg-component" "^6.3.1"
+
+"@svgr/core@^6.3.1":
+  version "6.4.0"
+  resolved "https://mirrors.cloud.tencent.com/npm/@svgr%2fcore/-/core-6.4.0.tgz#95878c7b23962febc14735885bdb9f35ee2735e5"
+  integrity sha512-wU9uyF6BUnwAqG7fDOowmDQzmbvovj1uq/iETfMK9xwQNaT+e7yN7SmDDcETXC72dnOrMcRuEWw0JEvpJha+yg==
+  dependencies:
+    "@svgr/babel-preset" "^6.4.0"
+    "@svgr/plugin-jsx" "^6.4.0"
+    camelcase "^6.2.0"
+    cosmiconfig "^7.0.1"
+
+"@svgr/hast-util-to-babel-ast@^6.4.0":
+  version "6.4.0"
+  resolved "https://mirrors.cloud.tencent.com/npm/@svgr%2fhast-util-to-babel-ast/-/hast-util-to-babel-ast-6.4.0.tgz#864032f02fdc7fc9c7cd62480417cc54341cb9bd"
+  integrity sha512-PjcU8jCneKXJnrREycsgfgQ/bzR1ogSKC5MBeUu2wmEoJIjzXX7X14DDktUjU9bkBy26yMDiVHn46Nl82P3WEg==
+  dependencies:
+    "@babel/types" "^7.18.4"
+    entities "^4.3.0"
+
+"@svgr/plugin-jsx@^6.4.0":
+  version "6.4.0"
+  resolved "https://mirrors.cloud.tencent.com/npm/@svgr%2fplugin-jsx/-/plugin-jsx-6.4.0.tgz#f756b7d71fd535801e042cd5d5038eebd318582d"
+  integrity sha512-gu6E7v8qRAtCxbymI1et3G7athogvKvzsJkSWiHVZsuVZbyx5O2b7+DIkKvAGh2RvEzgSvfGf8QD1BaHal2vBw==
+  dependencies:
+    "@babel/core" "^7.18.5"
+    "@svgr/babel-preset" "^6.4.0"
+    "@svgr/hast-util-to-babel-ast" "^6.4.0"
+    svg-parser "^2.0.4"
 
 "@tauri-apps/api@^1.1.0":
   version "1.1.0"
@@ -1987,6 +2077,11 @@ camel-case@^4.1.1:
     pascal-case "^3.1.2"
     tslib "^2.0.3"
 
+camelcase@^6.2.0:
+  version "6.3.0"
+  resolved "https://mirrors.cloud.tencent.com/npm/camelcase/-/camelcase-6.3.0.tgz#5685b95eb209ac9c0c177467778c9c84df58ba9a"
+  integrity sha512-Gmy6FhYlCY7uOElZUSbxo2UCDH8owEk996gkbrpsgGtrJLM3J7jGxl9Ic7Qwwj4ivOE5AWZWRMecDdF7hqGjFA==
+
 caniuse-lite@^1.0.30001400:
   version "1.0.30001418"
   resolved "https://mirrors.cloud.tencent.com/npm/caniuse-lite/-/caniuse-lite-1.0.30001418.tgz#5f459215192a024c99e3e3a53aac310fc7cf24e6"
@@ -2115,7 +2210,7 @@ core-util-is@^1.0.2, core-util-is@~1.0.0:
   resolved "https://mirrors.cloud.tencent.com/npm/core-util-is/-/core-util-is-1.0.3.tgz#a6042d3634c2b27e9328f837b965fac83808db85"
   integrity sha512-ZQBvi1DcpJ4GDqanjucZ2Hj3wEO5pZDS89BWbkcrvdxksJorwUDDZamX9ldFkp9aw2lmBDLgkObEA4DWNJ9FYQ==
 
-cosmiconfig@^7.0.0:
+cosmiconfig@^7.0.0, cosmiconfig@^7.0.1:
   version "7.0.1"
   resolved "https://mirrors.cloud.tencent.com/npm/cosmiconfig/-/cosmiconfig-7.0.1.tgz#714d756522cace867867ccb4474c5d01bbae5d6d"
   integrity sha512-a1YWNUV2HwGimB7dU2s1wUMurNKjpx60HxBB6xUM8Re+2s1g1IIfJvFR0/iCF+XHdE0GMTKTuLR32UQff4TEyQ==
@@ -2301,6 +2396,11 @@ end-or-error@^1.0.1:
   version "1.0.1"
   resolved "https://mirrors.cloud.tencent.com/npm/end-or-error/-/end-or-error-1.0.1.tgz#dc7a6210fe78d372fee24a8b4899dbd155414dcb"
   integrity sha1-3HpiEP5403L+4kqLSJnb0VVBTcs=
+
+entities@^4.3.0:
+  version "4.4.0"
+  resolved "https://mirrors.cloud.tencent.com/npm/entities/-/entities-4.4.0.tgz#97bdaba170339446495e653cfd2db78962900174"
+  integrity sha512-oYp7156SP8LkeGD0GF85ad1X9Ai79WtRsZ2gxJqtBuzH+98YUV6jkHEKlZkMbcrjJjIVJNIDP/3WL9wQkoPbWA==
 
 errno@^0.1.1:
   version "0.1.8"
@@ -2792,6 +2892,11 @@ estraverse@^5.1.0, estraverse@^5.2.0, estraverse@^5.3.0:
   version "5.3.0"
   resolved "https://mirrors.cloud.tencent.com/npm/estraverse/-/estraverse-5.3.0.tgz#2eea5290702f26ab8fe5370370ff86c965d21123"
   integrity sha512-MMdARuVEQziNTeJD8DgMqmhwR11BRQ/cBP+pLtYdSTnf3MIO8fFeiINEbX36ZdNlfU/7A9f3gUw49B3oQsvwBA==
+
+estree-walker@^2.0.1:
+  version "2.0.2"
+  resolved "https://mirrors.cloud.tencent.com/npm/estree-walker/-/estree-walker-2.0.2.tgz#52f010178c2a4c117a7757cfe942adb7d2da4cac"
+  integrity sha512-Rfkk/Mp/DL7JVje3u18FxFujQlTNR2q6QfMSMB7AvCBx91NGj/ba3kCfza0f6dVDbw7YlRf/nDrn7pQrCCyQ/w==
 
 esutils@^2.0.2:
   version "2.0.3"
@@ -3955,7 +4060,7 @@ picocolors@^1.0.0:
   resolved "https://mirrors.cloud.tencent.com/npm/picocolors/-/picocolors-1.0.0.tgz#cb5bdc74ff3f51892236eaf79d68bc44564ab81c"
   integrity sha512-1fygroTLlHu66zi26VoTDv8yRgm0Fccecssto+MhsZ0D/DGW2sm8E8AjW7NU5VVTRt5GxbeZ5qBuJr+HyLYkjQ==
 
-picomatch@^2.3.1:
+picomatch@^2.2.2, picomatch@^2.3.1:
   version "2.3.1"
   resolved "https://mirrors.cloud.tencent.com/npm/picomatch/-/picomatch-2.3.1.tgz#3ba3833733646d9d3e4995946c1365a67fb07a42"
   integrity sha512-JU3teHTNjmE2VCGFzuY8EXzCDVwEqB2a8fsIvwaStHhAWJEeVd1o1QD80CU6+ZdEXXSLbSsuLwJjkCBWqRQUVA==
@@ -4577,6 +4682,11 @@ supports-preserve-symlinks-flag@^1.0.0:
   resolved "https://mirrors.cloud.tencent.com/npm/supports-preserve-symlinks-flag/-/supports-preserve-symlinks-flag-1.0.0.tgz#6eda4bd344a3c94aea376d4cc31bc77311039e09"
   integrity sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==
 
+svg-parser@^2.0.4:
+  version "2.0.4"
+  resolved "https://mirrors.cloud.tencent.com/npm/svg-parser/-/svg-parser-2.0.4.tgz#fdc2e29e13951736140b76cb122c8ee6630eb6b5"
+  integrity sha512-e4hG1hRwoOdRb37cIMSgzNsxyzKfayW6VOflrwvR+/bzrkyxY/31WkbgnQpgtrNp1SdpJvpUAGTa/ZoiPNDuRQ==
+
 text-table@^0.2.0:
   version "0.2.0"
   resolved "https://mirrors.cloud.tencent.com/npm/text-table/-/text-table-0.2.0.tgz#7f5ee823ae805207c00af2df4a84ec3fcfa570b4"
@@ -4824,6 +4934,14 @@ vite-plugin-babel@^1.1.2:
   version "1.1.2"
   resolved "https://mirrors.cloud.tencent.com/npm/vite-plugin-babel/-/vite-plugin-babel-1.1.2.tgz#faf27bf69628e20d4f36f85b415789e6121d93e3"
   integrity sha512-NPqUSzxzdPo1UyZGvL1KOIYy5R1T9+Af6cZ9Qw/f7tepjp6FSmx4SbK6eZ9xttEnSsdYj3IJmXwlU8PYeZstWw==
+
+vite-plugin-svgr@^2.2.1:
+  version "2.2.1"
+  resolved "https://mirrors.cloud.tencent.com/npm/vite-plugin-svgr/-/vite-plugin-svgr-2.2.1.tgz#6e1132a3b66f71e1d69e8c5fe989393260184ac3"
+  integrity sha512-+EqwahbwjETJH/ssA/66dNYyKN1cO0AStq96MuXmq5maU7AePBMf2lDKfQna49tJZAjtRz+R899BWCsUUP45Fg==
+  dependencies:
+    "@rollup/pluginutils" "^4.2.1"
+    "@svgr/core" "^6.3.1"
 
 vite@^3.0.2:
   version "3.1.6"

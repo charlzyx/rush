@@ -73,8 +73,8 @@
         "width": 800,
         "height": 960,
         "fileDropEnabled": false,
-        "fullscreen": false,
-        "resizable": false
+        "transparent": true,
+        "decorations": false
       }
     ]
   }

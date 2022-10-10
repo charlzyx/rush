@@ -97,6 +97,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "904dfeac50f3cdaba28fc6f57fdcddb75f49ed61346676a78c4ffe55877802fd"
 
 [[package]]
+name = "bincode"
+version = "1.3.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b1f45e9417d87227c7a56d22e471c6206462cba514c7590c09aff4cf6d1ddcad"
+dependencies = [
+ "serde",
+]
+
+[[package]]
 name = "bitflags"
 version = "1.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2075,15 +2084,6 @@ dependencies = [
 
 [[package]]
 name = "raw-window-handle"
-version = "0.4.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b800beb9b6e7d2df1fe337c9e3d04e3af22a124460fb4c30fcc22c9117cefb41"
-dependencies = [
- "cty",
-]
-
-[[package]]
-name = "raw-window-handle"
 version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ed7e3d950b66e19e0c372f3fa3fbbcf85b1746b571f74e0c2af6042a5c93420a"
@@ -2163,7 +2163,7 @@ dependencies = [
  "objc",
  "objc-foundation",
  "objc_id",
- "raw-window-handle 0.5.0",
+ "raw-window-handle",
  "wasm-bindgen",
  "wasm-bindgen-futures",
  "web-sys",
@@ -2329,9 +2329,9 @@ dependencies = [
 
 [[package]]
 name = "serde_json"
-version = "1.0.85"
+version = "1.0.86"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e55a28e3aaef9d5ce0506d0a14dbba8054ddc7e499ef522dd8b26859ec9d4a44"
+checksum = "41feea4228a6f1cd09ec7a3593a682276702cd67b5273544757dae23c096f074"
 dependencies = [
  "itoa 1.0.4",
  "ryu",
@@ -2635,13 +2635,13 @@ dependencies = [
  "parking_lot",
  "paste",
  "png 0.17.6",
- "raw-window-handle 0.5.0",
+ "raw-window-handle",
  "scopeguard",
  "serde",
  "unicode-segmentation",
- "uuid 1.2.0",
+ "uuid 1.2.1",
  "windows 0.39.0",
- "windows-implement 0.39.0",
+ "windows-implement",
  "x11-dl",
 ]
 
@@ -2686,7 +2686,7 @@ dependencies = [
  "os_pipe",
  "percent-encoding",
  "rand 0.8.5",
- "raw-window-handle 0.5.0",
+ "raw-window-handle",
  "regex",
  "rfd",
  "semver 1.0.14",
@@ -2706,9 +2706,9 @@ dependencies = [
  "time",
  "tokio",
  "url",
- "uuid 1.2.0",
+ "uuid 1.2.1",
  "webkit2gtk",
- "webview2-com 0.19.1",
+ "webview2-com",
  "windows 0.39.0",
  "zip",
 ]
@@ -2751,7 +2751,7 @@ dependencies = [
  "tauri-utils",
  "thiserror",
  "time",
- "uuid 1.2.0",
+ "uuid 1.2.1",
  "walkdir",
 ]
 
@@ -2770,6 +2770,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "tauri-plugin-window-state"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2f15dab0be2ce3ce8a57d0d2de17d201d0c2f3230d68981ff3f0942684de03eb"
+dependencies = [
+ "bincode",
+ "serde",
+ "tauri",
+ "thiserror",
+]
+
+[[package]]
 name = "tauri-runtime"
 version = "0.11.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2780,13 +2792,13 @@ dependencies = [
  "http-range",
  "infer",
  "rand 0.8.5",
- "raw-window-handle 0.5.0",
+ "raw-window-handle",
  "serde",
  "serde_json",
  "tauri-utils",
  "thiserror",
- "uuid 1.2.0",
- "webview2-com 0.19.1",
+ "uuid 1.2.1",
+ "webview2-com",
  "windows 0.39.0",
 ]
 
@@ -2800,12 +2812,12 @@ dependencies = [
  "gtk",
  "percent-encoding",
  "rand 0.8.5",
- "raw-window-handle 0.5.0",
+ "raw-window-handle",
  "tauri-runtime",
  "tauri-utils",
- "uuid 1.2.0",
+ "uuid 1.2.1",
  "webkit2gtk",
- "webview2-com 0.19.1",
+ "webview2-com",
  "windows 0.39.0",
  "wry",
 ]
@@ -3047,9 +3059,9 @@ checksum = "099b7128301d285f79ddd55b9a83d5e6b9e97c92e0ea0daebee7263e932de992"
 
 [[package]]
 name = "unicode-ident"
-version = "1.0.4"
+version = "1.0.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dcc811dc4066ac62f84f11307873c4850cb653bfa9b1719cee2bd2204a4bc5dd"
+checksum = "6ceab39d59e4c9499d4e5a8ee0e2735b891bb7308ac83dfb4e80cad195c9f6f3"
 
 [[package]]
 name = "unicode-normalization"
@@ -3092,9 +3104,9 @@ checksum = "bc5cf98d8186244414c848017f0e2676b3fcb46807f6668a97dfe67359a3c4b7"
 
 [[package]]
 name = "uuid"
-version = "1.2.0"
+version = "1.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "683f0a095f6dcf74520a5f17a12452ae6f970abbd2443299a1e226fd38195f2b"
+checksum = "feb41e78f93363bb2df8b0e86a2ca30eed7806ea16ea0c790d757cf93f79be83"
 dependencies = [
  "getrandom 0.2.7",
 ]
@@ -3277,26 +3289,14 @@ dependencies = [
 
 [[package]]
 name = "webview2-com"
-version = "0.16.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a489a9420acabb3c2ed0434b6f71f6b56b9485ec32665a28dec1ee186d716e0f"
-dependencies = [
- "webview2-com-macros",
- "webview2-com-sys 0.16.0",
- "windows 0.37.0",
- "windows-implement 0.37.0",
-]
-
-[[package]]
-name = "webview2-com"
 version = "0.19.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b4a769c9f1a64a8734bde70caafac2b96cada12cd4aefa49196b3a386b8b4178"
 dependencies = [
  "webview2-com-macros",
- "webview2-com-sys 0.19.0",
+ "webview2-com-sys",
  "windows 0.39.0",
- "windows-implement 0.39.0",
+ "windows-implement",
 ]
 
 [[package]]
@@ -3312,20 +3312,6 @@ dependencies = [
 
 [[package]]
 name = "webview2-com-sys"
-version = "0.16.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0258c53ee9adc0a4f8ba1c8c317588f7a58c7048a55b621d469ba75ab3709ca1"
-dependencies = [
- "regex",
- "serde",
- "serde_json",
- "thiserror",
- "windows 0.37.0",
- "windows-bindgen 0.37.0",
-]
-
-[[package]]
-name = "webview2-com-sys"
 version = "0.19.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "aac48ef20ddf657755fdcda8dfed2a7b4fc7e4581acce6fe9b88c3d64f29dee7"
@@ -3335,8 +3321,8 @@ dependencies = [
  "serde_json",
  "thiserror",
  "windows 0.39.0",
- "windows-bindgen 0.39.0",
- "windows-metadata 0.39.0",
+ "windows-bindgen",
+ "windows-metadata",
 ]
 
 [[package]]
@@ -3372,13 +3358,13 @@ checksum = "712e227841d057c1ee1cd2fb22fa7e5a5461ae8e48fa2ca79ec42cfc1931183f"
 
 [[package]]
 name = "window-shadows"
-version = "0.1.3"
+version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "796156ad1a67853e927727809bb6138ddc1f19ebced0dc976c0d109d5e2576f7"
+checksum = "6c69eb48aac2da0199ea148c6f2c2610db8a0572b32a3dc857dec40ca22f1cec"
 dependencies = [
  "cocoa",
  "objc",
- "raw-window-handle 0.4.3",
+ "raw-window-handle",
  "windows-sys",
 ]
 
@@ -3390,7 +3376,7 @@ checksum = "1cf5fadca1f5fbb2e715306643b254894eebf1918e683c07ee6251c93b15c3d0"
 dependencies = [
  "cocoa",
  "objc",
- "raw-window-handle 0.5.0",
+ "raw-window-handle",
  "windows-sys",
 ]
 
@@ -3413,7 +3399,6 @@ version = "0.37.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "57b543186b344cc61c85b5aab0d2e3adf4e0f99bc076eff9aa5927bcc0b8a647"
 dependencies = [
- "windows-implement 0.37.0",
  "windows_aarch64_msvc 0.37.0",
  "windows_i686_gnu 0.37.0",
  "windows_i686_msvc 0.37.0",
@@ -3427,7 +3412,7 @@ version = "0.39.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f1c4bd0a50ac6020f65184721f758dba47bb9fbc2133df715ec74a237b26794a"
 dependencies = [
- "windows-implement 0.39.0",
+ "windows-implement",
  "windows_aarch64_msvc 0.39.0",
  "windows_i686_gnu 0.39.0",
  "windows_i686_msvc 0.39.0",
@@ -3437,32 +3422,12 @@ dependencies = [
 
 [[package]]
 name = "windows-bindgen"
-version = "0.37.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0bed7be31ade0af08fec9b5343e9edcc005d22b1f11859b8a59b24797f5858e8"
-dependencies = [
- "windows-metadata 0.37.0",
- "windows-tokens 0.37.0",
-]
-
-[[package]]
-name = "windows-bindgen"
 version = "0.39.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "68003dbd0e38abc0fb85b939240f4bce37c43a5981d3df37ccbaaa981b47cb41"
 dependencies = [
- "windows-metadata 0.39.0",
- "windows-tokens 0.39.0",
-]
-
-[[package]]
-name = "windows-implement"
-version = "0.37.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "67a1062e555f7d9d66fd1130ed4f7c6ec41a47529ee0850cd0e926d95b26bb14"
-dependencies = [
- "syn",
- "windows-tokens 0.37.0",
+ "windows-metadata",
+ "windows-tokens",
 ]
 
 [[package]]
@@ -3472,14 +3437,8 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ba01f98f509cb5dc05f4e5fc95e535f78260f15fea8fe1a8abdd08f774f1cee7"
 dependencies = [
  "syn",
- "windows-tokens 0.39.0",
+ "windows-tokens",
 ]
-
-[[package]]
-name = "windows-metadata"
-version = "0.37.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4f33f2b90a6664e369c41ab5ff262d06f048fc9685d9bf8a0e99a47750bb0463"
 
 [[package]]
 name = "windows-metadata"
@@ -3499,12 +3458,6 @@ dependencies = [
  "windows_x86_64_gnu 0.36.1",
  "windows_x86_64_msvc 0.36.1",
 ]
-
-[[package]]
-name = "windows-tokens"
-version = "0.37.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3263d25f1170419995b78ff10c06b949e8a986c35c208dc24333c64753a87169"
 
 [[package]]
 name = "windows-tokens"
@@ -3672,9 +3625,9 @@ dependencies = [
  "url",
  "webkit2gtk",
  "webkit2gtk-sys",
- "webview2-com 0.19.1",
+ "webview2-com",
  "windows 0.39.0",
- "windows-implement 0.39.0",
+ "windows-implement",
 ]
 
 [[package]]
@@ -3717,17 +3670,15 @@ checksum = "d2d7d3948613f75c98fd9328cfdcc45acc4d360655289d0a7d4ec931392200a3"
 name = "yap"
 version = "0.0.0"
 dependencies = [
- "cocoa",
  "lazy_static",
- "objc",
  "serde",
  "serde_json",
  "tauri",
  "tauri-build",
- "webview2-com 0.16.0",
+ "tauri-plugin-window-state",
+ "webview2-com",
  "window-shadows",
  "window-vibrancy",
- "windows 0.37.0",
 ]
 
 [[package]]
