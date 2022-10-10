@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## v0.1.1
+chore: 更新 CHANGELOG
+
 ## v0.1.0
 feat: 🎸 UI 调整, logo 微调
 feat: 🎸 自定义 title bar
