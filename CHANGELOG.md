@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## v0.1.2
+bug: ubuntu-latest 打包有问题, 'Error: No artifacts were found.' 暂不支持, 等 actions 修复
+
 ## v0.1.1
 chore: 更新 CHANGELOG
 
