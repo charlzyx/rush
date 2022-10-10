@@ -1,5 +1,7 @@
 # CHANGELOG
 
+## v0.1.4
+[master 4409333] fix: 修復url拼裝錯誤，樣式美化
 ## v0.1.3
 feat: 🎸 成吨的优化, README 更新
 ## v0.1.2
