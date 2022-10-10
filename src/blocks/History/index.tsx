@@ -14,16 +14,12 @@ import {
   IconArrowLeft,
   IconArrowRight,
   IconCopy,
-  IconExpand,
   IconFullscreen,
   IconFullscreenExit,
   IconImage,
   IconLink,
-  IconMoon,
   IconMosaic,
   IconRefresh,
-  IconShrink,
-  IconSun,
 } from '@arco-design/web-react/icon';
 import { useSize } from 'ahooks';
 import dayjs from 'dayjs';
@@ -123,9 +119,7 @@ const Group = (props: {
     return config?.current?.cdn
       ? `${config?.current?.cdn ?? ''}/${
           config.current.prefix
-        }${encodeURIComponent(
-          name.replace(config.current.prefix, ''),
-        )}`.replace('//', '/')
+        }${encodeURIComponent(name.replace(config.current.prefix, ''))}`
       : url;
   }, [config, name, url]);
 
@@ -138,7 +132,7 @@ const Group = (props: {
         overflow: 'hidden',
         transition: 'all ease-in-out 0.3s',
         width: '100%',
-        height: '136px',
+        height: '140px',
         backgroundColor: hover ? ` var(--color-bg-4)` : ` var(--color-bg-3)`,
         backgroundImage: isImage ? `url(${fileUrl})` : 'var(--color-bg-2)',
         backgroundSize: props.fit ?? 'cover',

@@ -19,7 +19,7 @@ const AbsoluteWrapper = (
         right: 0,
         transition: 'all ease 0.3s',
         opacity: 1,
-        height: '83vh',
+        height: 'calc(100vh - 100px)',
         background: 'rgba(var(--gray-1), 0.9)',
         WebkitBackdropFilter: 'blur(4px)',
         backdropFilter: 'blur(4px)',
