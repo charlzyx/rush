@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v0.1.0
+feat: 🎸 UI 调整, logo 微调
+feat: 🎸 自定义 title bar
+
 ## v0.0.10
 feat: 🎸 修复windows /Mac 构建
 
