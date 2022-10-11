@@ -1,14 +1,12 @@
 import { DB } from '@/db';
-import { Plugin } from './Plugin';
+import { Plugin, PluginConfigSchemaItem } from './Plugin';
 import { PageQuery, PageResp, StoreItem } from '@/shared/http';
 import tiny from '@mxsir/image-tiny';
-import md5 from 'md5';
 import { store } from '@/store';
 import OSS from 'ali-oss';
 
 export interface AliOssConfig {
-  quality: number;
-  secure?: true;
+  quality?: number;
   accessKeyId: string;
   accessKeySecret: string;
   region: string;
@@ -21,33 +19,31 @@ const IMAGE_PATTERN = /\.(jpg|jpeg|png|gif|webp)/;
 
 export class AliOssPlugin extends Plugin {
   name = 'alioss';
-  config: AliOssConfig = { ...store.get('config'), quality: 80, secure: true };
+  config: AliOssConfig = {
+    ...store.get('config_current')?.alioss,
+    quality: 80,
+    secure: true,
+  };
   client: OSS;
+  static configSchema: PluginConfigSchemaItem[] = [
+    // accessKeyId: string;
+    // accessKeySecret: string;
+    // region: string;
+    // prefix: string;
+    // bucket: string;
+    // cdn?: string;
+    { label: 'accessKeyId', name: 'accessKeyId', required: true },
+    { label: 'accessKeySecret', name: 'accessKeySecret', required: true },
+    { label: 'region', name: 'region', required: true },
+    { label: 'prefix', name: 'prefix', required: true },
+    { label: 'bucket', name: 'bucket', required: true },
+    { label: 'cdn', name: 'cdn', required: false },
+  ];
 
   constructor(config: AliOssConfig) {
     super();
     this.config = { ...this.config, ...config };
     this.client = new OSS(this.config);
-  }
-
-  async existed(file: File) {
-    const conf = store.get('config');
-    const buffer = await file.arrayBuffer();
-    const sign = md5(new Uint8Array(buffer));
-    // const exist = await this.client.list(
-    //   {
-    //     'max-keys': 1,
-    //     prefix: conf.prefix,
-    //     marker: file.name,
-    //   },
-    //   {
-    //     timeout: 2000,
-    //   },
-    // );
-    // DB.exist('tiny', { md5: sign });
-    // console.log('existed of ', file, exist);
-    // return exist;
-    return false;
   }
 
   async transform(file: File): Promise<File> {
@@ -60,13 +56,7 @@ export class AliOssPlugin extends Plugin {
   }
 
   async upload(file: File): Promise<StoreItem> {
-    const exist = await this.existed(file);
-    if (exist) {
-      return exist as any;
-    }
-    const buffer = await file.arrayBuffer();
-    const sign = md5(new Uint8Array(buffer));
-    const fileName = `${sign}___${file.name}`;
+    const fileName = file.name;
     const remotePath = `${this.config.prefix}/${fileName}`.replace('//', '/');
 
     const upload = await this.client?.multipartUpload(remotePath, file, {
@@ -81,8 +71,7 @@ export class AliOssPlugin extends Plugin {
     const ret = {
       scope: this.name,
       name: file.name,
-      createTime: +new Date(),
-      md5: sign,
+      create_time: +new Date(),
       url: this.config.cdn
         ? this.config.cdn + upload.name
         : (upload.data as any).url,

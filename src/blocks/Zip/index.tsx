@@ -43,14 +43,6 @@ export const Zip = () => {
       abort,
       transfer,
     ) => {
-      const existed = await plug.existed(file as File);
-
-      if (existed) {
-        Message.warning('文件已经存在, 不要重复上传');
-        error('文件已经存在, 不要重复上传');
-        abort();
-        return;
-      }
       const preSize = file.size;
       const lite = await plug.transform(file as File);
       const afterSize = lite.size;

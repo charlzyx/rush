@@ -2,7 +2,6 @@ import { DB } from '@/db';
 import { Plugin } from './Plugin';
 import { PageQuery, PageResp, StoreItem } from '@/shared/http';
 import tiny from '@mxsir/image-tiny';
-import md5 from 'md5';
 import { Fs } from './fs';
 
 export interface TinyConfig {
@@ -24,16 +23,6 @@ export class TinyPlugin extends Plugin {
     this.fs = new Fs(this.config.output);
   }
 
-  async existed(file: File) {
-    if (this.config.allowOverwrite) {
-      return false;
-    }
-    const buffer = await file.arrayBuffer();
-    const sign = md5(new Uint8Array(buffer));
-    const exist = await DB.exist('tiny', { md5: sign });
-    return exist;
-  }
-
   async transform(file: File): Promise<File> {
     if (IMAGE_PATTERN.test(file.name)) {
       const lite = await tiny(file, this.config.quality);
@@ -44,20 +33,13 @@ export class TinyPlugin extends Plugin {
   }
 
   async upload(file: File): Promise<StoreItem> {
-    const exist = await this.existed(file);
-    if (exist) {
-      return exist as any;
-    }
-
     const buffer = await file.arrayBuffer();
-    const sign = md5(new Uint8Array(buffer));
     const url = await this.fs.wirte(file.name, buffer);
 
     const ret = {
       scope: this.name,
       name: file.name,
-      createTime: +new Date(),
-      md5: sign,
+      create_time: +new Date(),
       url: `file://${url}`,
     };
 

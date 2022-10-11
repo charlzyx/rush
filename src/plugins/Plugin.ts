@@ -1,25 +1,25 @@
 import { PageQuery, PageResp, StoreItem } from '@/shared/http';
-import md5 from 'md5';
 
+export interface PluginConfigSchemaItem {
+  label: string;
+  name: string;
+  required?: boolean;
+}
 export class Plugin {
   name: string = '';
+
+  static configSchema: PluginConfigSchemaItem[] = [];
 
   async transform(file: File): Promise<File> {
     return Promise.resolve(file);
   }
 
   async upload(file: File): Promise<StoreItem> {
-    const buffer = await file.arrayBuffer();
     return {
       name: file.name,
-      createTime: +new Date(),
-      md5: md5(new Uint8Array(buffer)),
+      create_time: +new Date(),
       url: file.webkitRelativePath,
     };
-  }
-
-  async existed(file: File): Promise<boolean> {
-    return Promise.resolve(false);
   }
 
   async validateConfig(config: any): Promise<boolean> {

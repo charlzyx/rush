@@ -4,17 +4,13 @@ import { StoreItem } from '@/shared/http';
 import { useStore } from '@/store';
 import {
   Button,
-  Card,
   DatePicker,
   Grid,
   Input,
   Pagination,
   Radio,
-  Space,
 } from '@arco-design/web-react';
 import {
-  IconArrowLeft,
-  IconArrowRight,
   IconFullscreen,
   IconFullscreenExit,
   IconImage,
@@ -25,7 +21,6 @@ import {
 } from '@arco-design/web-react/icon';
 import { useDebounce, useSize } from 'ahooks';
 import dayjs from 'dayjs';
-import { repeat } from 'lodash';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Item } from './Item';
 
@@ -100,7 +95,7 @@ export const History = () => {
     pageSize: 10,
   });
 
-  const [state, setState] = useStore('state', {
+  const [state, setState] = useStore('history_state', {
     loading: false,
     blur: false,
     fit: 'cover' as 'cover' | 'contain',
@@ -272,14 +267,11 @@ export const History = () => {
             >
               {group.map((item) => {
                 return (
-                  <Col
-                    key={item.url + item.create_time + item.md5}
-                    span={24 / col}
-                  >
+                  <Col key={item.name + item.create_time} span={24 / col}>
                     <Item
                       blur={state.blur ? 6 : 0}
                       fit={state.fit}
-                      key={item.create_time + item.md5}
+                      key={item.create_time + item.name}
                       unit={unit - 16}
                       data={item}
                     ></Item>

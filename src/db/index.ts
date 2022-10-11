@@ -1,13 +1,19 @@
 import Database from 'tauri-plugin-sql-api';
-import { DROP, INIT, INSERT, QUERY, TABLE } from './init';
+import { DROP, INIT, INSERT, TABLE } from './init';
 import { PageQuery, StoreItem } from '@/shared/http';
+import { makesure } from '../plugins/fs';
+import { path } from '@tauri-apps/api';
 import { nanoid } from 'nanoid';
 
 export class DB {
   static db: null | Database = null;
   static async connect(): Promise<Database> {
     try {
-      DB.db = await Database.load('sqlite:test.db');
+      const home = await path.homeDir();
+      const workdir = await path.join(home, '.rush');
+      await makesure(workdir);
+      const dbfile = await path.join(workdir, 'sqlite_rush.db');
+      DB.db = await Database.load(dbfile);
       console.log('DB connect Success!');
       return DB.db;
     } catch (e) {
@@ -30,8 +36,8 @@ export class DB {
     const sql = INSERT({
       id,
       scope,
-      create_time: +new Date(),
       ...data,
+      create_time: +new Date(),
     });
     return DB.db.execute(sql[0], sql[1]);
   }
@@ -41,20 +47,6 @@ export class DB {
       return Promise.reject('DB not connected.');
     } else {
       return DB.db.execute(DROP);
-    }
-  }
-
-  static async exist(scope: string, query: { md5: string }) {
-    if (!DB.db) {
-      return Promise.reject('DB not connected.');
-    } else {
-      const sql = `
-SELECT * FROM ${TABLE}
-WHERE scope = $1 AND md5 = $2`
-        .split('\n')
-        .join(' ');
-      const ret = await DB.db.select(sql, [scope, query.md5]);
-      return (ret as any)?.[0];
     }
   }
 

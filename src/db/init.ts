@@ -5,7 +5,6 @@ export const INIT = `CREATE TABLE IF NOT EXISTS ${TABLE} (
     scope       TEXT            NOT NULL,
     name        TEXT            NOT NULL,
     url         TEXT            NOT NULL,
-    md5         TEXT            NOT NULL,
     create_time BIGINT          DEFAULT 0
 )`;
 
@@ -16,7 +15,6 @@ export const INSERT = (data: {
   scope: string;
   name: string;
   url: string;
-  md5: string;
   create_time: number;
 }) => {
   const values = [
@@ -24,14 +22,11 @@ export const INSERT = (data: {
     data.scope,
     data.name,
     data.url,
-    data.md5,
     data.create_time,
     0,
   ];
   return [
-    `INSERT INTO ${TABLE} (id, scope, name, url, md5, create_time) VALUES($1, $2, $3, $4, $5, $6)`,
+    `INSERT INTO ${TABLE} (id, scope, name, url, create_time) VALUES($1, $2, $3, $4, $5)`,
     values,
   ] as const;
 };
-
-export const QUERY = `SELECT * from ${TABLE}`;

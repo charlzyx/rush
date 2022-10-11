@@ -4,17 +4,9 @@ import { useState } from 'react';
 import Mitt from 'mitt';
 
 const ev = Mitt();
-type OSSItem = {
-  alias: string;
-  accessKeyId: string;
-  accessKeySecret: string;
-  region: string;
-  prefix: string;
-  bucket: string;
-  cdn?: string;
-};
+
 export const store = {
-  get(k: string) {
+  get(k: Key) {
     const text = localStorage.getItem(k);
     try {
       return JSON.parse(text!);
@@ -28,7 +20,7 @@ export const store = {
   },
 };
 
-type Key = 'list' | 'current' | 'state';
+type Key = 'config_list' | 'config_current' | 'history_state';
 
 export const useStore = <S extends any>(key: Key, init?: S) => {
   const [state, setState] = useState<S>(store.get(key) ?? init);
@@ -55,37 +47,4 @@ export const useStore = <S extends any>(key: Key, init?: S) => {
     [key, state],
   );
   return [state, set as typeof setState] as const;
-};
-
-const getConfig = (): {
-  current: OSSItem | undefined;
-  setCurrent: (key: string) => void;
-  list: OSSItem[];
-} => {
-  const ds = store.get('list');
-  const current = store.get('current');
-  const now = ds?.find((x: OSSItem) => x.alias === current);
-  return {
-    current: now,
-    list: ds,
-    setCurrent: (key: string) => {
-      store.set('current', key);
-    },
-  };
-};
-
-/** 将时间戳, 转换成字符串靠前的值, 主要为了解决 oss 不能根据时间排序的问题 */
-export const charsIndex = (n: number) => {
-  return String.fromCharCode(Number.MAX_SAFE_INTEGER - n);
-};
-
-export const useConfig = () => {
-  const [config, setConfig] = useState(getConfig());
-  useEffect(() => {
-    ev.on('fresh', () => {
-      setConfig(getConfig());
-    });
-  }, []);
-
-  return config;
 };

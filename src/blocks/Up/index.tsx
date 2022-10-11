@@ -14,17 +14,17 @@ import './up.css';
 import { AniSvg } from '@/blocks/AniSvg';
 import { AliOssPlugin } from '@/plugins/AliOss';
 import { DB } from '@/db';
-import { useConfig } from '@/store';
+import { useStore } from '@/store';
 
 export const Up = () => {
   const [files, setFiles] = useState<any[]>([]);
-  const config = useConfig();
+  const [config] = useStore<any>('config_current');
   const [quality, setQuality] = useState(80);
 
   const wrapper = useRef<HTMLDivElement | null>(null);
 
   const plug = useMemo(() => {
-    return new AliOssPlugin({ ...config.current!, quality });
+    return new AliOssPlugin({ ...config?.alioss!, quality });
   }, [config, quality]);
 
   const [finished, setFinished] = useState(0);
@@ -43,14 +43,6 @@ export const Up = () => {
       abort,
       transfer,
     ) => {
-      const existed = await plug.existed(file as File);
-
-      if (existed) {
-        Message.warning('文件已经存在, 不要重复上传');
-        error('文件已经存在, 不要重复上传');
-        abort();
-        return;
-      }
       const lite = await plug.transform(file as File);
       const result = await plug.upload(lite);
       await DB.insert(plug.name, result);

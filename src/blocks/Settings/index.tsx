@@ -1,303 +1,162 @@
+import { Button, Radio, Space } from '@arco-design/web-react';
+import { IconPlus } from '@arco-design/web-react/icon';
+import { useMemo, useRef, useState } from 'react';
+import { SchemaForm } from './SchemaForm';
+import { SchemaList } from './SchemaList';
+
+import { AliOssPlugin } from '@/plugins/AliOss';
+import { QiNiuPlugin } from '@/plugins/QiNiu';
 import { useStore } from '@/store';
-import {
-  Button,
-  Card,
-  Form,
-  Grid,
-  Input,
-  Message,
-  Popconfirm,
-  Space,
-  Table,
-  TableColumnProps,
-  Typography,
-} from '@arco-design/web-react';
-import { IconDelete, IconEdit, IconPlus } from '@arco-design/web-react/icon';
-import React, { useMemo, useRef, useState } from 'react';
-import { testConfig } from '@/utils/uploader';
+import { PluginKey } from './config';
 
-const pick = <T extends object>(o: T, ...keys: (keyof T)[]): Partial<T> => {
-  return Object.keys(o).reduce((neo: any, key) => {
-    if (keys.includes(key as any)) {
-      neo[key] = (o as any)[key];
+const usePluginSettings = (key: PluginKey) => {
+  const [now, setNow] = useState<PluginKey>('alioss');
+  const [allList, setAllList] = useStore<Record<string, any>>(
+    'config_list',
+    {},
+  );
+  const [allCurrent, setAllCurrent] = useStore<Record<string, any>>(
+    'config_current',
+    {},
+  );
+
+  const nowList = useMemo(() => {
+    if (!allList[now]) {
+      setAllList((old) => {
+        return {
+          ...old,
+          [now]: [],
+        };
+      });
     }
-    return neo;
-  }, {});
+    return allList[now] ?? [];
+  }, [now, allList, setAllList]);
+
+  const nowSchema = useMemo(() => {
+    return now === 'alioss'
+      ? AliOssPlugin.configSchema
+      : QiNiuPlugin.configSchema;
+  }, [now]);
+
+  const actions = useMemo(() => {
+    return {
+      create(neo: any) {
+        setAllList((old) => {
+          const next = old[now] ?? [];
+          next.push(neo);
+          return {
+            ...old,
+            [now]: next,
+          };
+        });
+      },
+      remove(alias: string) {
+        setAllList((old) => {
+          const next = old[now] ?? [];
+          const index = next.findIndex((x: any) => x.alias === alias);
+          if (index > -1) {
+            next.splice(index, 1);
+          }
+          return {
+            ...old,
+            [now]: [...next],
+          };
+        });
+      },
+      update(neo: any) {
+        setAllList((old) => {
+          const next = old[now] ?? [];
+          const index = next.findIndex((x: any) => x.alias === neo.alias);
+          if (index > -1) {
+            next[index] = neo;
+          }
+          return {
+            ...old,
+            [now]: [...next],
+          };
+        });
+      },
+      setCurrent(alias: string) {
+        setAllCurrent((old) => {
+          return {
+            ...old,
+            [now]: allList.find((x: any) => x.alias === alias),
+          };
+        });
+      },
+    };
+  }, [allList, now, setAllCurrent, setAllList]);
+
+  return {
+    now,
+    setNow,
+    actions,
+    schema: nowSchema,
+    list: nowList,
+    currents: allCurrent,
+  };
 };
 
-const FormItem = Form.Item;
-type OSSItem = {
-  alias: string;
-  accessKeyId: string;
-  accessKeySecret: string;
-  region: string;
-  prefix: string;
-  bucket: string;
-  cdn?: string;
-};
+export function Settings() {
+  const { now, setNow, list, schema, actions } = usePluginSettings('alioss');
+  const [view, setView] = useState<'list' | 'edit'>('list');
+  const tmp = useRef({});
 
-const CopyRender = (text: any) => {
   return (
-    <Typography.Paragraph
+    <div
       style={{
-        marginBottom: '0',
+        padding: 16,
       }}
-      ellipsis
-      copyable
     >
-      {text}
-    </Typography.Paragraph>
-  );
-};
-
-const OSSList = (porps: {
-  onEdit: (item: OSSItem) => void;
-  setView: (view: 'list' | 'edit') => void;
-}) => {
-  const [ds, setDs] = useStore<OSSItem[]>('list', []);
-  const [current, setCurrent] = useStore<OSSItem['alias']>('current');
-
-  const columns: TableColumnProps[] = useMemo(
-    () => [
-      {
-        title: '名称',
-        dataIndex: 'alias',
-        render(_, item) {
-          const actived = item.alias === current;
-
-          return (
-            <Button
-              onClick={() => {
-                setCurrent(item.alias);
-              }}
-              size="small"
-              type={actived ? 'primary' : 'text'}
-            >
-              {item.alias}
-            </Button>
-          );
-        },
-      },
-
-      {
-        title: 'region',
-        dataIndex: 'region',
-        render: CopyRender,
-      },
-      {
-        title: 'prerfix',
-        dataIndex: 'prefix',
-        render: CopyRender,
-      },
-
-      {
-        title: '',
-        width: '100px',
-        render(_, item) {
-          return (
-            <Space>
-              <Button
-                size="small"
-                type="text"
-                icon={<IconEdit></IconEdit>}
-                onClick={() => {
-                  porps.onEdit(item);
-                }}
-              >
-                编辑!
-              </Button>
-              <Popconfirm
-                title="要删掉这条配置吗?"
-                okText="朕意已决!"
-                cancelText="朕再想想"
-                onOk={() => {
-                  setDs((list) => {
-                    const neo = list.filter((x) => x.alias !== item.alias);
-                    return neo;
-                  });
-                }}
-              >
-                <Button
-                  iconOnly
-                  icon={<IconDelete></IconDelete>}
-                  size="small"
-                  type="text"
-                ></Button>
-              </Popconfirm>
-            </Space>
-          );
-        },
-      },
-    ],
-    [current, porps, setCurrent, setDs],
-  );
-  return (
-    <React.Fragment>
       <Space
         align="end"
         style={{
           display: 'flex',
           justifyContent: 'space-between',
-          marginBottom: '8px',
+          alignItems: 'center',
+          marginBottom: 8,
         }}
       >
+        <Radio.Group
+          type="button"
+          value={now}
+          onChange={setNow}
+          options={['alioss', 'qiniu']}
+        ></Radio.Group>
+
         <Button type="text"></Button>
 
         <Button
           icon={<IconPlus></IconPlus>}
           onClick={() => {
-            porps.setView('edit');
+            setView('edit');
           }}
           type="primary"
         >
           加个配置
         </Button>
       </Space>
-      <Table
-        data={ds}
-        size="small"
-        expandedRowRender={(row) => {
-          return (
-            <Grid.Row>
-              {Object.keys(
-                pick(row, 'accessKeySecret', 'accessKeyId', 'bucket', 'cdn'),
-              ).map((key) => {
-                return (
-                  <Grid.Col span={24 / 4} key={key}>
-                    {key}:
-                    <Typography.Paragraph
-                      copyable
-                      ellipsis={{ cssEllipsis: true, rows: 1 }}
-                    >
-                      {(row as any)[key]}
-                    </Typography.Paragraph>
-                  </Grid.Col>
-                );
-              })}
-            </Grid.Row>
-          );
-        }}
-        columns={columns}
-        rowKey="alias"
-        pagination={false}
-      ></Table>
-    </React.Fragment>
-  );
-};
-
-const Edit = (props: { init?: OSSItem; onFinish: () => void }) => {
-  const formRef = useRef<any>();
-  const [ds, setDs] = useStore<OSSItem[]>('list');
-
-  return (
-    <React.Fragment>
-      <Form
-        initialValues={props.init}
-        ref={formRef}
-        onSubmit={async (neo) => {
-          const ok = await testConfig(neo);
-          if (!ok) {
-            return Message.error('配置测试链接失败, 请检查您的配置是否正确');
-          }
-          const index = props.init
-            ? ds.findIndex((x) => x.alias === props.init?.alias)
-            : -1;
-
-          if (index > -1) {
-            setDs((list) => {
-              list.splice(index, 1, neo as any);
-              return [...list];
-            });
-          } else {
-            setDs((list) => {
-              list.push(neo as any);
-              return [...list];
-            });
-          }
-
-          formRef.current?.resetFields?.();
-          props.onFinish();
-        }}
-        style={{ width: '100%' }}
-        autoComplete="off"
-      >
-        <FormItem
-          field="alias"
-          label="别名"
-          required
-          rules={[
-            {
-              validator(value, callback) {
-                if (!props.init && ds.find((x) => x.alias === value)) {
-                  callback('已经存在同名的配置');
-                }
-              },
-            },
-          ]}
-        >
-          <Input />
-        </FormItem>
-        <FormItem field="accessKeyId" label="Access Key ID" required>
-          <Input />
-        </FormItem>
-        <FormItem field="accessKeySecret" label="Access Key Secret" required>
-          <Input />
-        </FormItem>
-        <FormItem field="region" label="Region" required>
-          <Input />
-        </FormItem>
-        <FormItem field="prefix" label="Prefix" required>
-          <Input />
-        </FormItem>
-        <FormItem field="bucket" label="Bucket" required>
-          <Input />
-        </FormItem>
-        <FormItem field="cdn" label="CDN">
-          <Input />
-        </FormItem>
-        <Form.Item label=" ">
-          <Space size={24}>
-            <Button type="primary" htmlType="submit">
-              确定
-            </Button>
-            <Button
-              onClick={() => {
-                formRef.current?.resetFields?.();
-                props.onFinish();
-              }}
-            >
-              取消
-            </Button>
-          </Space>
-        </Form.Item>
-      </Form>
-    </React.Fragment>
-  );
-};
-
-export const Settings = () => {
-  const [view, setView] = useState<'list' | 'edit'>('list');
-  const [item, setItem] = useState<any>();
-
-  return (
-    <Card bordered={false}>
       {view === 'list' ? (
-        <OSSList
-          onEdit={(neo) => {
-            setItem(neo);
+        <SchemaList
+          onDelete={(item) => actions.remove(item.alias)}
+          onEdit={() => {
+            tmp.current = tmp;
             setView('edit');
           }}
-          setView={setView}
-        ></OSSList>
-      ) : (
-        <Edit
-          init={item}
-          onFinish={() => {
-            setItem({});
+          schema={schema}
+          list={list}
+        ></SchemaList>
+      ) : null}
+      {view === 'edit' ? (
+        <SchemaForm
+          init={{ ...tmp.current }}
+          schema={schema}
+          onSubmit={list}
+          onCancel={() => {
             setView('list');
           }}
-        ></Edit>
-      )}
-    </Card>
+        ></SchemaForm>
+      ) : null}
+    </div>
   );
-};
+}

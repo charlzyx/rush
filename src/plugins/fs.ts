@@ -1,7 +1,7 @@
 import { dialog, fs, path } from '@tauri-apps/api';
 import { writeBinaryFile } from '@tauri-apps/api/fs';
 
-const makesure = async (dir: string) => {
+export const makesure = async (dir: string) => {
   const exist = (await fs.exists(dir)) as any;
   if (!exist) {
     await fs.createDir(dir, {

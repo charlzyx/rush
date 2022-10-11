@@ -14,7 +14,7 @@ const RadioGroup = Radio.Group;
 type Pages = 'Hisotry' | 'Up' | 'Zip' | 'Settings';
 
 export const Menu = () => {
-  const [route, setRoute] = useState<Pages>('Hisotry');
+  const [route, setRoute] = useState<Pages>('Zip');
 
   return (
     <RadioGroup
