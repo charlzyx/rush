@@ -21,13 +21,12 @@ window-vibrancy = "0.3.0"
 lazy_static = "1.4.0"
 tauri-plugin-window-state = "0.1.0"
 window-shadows = "0.2"
-sqlx = "0.6.2"
 
 [dependencies.tauri-plugin-sql]
 git = "https://github.com/tauri-apps/tauri-plugin-sql"
 # tag = "v0.1.0"
 features = ["sqlite"] # or "postgres", or "mysql"
-branch = "dev"
+branch = "release"
 
 [target.'cfg(target_os = "windows")'.dependencies]
 webview2-com = "0.19.1"

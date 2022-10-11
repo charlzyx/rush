@@ -6,6 +6,11 @@ import '@arco-design/web-react/dist/css/index.less';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import zh_cn from 'dayjs/locale/zh-cn';
+import { DB } from '@/db';
+
+DB.connect().then(() => {
+  DB.init();
+});
 
 dayjs.extend(relativeTime);
 

@@ -14,21 +14,17 @@ import {
 import { pic } from '@/svg';
 import dayjs from 'dayjs';
 import './up.css';
-// import tiny from '@mxsir/image-tiny';
+import tiny from '@mxsir/image-tiny';
 import { AniSvg } from '@/blocks/AniSvg';
-import { TinyPlugin } from '@/builtins/Tiny';
-import { config } from 'process';
 
 const IMAGE_PATTERN = /\.(jpg|jpeg|png|gif|webp|svg)/;
 
 export const Up = () => {
+  const ref = useRef<any>();
   const [files, setFiles] = useState<any[]>([]);
   const [quality, setQuality] = useState(80);
-
-  const tiny = useMemo(() => {
-    return new TinyPlugin({ quality });
-  }, [quality]);
-
+  const config = useConfig();
+  const client = useClient();
   const [finished, setFinished] = useState(0);
   const count = useMemo(() => {
     return files.length || 0;
@@ -45,48 +41,41 @@ export const Up = () => {
       abort,
       transfer,
     ) => {
-      const transformed = await tiny.transform(file as File);
-      const result = await tiny.upload(transformed);
+      if (!client) return;
+      const { prefix, cdn } = config.current!;
+      const now = dayjs();
+      const y = now.year();
+      const m = now.month();
 
-      // if (!client) return;
-      // const { prefix, cdn } = config.current!;
-      // const now = dayjs();
-      // const y = now.year();
-      // const m = now.month();
+      const fileName = `___${charsIndex(
+        parseInt(`${y}${m < 10 ? `0${m}` : m}`),
+      )}${charsIndex(now.unix())}___${file.name}`;
 
-      // const fileName = `___${charsIndex(
-      //   parseInt(`${y}${m < 10 ? `0${m}` : m}`),
-      // )}${charsIndex(now.unix())}___${file.name}`;
+      const remotePath = `${prefix}/${fileName}`.replace('//', '/');
+      let zipFile = file;
+      if (IMAGE_PATTERN.test(fileName)) {
+        zipFile = await tiny(file, quality);
+      }
+      const up = await client?.multipartUpload(remotePath, zipFile, {
+        progress(p, cpt, res) {
+          // console.log({ p, cpt, res });
+        },
+        parallel: 4,
+        // 200 kb
+        partSize: 102400 * 200,
+      });
 
-      // const remotePath = `${prefix}/${fileName}`.replace('//', '/');
-      // let zipFile = file;
-      // if (IMAGE_PATTERN.test(fileName)) {
-      //   zipFile = await tiny(file, quality);
-      // }
-      // const up = await client?.multipartUpload(remotePath, zipFile, {
-      //   progress(p, cpt, res) {
-      //     // console.log({ p, cpt, res });
-      //   },
-      //   parallel: 4,
-      //   // 200 kb
-      //   partSize: 102400 * 200,
-      // });
-
-      load(result.url);
-      // 动画完成要等一会
-      setTimeout(() => {
-        setFinished((x) => x + 1);
-      }, 666);
-      // if (up.res.status !== 200) {
-      //   error('上传失败');
-      // } else {
-      //   // 动画完成要等一会
-      //   setTimeout(() => {
-      //     setFinished((x) => x + 1);
-      //   }, 666);
-      // }
+      load(cdn + up.name);
+      if (up.res.status !== 200) {
+        error('上传失败');
+      } else {
+        // 动画完成要等一会
+        setTimeout(() => {
+          setFinished((x) => x + 1);
+        }, 666);
+      }
     },
-    [tiny],
+    [client, config, quality],
   );
 
   useEffect(() => {
@@ -98,7 +87,7 @@ export const Up = () => {
   useEffect(() => {
     setFinished(0);
     setFiles([]);
-  }, []);
+  }, [config?.current?.alias]);
 
   return (
     <div>
@@ -140,6 +129,7 @@ export const Up = () => {
       <div style={{ position: 'relative' }}>
         <Yap
           stylePanelAspectRatio={'4:3'}
+          ref={ref}
           files={files}
           onupdatefiles={setFiles}
           allowMultiple={true}

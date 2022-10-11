@@ -8,6 +8,7 @@
 fn greet(name: &str) -> String {
     format!("Hello, {}! You've been greeted from Rust!", name)
 }
+
 use tauri_plugin_sql::TauriSql;
 use std::{env};
 use tauri::{generate_handler};

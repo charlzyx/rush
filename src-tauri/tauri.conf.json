@@ -22,6 +22,11 @@
         "scope": [
           "**"
         ]
+      },
+      "protocol": {
+        "all": true,
+        "asset": true,
+        "assetScope": ["**"]
       }
     },
     "bundle": {
@@ -71,7 +76,7 @@
       {
         "title": "Yap!",
         "width": 800,
-        "height": 960,
+        "height": 640,
         "fileDropEnabled": false,
         "transparent": true,
         "decorations": false
