@@ -3826,6 +3826,11 @@ nanoid@^3.3.4:
   resolved "https://mirrors.cloud.tencent.com/npm/nanoid/-/nanoid-3.3.4.tgz#730b67e3cd09e2deacf03c027c81c9d9dbc5e8ab"
   integrity sha512-MqBkQh/OHTS2egovRtLk45wEyNXwF+cokD+1YPf9u5VfJiRdAiRwB2froX5Co9Rh20xs4siNPm8naNotSD6RBw==
 
+nanoid@^4.0.0:
+  version "4.0.0"
+  resolved "https://mirrors.cloud.tencent.com/npm/nanoid/-/nanoid-4.0.0.tgz#6e144dee117609232c3f415c34b0e550e64999a5"
+  integrity sha512-IgBP8piMxe/gf73RTQx7hmnhwz0aaEXYakvqZyE302IXW3HyVNhdNGC+O2MwMAVhLEnvXlvKtGbtJf6wvHihCg==
+
 natural-compare@^1.4.0:
   version "1.4.0"
   resolved "https://mirrors.cloud.tencent.com/npm/natural-compare/-/natural-compare-1.4.0.tgz#4abebfeed7541f2c27acfb29bdbbd15c8d5ba4f7"
@@ -4716,9 +4721,9 @@ svg-parser@^2.0.4:
   resolved "https://mirrors.cloud.tencent.com/npm/svg-parser/-/svg-parser-2.0.4.tgz#fdc2e29e13951736140b76cb122c8ee6630eb6b5"
   integrity sha512-e4hG1hRwoOdRb37cIMSgzNsxyzKfayW6VOflrwvR+/bzrkyxY/31WkbgnQpgtrNp1SdpJvpUAGTa/ZoiPNDuRQ==
 
-"tauri-plugin-sql-api@github:tauri-apps/tauri-plugin-sql#dev":
-  version "0.1.0"
-  resolved "https://codeload.github.com/tauri-apps/tauri-plugin-sql/tar.gz/1b5e8e5852dbdb3c9521044bb3785e1a1eda4dc0"
+"tauri-plugin-sql-api@github:tauri-apps/tauri-plugin-sql#release":
+  version "0.1.1"
+  resolved "https://codeload.github.com/tauri-apps/tauri-plugin-sql/tar.gz/9d28a02cd23a40962ca8667b633fc1a56b617c5c"
   dependencies:
     "@tauri-apps/api" "^1.0.0"
     tslib "2.4.0"

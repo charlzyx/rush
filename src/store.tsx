@@ -28,7 +28,7 @@ export const store = {
   },
 };
 
-type Key = 'list' | 'current' | 'blur' | 'fit';
+type Key = 'list' | 'current' | 'state';
 
 export const useStore = <S extends any>(key: Key, init?: S) => {
   const [state, setState] = useState<S>(store.get(key) ?? init);

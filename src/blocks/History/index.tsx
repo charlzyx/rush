@@ -1,63 +1,38 @@
-import { useConfig, useStore } from '@/store';
-import { useClient } from '@/utils/uploader';
+import { AniSvg } from '@/blocks/AniSvg';
+import { DB } from '@/db';
+import { StoreItem } from '@/shared/http';
+import { useStore } from '@/store';
 import {
   Button,
   Card,
+  DatePicker,
   Grid,
-  Image,
-  Message,
+  Input,
+  Pagination,
   Radio,
   Space,
-  Typography,
 } from '@arco-design/web-react';
 import {
   IconArrowLeft,
   IconArrowRight,
-  IconCopy,
-  IconExpand,
   IconFullscreen,
   IconFullscreenExit,
   IconImage,
-  IconLink,
-  IconMoon,
   IconMosaic,
   IconRefresh,
-  IconShrink,
-  IconSun,
+  IconSave,
+  IconSend,
 } from '@arco-design/web-react/icon';
-import { useSize } from 'ahooks';
+import { useDebounce, useSize } from 'ahooks';
 import dayjs from 'dayjs';
-import copy from '@arco-design/web-react/es/_util/clipboard';
-import OSS from 'ali-oss';
+import { repeat } from 'lodash';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { usePageLink } from './usePageLink';
-import { AniSvg } from '@/blocks/AniSvg';
+import { Item } from './Item';
 
-const RadioGroup = Radio.Group;
 const Row = Grid.Row;
 const Col = Grid.Col;
 
-const Copyable = (props: { text: string }) => {
-  return (
-    <Button
-      style={{
-        width: '100%',
-      }}
-      onClick={() =>
-        copy(props.text).then(() => {
-          Message.success(`已复制到剪切板 ${props.text}`);
-        })
-      }
-      size="small"
-      icon={<IconLink></IconLink>}
-      type="outline"
-    >
-      <IconCopy></IconCopy>
-    </Button>
-  );
-};
-
-const IMAGE_PATTERN = /\.(jpg|jpeg|png|gif|webp)/;
+const RadioGroup = Radio.Group;
 
 const xInRange = (x: number, range: [number, number]) => {
   return x >= range[0] && x < range[1];
@@ -68,197 +43,140 @@ const computedCol = (x: number) => {
   const isMiddle = xInRange(x, [600, 960]);
   const isLarge = xInRange(x, [960, 1400]);
   const isMax = xInRange(x, [1400, Number.MAX_VALUE]);
-  return isSmall ? 2 : isMiddle ? 3 : isLarge ? 4 : isMax ? 6 : 3;
-};
-
-const computedRow = (h: number) => {
-  return Math.floor((h || 30 - 30) / 180);
+  return isSmall ? 3 : isMiddle ? 4 : isLarge ? 6 : isMax ? 8 : 4;
 };
 
 const useResponsiveSize = () => {
   const size = useSize(document.body);
-  const [col, setCol] = useState(computedCol(size?.width || 1));
-  const [row, setRow] = useState(computedRow(size?.height || 1));
+  const w = (size?.width || window.document.body.clientWidth) - 32;
+  const h = size?.height || window.document.body.clientHeight - 80;
+
+  const width = useDebounce(w, { wait: 100, leading: true, trailing: true });
+  const height = useDebounce(h, { wait: 100, leading: true, trailing: true });
+
+  const [col, setCol] = useState(computedCol(width));
+
+  const unit = useMemo(() => {
+    return width / col;
+  }, [col, width]);
+
+  const lazyUnit = useDebounce(unit, {
+    wait: 96,
+    leading: true,
+    trailing: true,
+  });
+
+  const row = useMemo(() => {
+    return Math.floor(height / lazyUnit);
+  }, [height, lazyUnit]);
 
   const pageSize = useMemo(() => {
     return col * row;
   }, [col, row]);
 
   useEffect(() => {
-    const nextCol = computedCol(size?.width || 1);
-    const nextRow = computedRow(size?.height || 1);
+    const nextCol = computedCol(width);
     if (nextCol !== col) {
       setCol(nextCol);
     }
-    if (nextRow !== row) {
-      setRow(nextRow);
-    }
-  }, [col, row, size?.height, size?.width]);
-  return { col, pageSize };
-};
+  }, [col, width]);
 
-const Group = (props: {
-  data: OSS.ObjectMeta;
-  fit?: 'cover' | 'contain';
-  blur?: number;
-}) => {
-  const config = useConfig();
-  const [hover, setHover] = useState(false);
-  const { name, url, lastModified } = props.data;
-  const [visible, setVisible] = useState(false);
-
-  const isImage = useMemo(() => {
-    return IMAGE_PATTERN.test(name);
-  }, [name]);
-
-  const displayName = useMemo(() => {
-    const segs = name.split('/');
-    const fullName = decodeURIComponent(segs[segs.length - 1]);
-    // 移除上传的 charsIndex 前缀
-    const liteName = fullName.replace(/___(.*)___/, '');
-    return liteName;
-  }, [name]);
-
-  const fileUrl = useMemo(() => {
-    return config?.current?.cdn
-      ? `${config?.current?.cdn ?? ''}/${
-          config.current.prefix
-        }${encodeURIComponent(
-          name.replace(config.current.prefix, ''),
-        )}`.replace('//', '/')
-      : url;
-  }, [config, name, url]);
-
-  return (
-    <div
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
-      style={{
-        borderRadius: '4px',
-        overflow: 'hidden',
-        transition: 'all ease-in-out 0.3s',
-        width: '100%',
-        height: '136px',
-        backgroundColor: hover ? ` var(--color-bg-4)` : ` var(--color-bg-3)`,
-        backgroundImage: isImage ? `url(${fileUrl})` : 'var(--color-bg-2)',
-        backgroundSize: props.fit ?? 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        border: '1px solid var(--color-border-1)',
-      }}
-    >
-      <div
-        style={{
-          borderRadius: '4px',
-          overflow: 'hidden',
-          width: '100%',
-          transition: 'all ease-in-out 0.3s',
-          height: '100%',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'flex-end',
-          WebkitBackdropFilter: hover
-            ? 'blur(0px)'
-            : `blur(${props.blur ?? 6}px)`,
-          backdropFilter: hover ? 'blur(0px)' : `blur(${props.blur ?? 6}px)`,
-          padding: '16px 10px',
-        }}
-        onClick={() => (isImage ? setVisible(true) : null)}
-      >
-        <div>
-          <Typography.Title
-            style={{
-              color: 'var(--color-text-1)',
-              // textShadow: '0px 0px 10px var(--color-text-4)',
-            }}
-            ellipsis={{
-              cssEllipsis: true,
-              showTooltip: true,
-              rows: 3,
-            }}
-            heading={6}
-          >
-            {displayName}
-          </Typography.Title>
-          <span
-            style={{
-              color: 'var(--color-text-2)',
-            }}
-          >
-            {dayjs(lastModified).fromNow()}
-          </span>
-        </div>
-        <div onClick={(e) => e.stopPropagation()}>
-          <Copyable text={fileUrl}></Copyable>
-        </div>
-      </div>
-      <Image.Preview
-        src={fileUrl}
-        visible={visible}
-        onVisibleChange={setVisible}
-      ></Image.Preview>
-    </div>
-  );
+  return { col, row, unit: lazyUnit, pageSize };
 };
 
 export const History = () => {
-  const client = useClient();
-  const config = useConfig();
-  const [objects, setObjects] = useState<OSS.ObjectMeta[]>([]);
-  const { isRoot, can, current, next, prev, setNext, reload } = usePageLink();
-  const { col, pageSize } = useResponsiveSize();
-  const [loading, setLoading] = useState(false);
-  const [blur, setBlur] = useStore('blur', false);
-  const [fit, setFit] = useStore<'cover' | 'contain'>('fit', 'cover');
+  const [query, setQuery] = useState({
+    scope: 'tiny' as 'alioss' | 'tiny',
+    list: [] as StoreItem[],
+    kw: '',
+    dateRange: [] as string[],
+  });
+
+  const [list, setList] = useState<StoreItem[]>([]);
+
+  const [page, setPage] = useState({
+    total: 0,
+    current: 1,
+    pageSize: 10,
+  });
+
+  const [state, setState] = useStore('state', {
+    loading: false,
+    blur: false,
+    fit: 'cover' as 'cover' | 'contain',
+  });
+
+  const lazyKw = useDebounce(query.kw, { trailing: true, wait: 233 });
+  const { col, row, unit, pageSize } = useResponsiveSize();
 
   const groups = useMemo(() => {
-    return objects.reduce((arr, item, idx) => {
+    return list.reduce((arr, item, idx) => {
       const groupIdx = Math.floor(idx / col);
       arr[groupIdx] = arr[groupIdx] || [];
       arr[groupIdx].push(item);
       return arr;
-    }, [] as OSS.ObjectMeta[][]);
-  }, [col, objects]);
+    }, [] as StoreItem[][]);
+  }, [col, list]);
+
+  useEffect(() => {
+    setPage((x) => {
+      return { ...x, pageSize };
+    });
+  }, [pageSize]);
 
   const load = useCallback(() => {
-    if (!client || !config || pageSize <= 0) return;
-    setLoading(true);
-    client
-      .list(
-        {
-          'max-keys': pageSize,
-          prefix: config.current?.prefix,
-          marker: isRoot(current) ? undefined : current,
-        },
-        {
-          timeout: 1000,
-        },
-      )
-      .then((resp) => {
-        setNext(resp.nextMarker);
-        const list = resp.objects;
-        list.sort((a, b) =>
-          dayjs(b.lastModified).isAfter(dayjs(a.lastModified)) ? 1 : -1,
-        );
-        setObjects(list);
+    if (!DB.db) return;
+
+    setState((x) => {
+      return {
+        ...x,
+        loading: true,
+      };
+    });
+    DB.query(query.scope, {
+      pageNumber: page.current,
+      pageSize: page.pageSize,
+      kw: lazyKw,
+      startTime: query.dateRange[0]
+        ? dayjs(query.dateRange[0]).unix()
+        : undefined,
+      endTime: query.dateRange[1]
+        ? dayjs(query.dateRange[1]).unix()
+        : undefined,
+    })
+      .then((data) => {
+        setList(data.list as StoreItem[]);
+        setPage((x) => {
+          return {
+            ...x,
+            total: data.total,
+          };
+        });
       })
       .finally(() => {
-        setLoading(false);
+        setState((x) => {
+          return {
+            ...x,
+            loading: false,
+          };
+        });
       });
-  }, [client, config, current, isRoot, pageSize, setNext]);
+  }, [setState, query.scope, query.dateRange, page, lazyKw]);
 
   useEffect(() => {
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [current, col, pageSize]);
-
-  useEffect(() => {
-    reload();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [config?.current?.alias, col, pageSize]);
+  }, [query, page.pageSize, page.current, lazyKw]);
 
   return (
-    <Card bordered={false}>
+    <div
+      style={{
+        height: '100%',
+        padding: '16px',
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
       <div
         style={{
           display: 'flex',
@@ -266,10 +184,10 @@ export const History = () => {
           paddingBottom: '16px',
         }}
       >
-        <div>
+        <div style={{ display: 'flex' }}>
           <RadioGroup
-            value={fit}
-            onChange={(v) => setFit(v)}
+            value={state.fit}
+            onChange={(v) => setState((x) => ({ ...x, fit: v }))}
             type="button"
             defaultValue="cover"
           >
@@ -280,10 +198,10 @@ export const History = () => {
               <IconFullscreenExit></IconFullscreenExit>
             </Radio>
           </RadioGroup>
-          <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
+          <span>&nbsp;&nbsp;</span>
           <RadioGroup
-            value={blur ? 'true' : 'false'}
-            onChange={(v) => setBlur(v === 'true')}
+            value={state.blur ? 'true' : 'false'}
+            onChange={(v) => setState((x) => ({ ...x, blur: v === 'true' }))}
             type="button"
             defaultValue="true"
           >
@@ -294,95 +212,126 @@ export const History = () => {
               <IconImage></IconImage>
             </Radio>
           </RadioGroup>
+          <span>&nbsp;&nbsp;</span>
+          <RadioGroup
+            value={query.scope}
+            onChange={(v) => setQuery((x) => ({ ...x, scope: v }))}
+            type="button"
+            defaultValue="tiny"
+          >
+            <Radio value="tiny">
+              <IconSave></IconSave>
+            </Radio>
+            <Radio value="alioss">
+              <IconSend></IconSend>
+            </Radio>
+          </RadioGroup>
+          <span>&nbsp;&nbsp;</span>
+          <div>
+            <Input
+              value={query.kw}
+              style={{ width: '100px' }}
+              onChange={(v) => setQuery((x) => ({ ...x, kw: v }))}
+              placeholder="搜索"
+            ></Input>
+          </div>
+          <span>&nbsp;&nbsp;</span>
+          <div>
+            <DatePicker.RangePicker
+              value={query.dateRange}
+              style={{ width: '240px' }}
+              onChange={(v) => setQuery((x) => ({ ...x, dateRange: v }))}
+            ></DatePicker.RangePicker>
+          </div>
         </div>
-        <div style={{}}>
+        <div>
           <Button
             onClick={() => {
-              reload();
+              load();
             }}
             type="outline"
-            size="small"
             icon={<IconRefresh></IconRefresh>}
           >
-            刷新
+            {col} x {row} 刷新
           </Button>
         </div>
       </div>
-      <Space direction="vertical" style={{ width: '100%' }}>
-        <div
-          style={{
-            marginRight: '-16px',
-            position: 'relative',
-          }}
-        >
-          {groups.map((group, idx) => {
-            return (
-              <Row
-                key={idx}
-                gutter={{ md: 16, lg: 16, xl: 16 }}
-                style={{ width: '100%', marginBottom: '16px' }}
-              >
-                {group.map((item) => {
-                  return (
-                    <Col key={item.url} span={24 / col}>
-                      <Group
-                        key={item.url}
-                        fit={fit}
-                        blur={blur ? 4 : 0}
-                        data={item}
-                      ></Group>
-                    </Col>
-                  );
-                })}
-              </Row>
-            );
-          })}
-          {groups.length === 0 ? (
-            <AniSvg name="wait" opacity={0.8}></AniSvg>
-          ) : (
-            <AniSvg name="wait" abs visible={loading} opacity={0.8}></AniSvg>
-          )}
-        </div>
-        <Space
-          style={{
-            position: 'fixed',
-            right: '16px',
-            bottom: '16px',
-            margin: '8px 0',
-            width: '100%',
-            display: 'flex',
-            justifyContent: 'flex-end',
-          }}
-        >
-          {can.prev ? (
-            <Button
-              disabled={!can.prev}
-              onClick={() => {
-                prev();
-              }}
-              type="outline"
-              icon={<IconArrowLeft />}
-              style={{
-                width: '100px',
-              }}
-              iconOnly
-            ></Button>
-          ) : null}
-
-          <Button
-            disabled={!can.next}
-            onClick={() => {
-              next();
-            }}
-            type="outline"
-            icon={<IconArrowRight />}
+      <div
+        style={{
+          position: 'relative',
+          marginRight: '-16px',
+          flex: 1,
+        }}
+      >
+        {groups.map((group, idx) => {
+          return (
+            <Row
+              key={idx}
+              gutter={{ md: 16, lg: 16, xl: 16 }}
+              style={{ width: '100%', marginBottom: '16px' }}
+            >
+              {group.map((item) => {
+                return (
+                  <Col
+                    key={item.url + item.create_time + item.md5}
+                    span={24 / col}
+                  >
+                    <Item
+                      blur={state.blur ? 6 : 0}
+                      fit={state.fit}
+                      key={item.create_time + item.md5}
+                      unit={unit - 16}
+                      data={item}
+                    ></Item>
+                  </Col>
+                );
+              })}
+            </Row>
+          );
+        })}
+        {list.length === 0 ? (
+          <AniSvg
             style={{
-              width: '100px',
+              width: '80%',
+              height: '80%',
             }}
-            iconOnly
-          ></Button>
-        </Space>
-      </Space>
-    </Card>
+            name="wait"
+            opacity={0.8}
+          ></AniSvg>
+        ) : (
+          <AniSvg
+            name="wait"
+            abs
+            visible={state.loading}
+            opacity={0.8}
+          ></AniSvg>
+        )}
+      </div>
+      <div
+        style={{
+          position: 'fixed',
+          bottom: 16,
+          right: 16,
+          WebkitBackdropFilter: 'blur(4px)',
+          backdropFilter: 'blur(4px)',
+        }}
+      >
+        <Pagination
+          current={page.current}
+          pageSize={page.pageSize}
+          onChange={(n) =>
+            setPage((x) => {
+              console.log('x', x, n);
+              return {
+                ...x,
+                current: n,
+              };
+            })
+          }
+          simple
+          total={page.total}
+        ></Pagination>
+      </div>
+    </div>
   );
 };

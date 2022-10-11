@@ -9,7 +9,9 @@ import zh_cn from 'dayjs/locale/zh-cn';
 import { DB } from '@/db';
 
 DB.connect().then(() => {
-  DB.init();
+  DB.init().then(() => {
+    console.log('DB inited.');
+  });
 });
 
 dayjs.extend(relativeTime);

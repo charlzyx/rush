@@ -10,22 +10,22 @@ import {
   Typography,
 } from '@arco-design/web-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import './up.css';
+import './zip.css';
 import { AniSvg } from '@/blocks/AniSvg';
-import { AliOssPlugin } from '@/plugins/AliOss';
+import { TinyPlugin } from '@/plugins/Tiny';
 import { DB } from '@/db';
-import { useConfig } from '@/store';
 
-export const Up = () => {
+export const Zip = () => {
   const [files, setFiles] = useState<any[]>([]);
-  const config = useConfig();
   const [quality, setQuality] = useState(80);
-
+  const [optimizeMaping, setOoptimizeMaping] = useState<Record<string, number>>(
+    {},
+  );
   const wrapper = useRef<HTMLDivElement | null>(null);
 
   const plug = useMemo(() => {
-    return new AliOssPlugin({ ...config.current!, quality });
-  }, [config, quality]);
+    return new TinyPlugin({ quality, allowOverwrite: true });
+  }, [quality]);
 
   const [finished, setFinished] = useState(0);
   const count = useMemo(() => {
@@ -51,11 +51,20 @@ export const Up = () => {
         abort();
         return;
       }
+      const preSize = file.size;
       const lite = await plug.transform(file as File);
+      const afterSize = lite.size;
       const result = await plug.upload(lite);
-      await DB.insert(plug.name, result);
+
+      setOoptimizeMaping((old) => {
+        return {
+          ...old,
+          [file.name]: parseFloat(((afterSize / preSize) * 100).toFixed(2)),
+        };
+      });
 
       load(result.url);
+      await DB.insert(plug.name, result);
       setTimeout(() => {
         setFinished((x) => x + 1);
       }, 666);
@@ -65,7 +74,7 @@ export const Up = () => {
 
   useEffect(() => {
     if (count > 0 && finished === count) {
-      Message.success('上传完成!');
+      Message.success('压缩完成!');
     }
   }, [count, finished]);
 
@@ -73,6 +82,27 @@ export const Up = () => {
     setFinished(0);
     setFiles([]);
   }, []);
+
+  const fresh = () => {
+    if (!wrapper.current) return;
+    const list = Array.from(
+      wrapper.current.querySelectorAll('.filepond--file-wrapper legend'),
+    );
+    list.forEach((legend) => {
+      const name = legend.innerHTML;
+      const ratio = optimizeMaping[name];
+      const li = legend.parentElement?.parentElement;
+      if (!li) return;
+      const status = li.querySelector('.filepond--file-status');
+      const text = status?.children?.[0];
+      if (!text) return;
+      const tip =
+        100 - ratio > 0 ? `-${(100 - ratio).toFixed(2)}%` : '压缩中...';
+      text.innerHTML = tip;
+    });
+  };
+
+  fresh();
 
   return (
     <div>
@@ -111,7 +141,11 @@ export const Up = () => {
         </Space>
       </Card>
 
-      <div ref={wrapper} style={{ position: 'relative' }}>
+      <div
+        ref={wrapper}
+        className="tiny-wapper"
+        style={{ position: 'relative' }}
+      >
         <Yap
           stylePanelAspectRatio={'4:3'}
           files={files}
@@ -122,7 +156,7 @@ export const Up = () => {
           labelIdle={pic}
         />
         {files.length === 0 ? (
-          <AniSvg name="cloud" opacity={0.8} className="upload-empty"></AniSvg>
+          <AniSvg name="work" opacity={0.8} className="upload-empty"></AniSvg>
         ) : null}
       </div>
     </div>

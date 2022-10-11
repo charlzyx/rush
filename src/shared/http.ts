@@ -9,7 +9,7 @@ export type PageQuery = {
 export type StoreItem = {
   name: string;
   url: string;
-  createTime: number;
+  create_time: number;
   md5: string;
 };
 

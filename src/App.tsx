@@ -2,6 +2,7 @@ import { Header } from '@/blocks/Header';
 import { History } from '@/blocks/History';
 import { Settings } from '@/blocks/Settings';
 import { Up } from '@/blocks/Up';
+import { Zip } from '@/blocks/Zip';
 import React from 'react';
 
 import { ConfigProvider } from '@arco-design/web-react';
@@ -33,7 +34,7 @@ const router = createBrowserRouter([
     path: '/',
     element: (
       <Page>
-        <History></History>
+        <Zip></Zip>
       </Page>
     ),
   },
@@ -58,6 +59,14 @@ const router = createBrowserRouter([
     element: (
       <Page>
         <Up></Up>
+      </Page>
+    ),
+  },
+  {
+    path: '/zip',
+    element: (
+      <Page>
+        <Zip></Zip>
       </Page>
     ),
   },
