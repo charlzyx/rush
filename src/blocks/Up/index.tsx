@@ -1,9 +1,13 @@
-import { pic } from '@/svg';
+import { pic } from '@/assets/svg';
+import { AniSvg } from '@/blocks/AniSvg';
+import { DB } from '@/db';
+import { AliOssPlugin } from '@/plugins/AliOss';
+import { QiNiuPlugin } from '@/plugins/QiNiu';
 import { ProcessServer, Rush } from '@/utils/rush';
 import {
   Button,
   Card,
-  Message,
+  Notification,
   Progress,
   Radio,
   Slider,
@@ -11,12 +15,8 @@ import {
   Typography,
 } from '@arco-design/web-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import './up.css';
-import { AniSvg } from '@/blocks/AniSvg';
-import { AliOssPlugin } from '@/plugins/AliOss';
-import { QiNiuPlugin } from '@/plugins/QiNiu';
-import { DB } from '@/db';
 import { usePluginSettings } from '../Settings';
+import './up.css';
 
 const RadioGroup = Radio.Group;
 
@@ -70,7 +70,10 @@ export const Up = () => {
 
   useEffect(() => {
     if (count > 0 && finished === count) {
-      Message.success('上传完成!');
+      Notification.success({
+        title: '上传完成!',
+        content: `${count} / ${finished}`,
+      });
     }
   }, [count, finished]);
 
@@ -134,7 +137,7 @@ export const Up = () => {
           labelIdle={pic}
         />
         {files.length === 0 ? (
-          <AniSvg name="cloud" opacity={0.8} className="upload-empty"></AniSvg>
+          <AniSvg name="task" opacity={0.8} className="upload-empty"></AniSvg>
         ) : null}
       </div>
     </div>

@@ -44,8 +44,10 @@
   position: absolute;
   right: 70%;
   left: 16px;
-  top: -16px;
   bottom: 0;
+  top: -4px;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
 }
 
 .filepond--label-action {

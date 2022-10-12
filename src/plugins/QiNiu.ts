@@ -66,7 +66,6 @@ export class QiNiuPlugin extends Plugin {
 
   async getToken(): Promise<string> {
     const { accessKey, secretKey, bucket } = this.config;
-    console.log('accessKey', accessKey, this.config);
     const token = (await invoke('qiniu_get_token', {
       accessKey,
       secretKey,
@@ -94,7 +93,9 @@ export class QiNiuPlugin extends Plugin {
   // https://github.com/PicGo/PicGo-Core/blob/dev/src/plugins/uploader/qiniu.ts
   async upload(file: File): Promise<StoreItem> {
     const fileName = file.name;
-    const remotePath = `${dayjs().format('YYYY_MM_DD_')}${fileName}`;
+    const decodeName = decodeURIComponent(fileName);
+    const datePrefix = dayjs().format('YYYY_MM_DD_');
+    const fileKey = `${datePrefix}${decodeName}`;
 
     if (+new Date() - this.TOKEN.expired_time < 10 * 60 * 1000) {
       await this.getToken();
@@ -106,12 +107,9 @@ export class QiNiuPlugin extends Plugin {
         const region =
           (qiniu.region as any)[this.config.region] ?? qiniu.region.z0;
 
-        console.log('token', token);
-        console.log('region', region, '--', this.config.region);
-
         const live = qiniu.upload(
           file,
-          remotePath,
+          fileKey,
           token,
           {},
           {
@@ -123,7 +121,6 @@ export class QiNiuPlugin extends Plugin {
           complete: resolve,
         });
       } catch (error) {
-        console.log(error);
         reject(error);
       }
     });

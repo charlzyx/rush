@@ -3,7 +3,7 @@ import { History } from '@/blocks/History';
 import { Settings } from '@/blocks/Settings';
 import { Up } from '@/blocks/Up';
 import { Zip } from '@/blocks/Zip';
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { ConfigProvider } from '@arco-design/web-react';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
@@ -72,11 +72,17 @@ const router = createBrowserRouter([
   },
 ]);
 const App = () => {
+  useEffect(() => {
+    // 防止拖一个图片进来, 被浏览器打开了
+    window.addEventListener('drop', (e) => {
+      e.preventDefault();
+    });
+  }, []);
   return (
     <RouterProvider
       fallbackElement={
         <Page>
-          <History></History>
+          <Zip></Zip>
         </Page>
       }
       router={router}

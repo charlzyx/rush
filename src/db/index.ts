@@ -4,6 +4,7 @@ import { PageQuery, StoreItem } from '@/shared/typings';
 import { makesure } from '../plugins/fs';
 import { os, path } from '@tauri-apps/api';
 import { nanoid } from 'nanoid';
+import dayjs from 'dayjs';
 
 export class DB {
   static db: null | Database = null;
@@ -45,7 +46,6 @@ export class DB {
       data.url,
       +new Date(),
     ]);
-    console.log('insert', scope, data, ret);
     return ret;
   }
 
@@ -70,7 +70,7 @@ export class DB {
       endTime ? `create_time <= ${endTime}` : '',
     ]
       .filter(Boolean)
-      .join('AND');
+      .join(' AND ');
     const like = kw && kw.trim() ? `AND name LIKE '%${kw.trim()}%'` : '';
 
     const sql = `

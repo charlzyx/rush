@@ -27,7 +27,7 @@ export const Menu = () => {
       style={{ width: '300px' }}
       value={route}
       type="button"
-      defaultValue="Hisotry"
+      defaultValue="Zip"
     >
       <Link to="/">
         <Radio onClick={() => setRoute('Zip')} value="Zip">

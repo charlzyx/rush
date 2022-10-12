@@ -2,6 +2,7 @@ import { ReactComponent as Brand } from './brand.svg';
 import { ReactComponent as Wait } from './wait.svg';
 import { ReactComponent as Work } from './work.svg';
 import { ReactComponent as Cloud } from './cloud.svg';
+import { ReactComponent as Task } from './task.svg';
 
 import { useThrottle } from 'ahooks';
 import React from 'react';
@@ -35,7 +36,7 @@ const AbsoluteWrapper = (
 };
 export const AniSvg = (props: {
   className?: string;
-  name?: 'work' | 'wait' | 'brand' | 'cloud';
+  name?: 'work' | 'wait' | 'brand' | 'cloud' | 'task';
   opacity?: number;
   visible?: boolean;
   abs?: boolean;
@@ -48,11 +49,13 @@ export const AniSvg = (props: {
       ? Brand
       : props.name === 'cloud'
       ? Cloud
+      : props.name === 'task'
+      ? Task
       : Wait;
   const Abs = props.abs ? AbsoluteWrapper : React.Fragment;
 
   const lazy = useThrottle(props.visible ?? true, {
-    wait: 366,
+    wait: 233,
     leading: true,
     trailing: true,
   });

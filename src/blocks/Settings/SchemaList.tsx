@@ -11,6 +11,24 @@ import {
 import { IconDelete, IconEdit } from '@arco-design/web-react/icon';
 import React, { useMemo } from 'react';
 
+const LongText = (props: { children: string }) => {
+  return (
+    <Typography.Title
+      style={{
+        color: 'var(--color-text-1)',
+      }}
+      ellipsis={{
+        cssEllipsis: true,
+        showTooltip: true,
+        rows: 1,
+      }}
+      copyable
+      heading={8 as any}
+    >
+      {props.children}
+    </Typography.Title>
+  );
+};
 export const SchemaList = (props: {
   list: any[];
   current: string;
@@ -25,11 +43,16 @@ export const SchemaList = (props: {
         return {
           title: item.label,
           dataIndex: item.name,
-          render: item.dataSource
-            ? (v: any) => {
-                return item.dataSource!.find((x) => x.value == v)?.label;
-              }
-            : undefined,
+          render: (v: any) => {
+            const text = item.dataSource
+              ? item.dataSource!.find((x: any) => x.value == v)?.label
+              : v;
+            return (
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <LongText>{text}</LongText>
+              </div>
+            );
+          },
         };
       })
       .slice(0, 2);

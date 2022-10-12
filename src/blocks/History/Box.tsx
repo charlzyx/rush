@@ -1,43 +1,12 @@
 import { StoreItem } from '@/shared/typings';
-import {
-  Button,
-  Image,
-  Message,
-  Space,
-  Typography,
-} from '@arco-design/web-react';
-import copy from '@arco-design/web-react/es/_util/clipboard';
-import {
-  IconCopy,
-  IconFile,
-  IconFolder,
-  IconLink,
-} from '@arco-design/web-react/icon';
-import { convertFileSrc } from '@tauri-apps/api/tauri';
+import { Button, Image, Space, Typography } from '@arco-design/web-react';
+import { IconFile, IconFolder } from '@arco-design/web-react/icon';
 import { path, shell } from '@tauri-apps/api';
+import { convertFileSrc } from '@tauri-apps/api/tauri';
 import dayjs from 'dayjs';
 import { useMemo, useState } from 'react';
+import { Copyable } from './Copyable';
 import './item.css';
-
-const Copyable = (props: { text: string }) => {
-  return (
-    <Button
-      style={{
-        width: '100%',
-      }}
-      onClick={() =>
-        copy(props.text).then(() => {
-          Message.success(`已复制到剪切板 ${props.text}`);
-        })
-      }
-      size="small"
-      icon={<IconLink></IconLink>}
-      type="outline"
-    >
-      <IconCopy></IconCopy>
-    </Button>
-  );
-};
 
 const IMAGE_PATTERN = /\.(jpg|jpeg|png|gif|webp|svg)/;
 const FILE_PATTERN = /file:\/\//;

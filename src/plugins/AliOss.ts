@@ -5,6 +5,7 @@ import tiny from '@mxsir/image-tiny';
 import { store } from '@/store';
 import OSS from 'ali-oss';
 import { TINY_SUPPORTE } from './config';
+import dayjs from 'dayjs';
 
 export interface AliOssConfig {
   quality?: number;
@@ -56,14 +57,21 @@ export class AliOssPlugin extends Plugin {
 
   async upload(file: File): Promise<StoreItem> {
     const fileName = file.name;
-    const remotePath = `${this.config.prefix}/${fileName}`.replace('//', '/');
+    const datePrefix = dayjs().format('YYYY_MM_DD_');
+    const decodeName = decodeURIComponent(fileName);
+
+    const composePrefix = `${this.config.prefix}/${datePrefix}`.replace(
+      '//',
+      '/',
+    );
+
+    const remotePath = `${composePrefix}${decodeName}`.replace('//', '/');
 
     const upload = await this.client?.multipartUpload(remotePath, file, {
       // progress(p, cpt, res) {
       //   // console.log({ p, cpt, res });
       // },
       parallel: 4,
-      // 200 kb
       partSize: 102400 * 200,
     });
 

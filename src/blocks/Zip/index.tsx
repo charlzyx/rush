@@ -1,11 +1,12 @@
+import { pic } from '@/assets/svg';
 import { AniSvg } from '@/blocks/AniSvg';
+import { Fs } from '@/plugins/fs';
 import { TinyPlugin } from '@/plugins/Tiny';
-import { pic } from '@/svg';
 import { ProcessServer, Rush } from '@/utils/rush';
 import {
   Button,
   Card,
-  Message,
+  Notification,
   Progress,
   Slider,
   Space,
@@ -13,10 +14,9 @@ import {
 } from '@arco-design/web-react';
 import { IconFolder } from '@arco-design/web-react/icon';
 import { shell } from '@tauri-apps/api';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Fs } from '@/plugins/fs';
-import './zip.css';
 import { useRafInterval } from 'ahooks';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import './zip.css';
 
 export const Zip = () => {
   const [files, setFiles] = useState<any[]>([]);
@@ -63,7 +63,10 @@ export const Zip = () => {
 
   useEffect(() => {
     if (count > 0 && finished === count) {
-      Message.success('压缩完成!');
+      Notification.success({
+        title: '压缩完成!',
+        content: `${count} / ${finished}`,
+      });
     }
   }, [count, finished]);
 
@@ -108,18 +111,16 @@ export const Zip = () => {
             justifyContent: 'space-between',
           }}
         >
-          <Space>
-            <Button
-              onClick={() => {
-                shell.open(Fs.output);
-              }}
-              size="small"
-              icon={<IconFolder></IconFolder>}
-              type="outline"
-            >
-              打开输出录
-            </Button>
-          </Space>
+          <Button
+            onClick={() => {
+              shell.open(Fs.output);
+            }}
+            size="small"
+            icon={<IconFolder></IconFolder>}
+            type="outline"
+          >
+            打开输出录
+          </Button>
           <Space direction="vertical" style={{ flex: 1 }}>
             <Typography.Text bold>&nbsp;&nbsp;&nbsp; 压缩质量</Typography.Text>
             <Slider
@@ -163,7 +164,7 @@ export const Zip = () => {
           labelIdle={pic}
         />
         {files.length === 0 ? (
-          <AniSvg name="work" opacity={0.8} className="upload-empty"></AniSvg>
+          <AniSvg name="task" opacity={0.8} className="upload-empty"></AniSvg>
         ) : null}
       </div>
     </div>

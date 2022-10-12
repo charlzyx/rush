@@ -12,8 +12,6 @@ import {
 import {
   IconFullscreen,
   IconFullscreenExit,
-  IconImage,
-  IconMosaic,
   IconRefresh,
 } from '@arco-design/web-react/icon';
 import { useDebounce, useSize, useThrottle } from 'ahooks';
@@ -152,11 +150,11 @@ export const History = () => {
       pageNumber: page.current,
       pageSize: page.pageSize,
       kw: lazyKw,
-      startTime: query.dateRange[0]
-        ? dayjs(query.dateRange[0]).unix()
+      startTime: query.dateRange?.[0]
+        ? +dayjs(query.dateRange[0]).startOf('day')
         : undefined,
-      endTime: query.dateRange[1]
-        ? dayjs(query.dateRange[1]).unix()
+      endTime: query.dateRange?.[1]
+        ? +dayjs(query.dateRange[1]).endOf('day')
         : undefined,
     })
       .then((data) => {
@@ -182,8 +180,6 @@ export const History = () => {
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query, page.pageSize, page.current, lazyKw, scope]);
-
-  console.log('scope in htisoyr', scope);
 
   return (
     <div
@@ -225,7 +221,9 @@ export const History = () => {
             <DatePicker.RangePicker
               value={query.dateRange}
               style={{ width: '240px' }}
-              onChange={(v) => setQuery((x) => ({ ...x, dateRange: v }))}
+              onChange={(v) => {
+                setQuery((x) => ({ ...x, dateRange: v }));
+              }}
             ></DatePicker.RangePicker>
           </div>
         </div>
@@ -266,7 +264,6 @@ export const History = () => {
                         width={`${Math.floor(100 / col)}%`}
                       >
                         <Box
-                          blur={state.blur ? 6 : 0}
                           fit={state.fit}
                           key={item.create_time + item.name}
                           data={item}
@@ -280,14 +277,7 @@ export const History = () => {
           </tbody>
         </table>
         {list.length === 0 ? (
-          <AniSvg
-            style={{
-              width: '80%',
-              height: '80%',
-            }}
-            name="wait"
-            opacity={0.8}
-          ></AniSvg>
+          <AniSvg abs name="wait" opacity={0.8}></AniSvg>
         ) : (
           <AniSvg
             name="wait"
@@ -313,7 +303,7 @@ export const History = () => {
             </Radio>
           </RadioGroup>
           <span>&nbsp;&nbsp;</span>
-          <RadioGroup
+          {/* <RadioGroup
             value={state.blur ? 'true' : 'false'}
             onChange={(v) => setState((x) => ({ ...x, blur: v === 'true' }))}
             type="button"
@@ -325,7 +315,7 @@ export const History = () => {
             <Radio value="false">
               <IconImage></IconImage>
             </Radio>
-          </RadioGroup>
+          </RadioGroup> */}
         </div>
         <div style={{}}>
           <Pagination

@@ -21,17 +21,25 @@ export const Config = () => {
     });
   }, [allList, plugins]);
 
+  const val = useMemo(() => {
+    if (scope && current?.alias) {
+      return [scope, current.alias];
+    } else {
+      return undefined;
+    }
+  }, [current?.alias, scope]);
+
   return (
     <Cascader
       style={{ width: '140px' }}
-      value={[scope, current?.alias]}
+      value={val}
       onChange={(next) => {
         const [nextScope, nextAlias] = next as any[];
         console.log('next', next);
         setScope(nextScope);
         actions.setCurrent(nextAlias!, nextScope);
       }}
-      placeholder="选择上传源"
+      placeholder="请补充上传配置"
       options={options}
     />
   );

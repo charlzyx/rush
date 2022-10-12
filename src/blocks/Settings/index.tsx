@@ -132,7 +132,6 @@ export function Settings() {
     usePluginSettings();
   const [view, setView] = useState<'list' | 'edit'>('list');
   const tmp = useRef<any>(null);
-  console.log(list, list);
 
   return (
     <div
@@ -160,8 +159,8 @@ export function Settings() {
             options={plugins}
           ></Radio.Group>
           <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
-          <Button type="outline">
-            {current?.alias || '点击别名使用该配置'}
+          <Button type="outline" size="small">
+            {current?.alias || '配置完成后, 点击别名启用该配置'}
           </Button>
         </div>
 

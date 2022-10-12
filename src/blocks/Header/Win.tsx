@@ -11,6 +11,8 @@ export const Win = () => {
       style={{
         fontSize: '1.4rem',
         display: 'flex',
+        position: 'relative',
+        top: '-3px',
         justifyContent: 'space-between',
         alignItems: 'center',
       }}
