@@ -1,5 +1,10 @@
 # CHANGELOG
 
+
+## v1.0.1
+[master ae45626] fix: 🐛 修复上传文件名称 url decode -> url encode
+fix: 修复时间查询报错, 图片拖入非拖拽区拦截
+
 ## v1.0.0
 BOOOM! rename -> Yap! ~> Rush!
 feat: 添加七牛云支持
