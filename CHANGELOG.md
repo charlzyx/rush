@@ -1,5 +1,7 @@
 # CHANGELOG
 
+## v1.0.2
+fix: 配置样式修复
 
 ## v1.0.1
 [master ae45626] fix: 🐛 修复上传文件名称 url decode -> url encode
