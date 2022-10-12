@@ -6,6 +6,7 @@ import { store } from '@/store';
 import OSS from 'ali-oss';
 import { TINY_SUPPORTE } from './config';
 import dayjs from 'dayjs';
+import { Notification } from '@arco-design/web-react';
 
 export interface AliOssConfig {
   quality?: number;
@@ -67,13 +68,22 @@ export class AliOssPlugin extends Plugin {
 
     const remotePath = `${composePrefix}${encodeName}`.replace('//', '/');
 
-    const upload = await this.client?.multipartUpload(remotePath, file, {
-      // progress(p, cpt, res) {
-      //   // console.log({ p, cpt, res });
-      // },
-      parallel: 4,
-      partSize: 102400 * 200,
-    });
+    const upload = await this.client
+      ?.multipartUpload(remotePath, file, {
+        // progress(p, cpt, res) {
+        //   // console.log({ p, cpt, res });
+        // },
+        parallel: 4,
+        partSize: 102400 * 200,
+      })
+      .catch((e) => {
+        const msg = e.message;
+        Notification.error({
+          title: '上传失败！Plug::Qiniu',
+          content: msg,
+        });
+        throw e;
+      });
 
     const ret = {
       scope: this.name,

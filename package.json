@@ -13,14 +13,13 @@
     "release": "node scripts/release.mjs"
   },
   "dependencies": {
-    "@actions/github": "^5.1.1",
     "@arco-design/web-react": "^2.40.2",
     "@formily/core": "^2.2.5",
     "@formily/react": "^2.2.5",
     "@mxsir/image-tiny": "^0.1.0",
-    "@octokit/rest": "^19.0.4",
     "@tauri-apps/api": "^1.1.0",
     "@types/ali-oss": "^6.16.4",
+    "@types/md5": "^2.3.2",
     "ahooks": "^3.7.1",
     "ali-oss": "^6.17.1",
     "axios": "^1.1.2",
@@ -29,6 +28,7 @@
     "filepond": "^4.30.4",
     "filepond-plugin-image-exif-orientation": "^1.0.11",
     "filepond-plugin-image-preview": "^4.6.11",
+    "md5": "^2.3.0",
     "mitt": "^3.0.0",
     "nanoid": "^4.0.0",
     "qiniu-js": "^3.4.1",

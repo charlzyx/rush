@@ -1,6 +1,6 @@
 import { StoreItem } from '@/shared/typings';
 import { Button, Image, Space, Typography } from '@arco-design/web-react';
-import { IconFile, IconFolder } from '@arco-design/web-react/icon';
+import { IconCloud, IconFile, IconFolder } from '@arco-design/web-react/icon';
 import { path, shell } from '@tauri-apps/api';
 import { convertFileSrc } from '@tauri-apps/api/tauri';
 import dayjs from 'dayjs';
@@ -34,9 +34,11 @@ export const Box = (props: {
     if (isFile) {
       return convertFileSrc(url.replace(FILE_PATTERN, ''));
     } else {
-      return url;
+      return encodeURI(url);
     }
   }, [url]);
+
+  const black = useMemo(() => /gitee/.test(props.data.url), [props.data.url]);
 
   return (
     <div
@@ -63,7 +65,7 @@ export const Box = (props: {
           <Typography.Title
             style={{
               color: 'var(--color-text-1)',
-              opacity: isImage && hover ? 1 : 0,
+              opacity: !isImage || black ? 1 : hover ? 1 : 0,
               transition: 'opacity ease 0.2s',
             }}
             ellipsis={{
@@ -83,6 +85,7 @@ export const Box = (props: {
             {dayjs(create_time).fromNow()}
           </span>
         </div>
+
         <div
           onClick={(e) => {
             e.stopPropagation();

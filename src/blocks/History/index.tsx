@@ -8,6 +8,7 @@ import {
   Input,
   Pagination,
   Radio,
+  Select,
 } from '@arco-design/web-react';
 import {
   IconFullscreen,
@@ -202,12 +203,20 @@ export const History = () => {
             display: 'flex',
           }}
         >
-          <RadioGroup
-            value={scope}
-            onChange={(v) => setScope(v)}
-            type="button"
-            options={plugins}
-          ></RadioGroup>
+          {plugins.length <= 3 ? (
+            <RadioGroup
+              value={scope}
+              onChange={(v) => setScope(v)}
+              type="button"
+              options={plugins}
+            ></RadioGroup>
+          ) : (
+            <Select
+              value={scope}
+              onChange={(v) => setScope(v)}
+              options={plugins}
+            ></Select>
+          )}
           <span>&nbsp;&nbsp;</span>
           <div>
             <Input

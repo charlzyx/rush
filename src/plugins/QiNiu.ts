@@ -7,6 +7,7 @@ import { invoke } from '@tauri-apps/api';
 import * as qiniu from 'qiniu-js';
 import dayjs from 'dayjs';
 import { TINY_SUPPORTE } from './config';
+import { Notification } from '@arco-design/web-react';
 
 export interface QiNiuConfig {
   quality: number;
@@ -117,7 +118,13 @@ export class QiNiuPlugin extends Plugin {
           },
         );
         live.subscribe({
-          error: reject,
+          error(e) {
+            const msg = e.message;
+            Notification.error({
+              title: '上传失败！Plug::Qiniu',
+              content: msg,
+            });
+          },
           complete: resolve,
         });
       } catch (error) {

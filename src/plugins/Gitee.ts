@@ -2,6 +2,7 @@ import { DB } from '@/db';
 import { Plugin, PluginConfigSchemaItem } from './Plugin';
 import { PageQuery, PageResp, StoreItem } from '@/shared/typings';
 import tiny from '@mxsir/image-tiny';
+import md5 from 'md5';
 import { store } from '@/store';
 import { TINY_SUPPORTE } from './config';
 import { Notification } from '@arco-design/web-react';
@@ -23,7 +24,7 @@ const toBase64 = (file: File) => {
   });
 };
 
-export interface GithubPluginConfig {
+export interface GiteePluginConfig {
   quality?: number;
   repo: string;
   branch: string;
@@ -32,10 +33,10 @@ export interface GithubPluginConfig {
   customUrl: string;
 }
 
-export class GithubPlugin extends Plugin {
-  name = 'github';
-  config: GithubPluginConfig = {
-    ...store.get('config_current')?.github,
+export class GiteePlugin extends Plugin {
+  name = 'gitee';
+  config: GiteePluginConfig = {
+    ...store.get('config_current')?.gitee,
     quality: 80,
     secure: true,
   };
@@ -47,7 +48,7 @@ export class GithubPlugin extends Plugin {
     { label: 'customUrl', name: 'customUrl', required: false },
   ];
 
-  constructor(config: GithubPluginConfig) {
+  constructor(config: GiteePluginConfig) {
     super();
     this.config = { ...this.config, ...config };
   }
@@ -68,21 +69,22 @@ export class GithubPlugin extends Plugin {
     const { branch, customUrl, path = '', repo, token } = this.config;
 
     const remotePath = `${encodeURI(path)}${datePrefix}/${encodeName}`;
-    const url = `https://api.github.com/repos/${repo}/contents/${remotePath}`;
+    const url = `https://gitee.com/api/v5/repos/${repo}/contents/${remotePath}?access_token=${token}`;
     const content = await toBase64(file);
 
     const uploading = req
-      .put(
+      .post(
         url,
         {
           message: 'Upload by Rush',
           branch: branch,
           content: content,
+          // sha: md5(remotePath),
           path: remotePath,
         },
         {
           headers: {
-            accept: 'application/vnd.github+json',
+            // accept: 'application/vnd.github+json',
             Authorization: `token ${token}`,
             'User-Agent': 'Rush',
           },
@@ -90,9 +92,10 @@ export class GithubPlugin extends Plugin {
       )
       .then((resp) => resp.data)
       .catch((e) => {
-        const msg = e?.response?.data?.message || '上传出错啦';
+        console.log(e);
+        const msg = e?.response?.data?.messages?.join(' ') || '上传出错啦';
         Notification.error({
-          title: '上传失败！Plug::Github',
+          title: '上传失败！Plug::Gitee',
           content: msg,
         });
       });
