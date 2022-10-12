@@ -3,16 +3,13 @@
 ![logo](./public/brand.svg)
 
 
-## Usage
+## 使用 Usage
 
-<div>
-  <video src="./public/docs/live.mov" autoPlay></video>
-</div>
+- 拖拽批量压缩图片, 支持格式 `jpg/png/gif`
+> Drop to optimize, `jpg/png/gif` is supported.
 
-## ScreenShots
+- 拖拽批量上传图片到 阿里云OSS/七牛云, 并默认开启图片压缩
+> Drop to upload to alioss/qiniu Object Storage, and optimize by default.
 
-![p1](./public/docs/p1.png)
-![p2](./public/docs/p2.png)
-![p3](./public/docs/p3.png)
-![p4](./public/docs/p4.png)
-![p5](./public/docs/p5.png)
+## 截图 ScreenShots
+![2022-10-12 16 39 47](https://user-images.githubusercontent.com/18055018/195295182-d4bfa92d-b837-4df3-a21a-b802e9cc4863.gif)
