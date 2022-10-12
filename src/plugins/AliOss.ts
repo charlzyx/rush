@@ -1,9 +1,10 @@
 import { DB } from '@/db';
 import { Plugin, PluginConfigSchemaItem } from './Plugin';
-import { PageQuery, PageResp, StoreItem } from '@/shared/http';
+import { PageQuery, PageResp, StoreItem } from '@/shared/typings';
 import tiny from '@mxsir/image-tiny';
 import { store } from '@/store';
 import OSS from 'ali-oss';
+import { TINY_SUPPORTE } from './config';
 
 export interface AliOssConfig {
   quality?: number;
@@ -14,8 +15,6 @@ export interface AliOssConfig {
   bucket: string;
   cdn?: string;
 }
-
-const IMAGE_PATTERN = /\.(jpg|jpeg|png|gif|webp)/;
 
 export class AliOssPlugin extends Plugin {
   name = 'alioss';
@@ -47,7 +46,7 @@ export class AliOssPlugin extends Plugin {
   }
 
   async transform(file: File): Promise<File> {
-    if (IMAGE_PATTERN.test(file.name)) {
+    if (this.config.quality! < 100 && TINY_SUPPORTE.test(file.name)) {
       const lite = await tiny(file, this.config.quality);
       return lite;
     } else {
@@ -73,7 +72,7 @@ export class AliOssPlugin extends Plugin {
       name: file.name,
       create_time: +new Date(),
       url: this.config.cdn
-        ? this.config.cdn + upload.name
+        ? `${this.config.cdn}/${upload.name}`
         : (upload.data as any).url,
     };
 

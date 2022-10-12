@@ -64,3 +64,9 @@
 .filepond--drip-blob {
   background-color: rgb(var(--gray-2));
 }
+.tiny-wrapper .filepond--file-status * {
+  opacity: 0 !important;
+}
+.tiny-wrapper .filepond--file-status *[data-tiny] {
+  opacity: 1 !important;
+}

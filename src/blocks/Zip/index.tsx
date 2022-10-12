@@ -1,3 +1,5 @@
+import { AniSvg } from '@/blocks/AniSvg';
+import { TinyPlugin } from '@/plugins/Tiny';
 import { pic } from '@/svg';
 import { ProcessServer, Yap } from '@/utils/yap';
 import {
@@ -9,22 +11,21 @@ import {
   Space,
   Typography,
 } from '@arco-design/web-react';
+import { IconFolder } from '@arco-design/web-react/icon';
+import { shell } from '@tauri-apps/api';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Fs } from '@/plugins/fs';
 import './zip.css';
-import { AniSvg } from '@/blocks/AniSvg';
-import { TinyPlugin } from '@/plugins/Tiny';
-import { DB } from '@/db';
+import { useRafInterval } from 'ahooks';
 
 export const Zip = () => {
   const [files, setFiles] = useState<any[]>([]);
   const [quality, setQuality] = useState(80);
-  const [optimizeMaping, setOoptimizeMaping] = useState<Record<string, number>>(
-    {},
-  );
+  const optimizeMaping = useRef<Record<string, number>>({});
   const wrapper = useRef<HTMLDivElement | null>(null);
 
   const plug = useMemo(() => {
-    return new TinyPlugin({ quality, allowOverwrite: true });
+    return new TinyPlugin({ quality });
   }, [quality]);
 
   const [finished, setFinished] = useState(0);
@@ -48,15 +49,11 @@ export const Zip = () => {
       const afterSize = lite.size;
       const result = await plug.upload(lite);
 
-      setOoptimizeMaping((old) => {
-        return {
-          ...old,
-          [file.name]: parseFloat(((afterSize / preSize) * 100).toFixed(2)),
-        };
-      });
+      optimizeMaping.current[file.name] = parseFloat(
+        ((afterSize / preSize) * 100).toFixed(2),
+      );
 
       load(result.url);
-      await DB.insert(plug.name, result);
       setTimeout(() => {
         setFinished((x) => x + 1);
       }, 666);
@@ -78,23 +75,29 @@ export const Zip = () => {
   const fresh = () => {
     if (!wrapper.current) return;
     const list = Array.from(
-      wrapper.current.querySelectorAll('.filepond--file-wrapper legend'),
+      wrapper.current.querySelectorAll('.filepond--file-status'),
     );
-    list.forEach((legend) => {
-      const name = legend.innerHTML;
-      const ratio = optimizeMaping[name];
-      const li = legend.parentElement?.parentElement;
-      if (!li) return;
-      const status = li.querySelector('.filepond--file-status');
+    list.forEach((status) => {
+      const legend = status.parentElement?.parentElement?.querySelector(
+        '.filepond--file-wrapper legend',
+      );
+      const name = legend?.innerHTML;
+      const ratio = optimizeMaping.current?.[name || ''];
+
       const text = status?.children?.[0];
       if (!text) return;
-      const tip =
-        100 - ratio > 0 ? `-${(100 - ratio).toFixed(2)}%` : '压缩中...';
+      const tip = 100 - ratio > 0 ? `-${(100 - ratio).toFixed(2)}%` : '';
+      if (tip) {
+        text.setAttribute('data-tiny', tip);
+      }
+
       text.innerHTML = tip;
     });
   };
 
-  fresh();
+  useRafInterval(() => {
+    fresh();
+  }, 123);
 
   return (
     <div>
@@ -105,6 +108,18 @@ export const Zip = () => {
             justifyContent: 'space-between',
           }}
         >
+          <Space>
+            <Button
+              onClick={() => {
+                shell.open(Fs.output);
+              }}
+              size="small"
+              icon={<IconFolder></IconFolder>}
+              type="outline"
+            >
+              打开输出录
+            </Button>
+          </Space>
           <Space direction="vertical" style={{ flex: 1 }}>
             <Typography.Text bold>&nbsp;&nbsp;&nbsp; 压缩质量</Typography.Text>
             <Slider
@@ -135,7 +150,7 @@ export const Zip = () => {
 
       <div
         ref={wrapper}
-        className="tiny-wapper"
+        className="tiny-wrapper"
         style={{ position: 'relative' }}
       >
         <Yap

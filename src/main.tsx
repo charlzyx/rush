@@ -8,7 +8,9 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import zh_cn from 'dayjs/locale/zh-cn';
 import { DB } from '@/db';
 
+console.log('DB connecting...');
 DB.connect().then(() => {
+  console.log('DB init...');
   DB.init().then(() => {
     console.log('DB inited.');
   });

@@ -24,7 +24,7 @@ const Page = (props: React.PropsWithChildren<{}>) => {
         <div>
           <Header></Header>
         </div>
-        <div style={{ flex: 1 }}>{props.children}</div>
+        <div style={{ flex: 1, height: '100%' }}>{props.children}</div>
       </div>
     </ConfigProvider>
   );

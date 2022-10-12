@@ -11,13 +11,16 @@ export const makesure = async (dir: string) => {
 };
 export class Fs {
   output: string = '';
+  static output: string = '';
 
   async init(dir?: string) {
     if (dir) {
+      Fs.output = dir;
       this.output = dir;
     } else {
       const desktop = await path.desktopDir();
       const tinyoutput = await path.join(desktop, 'rush');
+      Fs.output = tinyoutput;
       this.output = tinyoutput;
     }
   }

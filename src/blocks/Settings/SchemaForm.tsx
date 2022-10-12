@@ -1,8 +1,9 @@
-import { Button, Form, Input, Space } from '@arco-design/web-react';
-import React, { useMemo, useRef } from 'react';
+import { Button, Form, Input, Radio, Space } from '@arco-design/web-react';
+import React, { useEffect, useMemo, useRef } from 'react';
 
 import { PluginConfigSchemaItem } from '@/plugins/Plugin';
 const FormItem = Form.Item;
+const RadioGroup = Radio.Group;
 
 export const SchemaForm = (props: {
   init?: any;
@@ -16,7 +17,15 @@ export const SchemaForm = (props: {
     return props.schema.map((item) => {
       return (
         <FormItem field={item.name} label={item.label} required>
-          <Input />
+          {item.dataSource ? (
+            <RadioGroup
+              type="button"
+              defaultValue={item.required ? item.dataSource[0].value : null}
+              options={item.dataSource}
+            ></RadioGroup>
+          ) : (
+            <Input></Input>
+          )}
         </FormItem>
       );
     });
@@ -35,7 +44,12 @@ export const SchemaForm = (props: {
         style={{ width: '100%' }}
         autoComplete="off"
       >
-        <FormItem field="alias" label="别名" required>
+        <FormItem
+          field="alias"
+          label="别名"
+          required
+          disabled={props.init?.alias}
+        >
           <Input />
         </FormItem>
         {items}

@@ -21,6 +21,7 @@ window-vibrancy = "0.3.0"
 lazy_static = "1.4.0"
 tauri-plugin-window-state = "0.1.0"
 window-shadows = "0.2"
+qiniu-upload-token = "0.2.0"
 
 [dependencies.tauri-plugin-sql]
 git = "https://github.com/tauri-apps/tauri-plugin-sql"

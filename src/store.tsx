@@ -20,7 +20,7 @@ export const store = {
   },
 };
 
-type Key = 'config_list' | 'config_current' | 'history_state';
+type Key = 'config_scope' | 'config_list' | 'config_current' | 'history_state';
 
 export const useStore = <S extends any>(key: Key, init?: S) => {
   const [state, setState] = useState<S>(store.get(key) ?? init);
@@ -46,5 +46,11 @@ export const useStore = <S extends any>(key: Key, init?: S) => {
     },
     [key, state],
   );
+
+  useEffect(() => {
+    ev.on('fresh', () => {
+      setState(store.get(key));
+    });
+  }, [key]);
   return [state, set as typeof setState] as const;
 };

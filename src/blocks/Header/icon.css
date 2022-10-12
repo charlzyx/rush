@@ -28,7 +28,6 @@
 
 .icon-box {
   transition: all ease 0.2s;
-  border-radius: 4px;
   padding: 4px;
   height: 32px;
   width: 32px;
@@ -85,11 +84,9 @@
 }
 
 .header-title {
-  margin-left: 16px;
-  color: rgb(var(--primary-6));
-}
-.header-title {
-  width: 48px;
+  position: relative;
+  margin-left: 10px;
+  width: 40px;
   height: 32px;
   /* width: 200px;
   height: 200px; */

@@ -1,20 +1,18 @@
 import { DB } from '@/db';
 import { Plugin } from './Plugin';
-import { PageQuery, PageResp, StoreItem } from '@/shared/http';
+import { PageQuery, PageResp, StoreItem } from '@/shared/typings';
 import tiny from '@mxsir/image-tiny';
+import { TINY_SUPPORTE } from './config';
 import { Fs } from './fs';
 
 export interface TinyConfig {
   quality: number;
   output?: string;
-  allowOverwrite?: boolean;
 }
-
-const IMAGE_PATTERN = /\.(jpg|jpeg|png|gif|webp)/;
 
 export class TinyPlugin extends Plugin {
   name = 'tiny';
-  config: TinyConfig = { quality: 80, allowOverwrite: false };
+  config: TinyConfig = { quality: 80 };
   fs: Fs;
 
   constructor(config: TinyConfig) {
@@ -24,7 +22,7 @@ export class TinyPlugin extends Plugin {
   }
 
   async transform(file: File): Promise<File> {
-    if (IMAGE_PATTERN.test(file.name)) {
+    if (TINY_SUPPORTE.test(file.name)) {
       const lite = await tiny(file, this.config.quality);
       return lite;
     } else {
@@ -44,9 +42,5 @@ export class TinyPlugin extends Plugin {
     };
 
     return ret;
-  }
-
-  async query(query: PageQuery): Promise<PageResp> {
-    return DB.query<StoreItem>(this.name, query);
   }
 }

@@ -5,6 +5,7 @@ import {
   Card,
   Message,
   Progress,
+  Radio,
   Slider,
   Space,
   Typography,
@@ -13,19 +14,26 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import './up.css';
 import { AniSvg } from '@/blocks/AniSvg';
 import { AliOssPlugin } from '@/plugins/AliOss';
+import { QiNiuPlugin } from '@/plugins/QiNiu';
 import { DB } from '@/db';
-import { useStore } from '@/store';
+import { usePluginSettings } from '../Settings';
+
+const RadioGroup = Radio.Group;
 
 export const Up = () => {
+  const { scope, setScope, plugins, current } = usePluginSettings();
   const [files, setFiles] = useState<any[]>([]);
-  const [config] = useStore<any>('config_current');
   const [quality, setQuality] = useState(80);
 
   const wrapper = useRef<HTMLDivElement | null>(null);
 
   const plug = useMemo(() => {
-    return new AliOssPlugin({ ...config?.alioss!, quality });
-  }, [config, quality]);
+    if (scope === 'alioss') {
+      return new AliOssPlugin({ ...current });
+    } else if (scope === 'qiniu') {
+      return new QiNiuPlugin({ ...current });
+    }
+  }, [current, scope]);
 
   const [finished, setFinished] = useState(0);
   const count = useMemo(() => {
@@ -43,14 +51,19 @@ export const Up = () => {
       abort,
       transfer,
     ) => {
-      const lite = await plug.transform(file as File);
-      const result = await plug.upload(lite);
-      await DB.insert(plug.name, result);
+      if (!plug) return;
+      try {
+        const lite = await plug.transform(file as File);
+        const result = await plug.upload(lite);
+        await DB.insert(plug.name, result);
 
-      load(result.url);
-      setTimeout(() => {
-        setFinished((x) => x + 1);
-      }, 666);
+        load(result.url);
+        setTimeout(() => {
+          setFinished((x) => x + 1);
+        }, 666);
+      } catch (e: any) {
+        error(e.message);
+      }
     },
     [plug],
   );
@@ -75,6 +88,13 @@ export const Up = () => {
             justifyContent: 'space-between',
           }}
         >
+          <RadioGroup
+            type="button"
+            value={scope}
+            onChange={setScope}
+            options={plugins}
+          ></RadioGroup>
+
           <Space direction="vertical" style={{ flex: 1 }}>
             <Typography.Text bold>&nbsp;&nbsp;&nbsp; 压缩质量</Typography.Text>
             <Slider

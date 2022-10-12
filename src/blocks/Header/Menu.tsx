@@ -1,5 +1,4 @@
 import { useState } from 'react';
-
 import { Radio } from '@arco-design/web-react';
 import {
   IconHistory,
@@ -11,10 +10,17 @@ import { Link } from 'react-router-dom';
 
 const RadioGroup = Radio.Group;
 
-type Pages = 'Hisotry' | 'Up' | 'Zip' | 'Settings';
+type PageNames = 'Hisotry' | 'Up' | 'Zip' | 'Settings';
+
+const getPage = (): PageNames => {
+  const pathname = window.location.pathname;
+  const lower = pathname.replace(/\//, '');
+  const upperCase = lower.replace(/^\w/, (m) => m.toUpperCase());
+  return upperCase || ('Zip' as any);
+};
 
 export const Menu = () => {
-  const [route, setRoute] = useState<Pages>('Zip');
+  const [route, setRoute] = useState<PageNames>(getPage());
 
   return (
     <RadioGroup

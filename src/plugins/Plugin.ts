@@ -1,8 +1,11 @@
-import { PageQuery, PageResp, StoreItem } from '@/shared/http';
+import { PageQuery, PageResp, StoreItem } from '@/shared/typings';
+import React from 'react';
 
 export interface PluginConfigSchemaItem {
   label: string;
   name: string;
+  // select
+  dataSource?: { label: string; value: React.Key }[];
   required?: boolean;
 }
 export class Plugin {

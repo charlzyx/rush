@@ -1,6 +1,6 @@
 import { Button, Radio, Space } from '@arco-design/web-react';
 import { IconPlus } from '@arco-design/web-react/icon';
-import { useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { SchemaForm } from './SchemaForm';
 import { SchemaList } from './SchemaList';
 
@@ -9,8 +9,11 @@ import { QiNiuPlugin } from '@/plugins/QiNiu';
 import { useStore } from '@/store';
 import { PluginKey } from './config';
 
-const usePluginSettings = (key: PluginKey) => {
-  const [now, setNow] = useState<PluginKey>('alioss');
+export const usePluginSettings = () => {
+  const plugins = useMemo(() => {
+    return ['alioss', 'qiniu'] as PluginKey[];
+  }, []);
+  const [scope, setScope] = useStore<PluginKey>('config_scope', 'qiniu');
   const [allList, setAllList] = useStore<Record<string, any>>(
     'config_list',
     {},
@@ -21,86 +24,115 @@ const usePluginSettings = (key: PluginKey) => {
   );
 
   const nowList = useMemo(() => {
-    if (!allList[now]) {
+    if (!allList?.[scope]) {
       setAllList((old) => {
         return {
           ...old,
-          [now]: [],
+          [scope]: [],
         };
       });
     }
-    return allList[now] ?? [];
-  }, [now, allList, setAllList]);
+    return allList?.[scope] ?? [];
+  }, [scope, allList, setAllList]);
 
   const nowSchema = useMemo(() => {
-    return now === 'alioss'
+    return scope === 'alioss'
       ? AliOssPlugin.configSchema
       : QiNiuPlugin.configSchema;
-  }, [now]);
+  }, [scope]);
+
+  const nowCurrent = useMemo(() => {
+    return allCurrent?.[scope];
+  }, [allCurrent, scope]);
+
+  // Fresh current
+  const freshCurrent = useCallback(() => {
+    setAllCurrent((old) => {
+      const neo = Object.keys(old).reduce((next: any, itScope: string) => {
+        next[itScope] = allList?.[itScope]?.find(
+          (x: any) => x.alias === old[itScope]?.alias,
+        );
+        return next;
+      }, {});
+      return neo;
+    });
+  }, [allList, setAllCurrent]);
 
   const actions = useMemo(() => {
     return {
       create(neo: any) {
         setAllList((old) => {
-          const next = old[now] ?? [];
+          const next = old[scope] ?? [];
+          const index = next.findIndex((x: any) => x.alias === neo.alias);
+          if (index > -1) {
+            return old;
+          }
           next.push(neo);
           return {
             ...old,
-            [now]: next,
+            [scope]: next,
           };
         });
       },
       remove(alias: string) {
         setAllList((old) => {
-          const next = old[now] ?? [];
+          const next = old[scope] ?? [];
           const index = next.findIndex((x: any) => x.alias === alias);
           if (index > -1) {
             next.splice(index, 1);
           }
+          freshCurrent();
           return {
             ...old,
-            [now]: [...next],
+            [scope]: [...next],
           };
         });
       },
       update(neo: any) {
         setAllList((old) => {
-          const next = old[now] ?? [];
+          const next = old[scope] ?? [];
           const index = next.findIndex((x: any) => x.alias === neo.alias);
           if (index > -1) {
             next[index] = neo;
           }
+          freshCurrent();
           return {
             ...old,
-            [now]: [...next],
+            [scope]: [...next],
           };
         });
       },
-      setCurrent(alias: string) {
+      setCurrent(alias: string, forScope?: string) {
         setAllCurrent((old) => {
+          const s = forScope || scope;
           return {
             ...old,
-            [now]: allList.find((x: any) => x.alias === alias),
+            [s]: allList?.[s]?.find((x: any) => x.alias === alias),
           };
         });
       },
     };
-  }, [allList, now, setAllCurrent, setAllList]);
+  }, [allList, freshCurrent, scope, setAllCurrent, setAllList]);
 
   return {
-    now,
-    setNow,
+    plugins,
+    scope,
+    setScope,
     actions,
     schema: nowSchema,
     list: nowList,
-    currents: allCurrent,
+    current: nowCurrent,
+    allCurrent: allCurrent,
+    allList: allList,
   };
 };
 
 export function Settings() {
-  const { now, setNow, list, schema, actions } = usePluginSettings('alioss');
+  const { scope, setScope, list, current, schema, actions, plugins } =
+    usePluginSettings();
   const [view, setView] = useState<'list' | 'edit'>('list');
-  const tmp = useRef({});
+  const tmp = useRef<any>(null);
+  console.log(list, list);
 
   return (
     <div
@@ -117,18 +149,26 @@ export function Settings() {
           marginBottom: 8,
         }}
       >
-        <Radio.Group
-          type="button"
-          value={now}
-          onChange={setNow}
-          options={['alioss', 'qiniu']}
-        ></Radio.Group>
-
-        <Button type="text"></Button>
+        <div>
+          <Radio.Group
+            type="button"
+            value={scope}
+            onChange={(s) => {
+              tmp.current = null;
+              setScope(s);
+            }}
+            options={plugins}
+          ></Radio.Group>
+          <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
+          <Button type="outline">
+            {current?.alias || '点击别名使用该配置'}
+          </Button>
+        </div>
 
         <Button
           icon={<IconPlus></IconPlus>}
           onClick={() => {
+            tmp.current = null;
             setView('edit');
           }}
           type="primary"
@@ -138,9 +178,11 @@ export function Settings() {
       </Space>
       {view === 'list' ? (
         <SchemaList
+          current={current?.alias}
+          onSelect={(item) => actions.setCurrent(item.alias)}
           onDelete={(item) => actions.remove(item.alias)}
-          onEdit={() => {
-            tmp.current = tmp;
+          onEdit={(item) => {
+            tmp.current = item;
             setView('edit');
           }}
           schema={schema}
@@ -151,8 +193,14 @@ export function Settings() {
         <SchemaForm
           init={{ ...tmp.current }}
           schema={schema}
-          onSubmit={list}
+          onSubmit={(neo) => {
+            const act = tmp.current ? actions.update : actions.create;
+            return Promise.resolve(act(neo)).then(() => {
+              setView('list');
+            });
+          }}
           onCancel={() => {
+            tmp.current = null;
             setView('list');
           }}
         ></SchemaForm>

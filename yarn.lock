@@ -4191,7 +4191,7 @@ punycode@^2.1.0:
 
 qiniu-js@^3.4.1:
   version "3.4.1"
-  resolved "https://registry.npmmirror.com/qiniu-js/-/qiniu-js-3.4.1.tgz#0d258771164fac5d92df1797d1c55e38db934a57"
+  resolved "https://mirrors.cloud.tencent.com/npm/qiniu-js/-/qiniu-js-3.4.1.tgz#0d258771164fac5d92df1797d1c55e38db934a57"
   integrity sha512-8vxrLqDPlJUk3fUAaTozh3TAT3ww9B5KqGogmGuTiFHnewXDoMxTCSY5z8Ab5UNdrCo6ZxDM07G/o++CICRUFw==
   dependencies:
     "@babel/runtime-corejs2" "^7.10.2"

@@ -1,8 +1,8 @@
 import Database from 'tauri-plugin-sql-api';
-import { DROP, INIT, INSERT, TABLE } from './init';
-import { PageQuery, StoreItem } from '@/shared/http';
+import { DROP, INIT, TABLE } from './init';
+import { PageQuery, StoreItem } from '@/shared/typings';
 import { makesure } from '../plugins/fs';
-import { path } from '@tauri-apps/api';
+import { os, path } from '@tauri-apps/api';
 import { nanoid } from 'nanoid';
 
 export class DB {
@@ -12,7 +12,11 @@ export class DB {
       const home = await path.homeDir();
       const workdir = await path.join(home, '.rush');
       await makesure(workdir);
-      const dbfile = await path.join(workdir, 'sqlite_rush.db');
+      const osType = await os.type();
+      const dbfile = await path.join(
+        workdir,
+        osType === 'Windows_NT' ? 'sqlite_rush.db' : 'sqlite::rush.db',
+      );
       DB.db = await Database.load(dbfile);
       console.log('DB connect Success!');
       return DB.db;
@@ -33,13 +37,16 @@ export class DB {
       return Promise.reject('DB not connected.');
     }
     const id = `${+new Date()}_${nanoid()}`;
-    const sql = INSERT({
+    const sql = `INSERT INTO ${TABLE} (id, scope, name, url, create_time) VALUES($1, $2, $3, $4, $5)`;
+    const ret = await DB.db.execute(sql, [
       id,
       scope,
-      ...data,
-      create_time: +new Date(),
-    });
-    return DB.db.execute(sql[0], sql[1]);
+      data.name,
+      data.url,
+      +new Date(),
+    ]);
+    console.log('insert', scope, data, ret);
+    return ret;
   }
 
   static async drop() {
@@ -85,15 +92,16 @@ ${like}
 `
       .split('\n')
       .join(' ');
+
+    const total: { id: string }[] = await DB.db.select(count, [scope]);
+    const list = await DB.db.select(sql, [scope]);
+    const ret = { list: list as T[], total: total.length };
     console.log('query', {
       scope,
       sql,
       count,
+      ret,
     });
-    const total: { id: string }[] = await DB.db.select(count, [scope]);
-    const list = await DB.db.select(sql, [scope]);
-    const ret = { list: list as T[], total: total.length };
-
     return ret;
   }
 }

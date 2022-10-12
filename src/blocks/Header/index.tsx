@@ -16,10 +16,10 @@ export const Header = () => {
     <div
       data-tauri-drag-region
       style={{
-        display: 'flex',
         paddingTop: '16px',
         paddingRight: '16px',
         paddingLeft: '16px',
+        display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'flex-start',
       }}

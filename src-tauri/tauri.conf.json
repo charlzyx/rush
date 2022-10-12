@@ -2,7 +2,7 @@
   "build": {
     "beforeDevCommand": "yarn dev",
     "beforeBuildCommand": "yarn build",
-    "devPath": "http://localhost:62233",
+    "devPath": "http://localhost:23333",
     "distDir": "../dist"
   },
   "package": {
@@ -77,6 +77,8 @@
         "title": "Yap!",
         "width": 800,
         "height": 640,
+        "minWidth": 800,
+        "minHeight": 640,
         "fileDropEnabled": false,
         "transparent": true,
         "decorations": false
