@@ -1,4 +1,4 @@
-# Rush!
+# Rush! 冲冲冲!
 
 ![logo](./public/brand.svg)
 
