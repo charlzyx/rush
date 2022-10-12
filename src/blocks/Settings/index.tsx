@@ -3,16 +3,10 @@ import { IconPlus } from '@arco-design/web-react/icon';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { SchemaForm } from './SchemaForm';
 import { SchemaList } from './SchemaList';
-
-import { AliOssPlugin } from '@/plugins/AliOss';
-import { QiNiuPlugin } from '@/plugins/QiNiu';
 import { useStore } from '@/store';
-import { PluginKey } from './config';
+import { PluginKey, getPluginSchema, plugins } from '@/plugins';
 
 export const usePluginSettings = () => {
-  const plugins = useMemo(() => {
-    return ['alioss', 'qiniu'] as PluginKey[];
-  }, []);
   const [scope, setScope] = useStore<PluginKey>('config_scope', 'qiniu');
   const [allList, setAllList] = useStore<Record<string, any>>(
     'config_list',
@@ -36,9 +30,7 @@ export const usePluginSettings = () => {
   }, [scope, allList, setAllList]);
 
   const nowSchema = useMemo(() => {
-    return scope === 'alioss'
-      ? AliOssPlugin.configSchema
-      : QiNiuPlugin.configSchema;
+    return getPluginSchema(scope);
   }, [scope]);
 
   const nowCurrent = useMemo(() => {
@@ -128,7 +120,7 @@ export const usePluginSettings = () => {
 };
 
 export function Settings() {
-  const { scope, setScope, list, current, schema, actions, plugins } =
+  const { scope, setScope, list, current, schema, actions } =
     usePluginSettings();
   const [view, setView] = useState<'list' | 'edit'>('list');
   const tmp = useRef<any>(null);

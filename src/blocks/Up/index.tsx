@@ -1,8 +1,7 @@
 import { pic } from '@/assets/svg';
 import { AniSvg } from '@/blocks/AniSvg';
 import { DB } from '@/db';
-import { AliOssPlugin } from '@/plugins/AliOss';
-import { QiNiuPlugin } from '@/plugins/QiNiu';
+import { getPlugin, plugins } from '@/plugins';
 import { ProcessServer, Rush } from '@/utils/rush';
 import {
   Button,
@@ -21,18 +20,15 @@ import './up.css';
 const RadioGroup = Radio.Group;
 
 export const Up = () => {
-  const { scope, setScope, plugins, current } = usePluginSettings();
+  const { scope, setScope, current } = usePluginSettings();
   const [files, setFiles] = useState<any[]>([]);
   const [quality, setQuality] = useState(80);
 
   const wrapper = useRef<HTMLDivElement | null>(null);
 
   const plug = useMemo(() => {
-    if (scope === 'alioss') {
-      return new AliOssPlugin({ ...current });
-    } else if (scope === 'qiniu') {
-      return new QiNiuPlugin({ ...current });
-    }
+    const Plug = getPlugin(scope);
+    return new Plug({ ...current });
   }, [current, scope]);
 
   const [finished, setFinished] = useState(0);

@@ -15,7 +15,8 @@
       "all": true,
       "http": {
         "all": true,
-        "request": true
+        "request": true,
+        "scope": ["http://**", "https://**"]
       },
       "fs": {
         "all": true,
