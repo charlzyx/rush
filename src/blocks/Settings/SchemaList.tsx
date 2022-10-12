@@ -13,9 +13,12 @@ import React, { useMemo } from 'react';
 
 const LongText = (props: { children: string }) => {
   return (
-    <Typography.Title
+    <Typography.Paragraph
       style={{
         color: 'var(--color-text-1)',
+        width: '120px',
+        lineHeight: '18px',
+        height: '12px',
       }}
       ellipsis={{
         cssEllipsis: true,
@@ -23,10 +26,9 @@ const LongText = (props: { children: string }) => {
         rows: 1,
       }}
       copyable
-      heading={8 as any}
     >
       {props.children}
-    </Typography.Title>
+    </Typography.Paragraph>
   );
 };
 export const SchemaList = (props: {
