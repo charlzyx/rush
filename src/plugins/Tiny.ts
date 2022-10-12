@@ -1,9 +1,8 @@
-import { DB } from '@/db';
-import { Plugin } from './Plugin';
-import { PageQuery, PageResp, StoreItem } from '@/shared/typings';
+import { StoreItem } from '@/shared/typings';
 import tiny from '@mxsir/image-tiny';
 import { TINY_SUPPORTE } from './config';
 import { Fs } from './fs';
+import { Plugin } from './Plugin';
 
 export interface TinyConfig {
   quality: number;

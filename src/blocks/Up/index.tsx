@@ -1,5 +1,5 @@
 import { pic } from '@/svg';
-import { ProcessServer, Yap } from '@/utils/yap';
+import { ProcessServer, Rush } from '@/utils/rush';
 import {
   Button,
   Card,
@@ -124,7 +124,7 @@ export const Up = () => {
       </Card>
 
       <div ref={wrapper} style={{ position: 'relative' }}>
-        <Yap
+        <Rush
           stylePanelAspectRatio={'4:3'}
           files={files}
           onupdatefiles={setFiles}

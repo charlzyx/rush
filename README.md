@@ -1,4 +1,4 @@
-# Yap!
+# Rush!
 
 ![logo](./public/brand.svg)
 

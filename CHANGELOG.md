@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v1.0.0
+BOOOM! rename -> Yap! ~> Rush!
+feat: 添加七牛云支持
+
 ## v0.1.3
 feat: 🎸 成吨的优化, README 更新
 ## v0.1.2

@@ -7,6 +7,9 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import zh_cn from 'dayjs/locale/zh-cn';
 import { DB } from '@/db';
+import { autoudpate } from './autoupdate';
+
+autoudpate();
 
 console.log('DB connecting...');
 DB.connect().then(() => {

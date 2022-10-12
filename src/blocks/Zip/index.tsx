@@ -1,7 +1,7 @@
 import { AniSvg } from '@/blocks/AniSvg';
 import { TinyPlugin } from '@/plugins/Tiny';
 import { pic } from '@/svg';
-import { ProcessServer, Yap } from '@/utils/yap';
+import { ProcessServer, Rush } from '@/utils/rush';
 import {
   Button,
   Card,
@@ -153,7 +153,7 @@ export const Zip = () => {
         className="tiny-wrapper"
         style={{ position: 'relative' }}
       >
-        <Yap
+        <Rush
           stylePanelAspectRatio={'4:3'}
           files={files}
           onupdatefiles={setFiles}

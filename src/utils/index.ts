@@ -1,1 +1,1 @@
-export * from './yap';
+export * from './rush';

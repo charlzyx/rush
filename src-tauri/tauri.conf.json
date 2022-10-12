@@ -6,7 +6,7 @@
     "distDir": "../dist"
   },
   "package": {
-    "productName": "Yap!",
+    "productName": "Rush!",
     "version": "../package.json"
   },
   "tauri": {
@@ -44,7 +44,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "yap.charlzyx.github",
+      "identifier": "rush.charlzyx.github",
       "longDescription": "",
       "macOS": {
         "entitlements": null,
@@ -69,12 +69,12 @@
     "updater": {
       "active": true,
       "dialog": true,
-      "endpoints": ["https://charlzyx.github.io/yap/install.json"],
+      "endpoints": ["https://charlzyx.github.io/rush/install.json"],
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDVDNEYzMjUwNjI2QUUxRjcKUldUMzRXcGlVREpQWExyOGoxOGsrT1J6cTZhRW1rdk5RZEJQZjliQWNCQllpUEcyM2QxSkNmck8K"
     },
     "windows": [
       {
-        "title": "Yap!",
+        "title": "Rush!",
         "width": 800,
         "height": 640,
         "minWidth": 800,

@@ -1,1 +1,1 @@
-export type { PageQuery, PageResp } from './http';
+export type { PageQuery, PageResp } from './typings';

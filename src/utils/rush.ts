@@ -11,6 +11,6 @@ registerPlugin(FilePondPluginImageExifOrientation, FilePondPluginImagePreview);
 
 FilePonds.setOptions(zhCN);
 
-export const Yap = FilePond;
+export const Rush = FilePond;
 
 export type ProcessServer = FilePonds.ProcessServerConfigFunction;

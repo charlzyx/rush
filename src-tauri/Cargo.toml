@@ -1,10 +1,10 @@
 [package]
-name = "yap"
+name = "rush"
 version = "0.0.0"
 description = "upload file to ali-oss & automic tiny image"
 authors = ["charlzyx"]
 license = ""
-repository = "https://github.com/charlzyx/yap"
+repository = "https://github.com/charlzyx/rush"
 edition = "2021"
 rust-version = "1.57"
 
