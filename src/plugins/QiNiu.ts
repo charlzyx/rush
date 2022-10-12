@@ -93,9 +93,9 @@ export class QiNiuPlugin extends Plugin {
   // https://github.com/PicGo/PicGo-Core/blob/dev/src/plugins/uploader/qiniu.ts
   async upload(file: File): Promise<StoreItem> {
     const fileName = file.name;
-    const decodeName = decodeURIComponent(fileName);
+    const encodeName = encodeURIComponent(fileName);
     const datePrefix = dayjs().format('YYYY_MM_DD_');
-    const fileKey = `${datePrefix}${decodeName}`;
+    const fileKey = `${datePrefix}${encodeName}`;
 
     if (+new Date() - this.TOKEN.expired_time < 10 * 60 * 1000) {
       await this.getToken();

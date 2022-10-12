@@ -58,14 +58,14 @@ export class AliOssPlugin extends Plugin {
   async upload(file: File): Promise<StoreItem> {
     const fileName = file.name;
     const datePrefix = dayjs().format('YYYY_MM_DD_');
-    const decodeName = decodeURIComponent(fileName);
+    const encodeName = encodeURIComponent(fileName);
 
     const composePrefix = `${this.config.prefix}/${datePrefix}`.replace(
       '//',
       '/',
     );
 
-    const remotePath = `${composePrefix}${decodeName}`.replace('//', '/');
+    const remotePath = `${composePrefix}${encodeName}`.replace('//', '/');
 
     const upload = await this.client?.multipartUpload(remotePath, file, {
       // progress(p, cpt, res) {

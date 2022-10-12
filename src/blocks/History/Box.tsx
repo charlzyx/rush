@@ -25,11 +25,8 @@ export const Box = (props: {
   }, [name]);
 
   const displayName = useMemo(() => {
-    const segs = name.split('/');
-    const fullName = decodeURIComponent(segs[segs.length - 1]);
-    // 移除上传的 charsIndex 前缀
-    const liteName = fullName.replace(/___(.*)___/, '');
-    return liteName;
+    const decodeName = decodeURIComponent(name);
+    return decodeName;
   }, [name]);
 
   const fileUrl = useMemo(() => {
