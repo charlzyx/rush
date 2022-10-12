@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v1.0.3
+feat: 添加 github 图床
+feat: 添加 gitee 图床 (有防盗链， 已经无法使用了， 只能当网盘用)
+
 ## v1.0.2
 fix: 配置样式修复
 
