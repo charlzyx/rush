@@ -72,7 +72,7 @@ export const Zip = () => {
       const info = Object.keys(map).reduce(
         (yyds, name) => {
           yyds.before += map[name]?.before || 0;
-          yyds.after += map[name]?.before || 0;
+          yyds.after += map[name]?.after || 0;
           return yyds;
         },
         { before: 0, after: 0 },
