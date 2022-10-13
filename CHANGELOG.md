@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v1.1.0
+feat: 成吨的优化, 添加 scope/alias 二级空间
+feat: 移除垃圾 gitee
+feat: 添加 alioss/github 云同步功能
 ## v1.0.3
 feat: 添加 github 图床
 feat: 添加 gitee 图床 (有防盗链， 已经无法使用了， 只能当网盘用)
