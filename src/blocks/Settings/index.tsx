@@ -147,6 +147,7 @@ export function Settings() {
             onChange={(s) => {
               tmp.current = null;
               setScope(s);
+              setView('list');
             }}
             options={plugins}
           ></Radio.Group>

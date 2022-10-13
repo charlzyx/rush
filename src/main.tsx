@@ -24,7 +24,5 @@ dayjs.extend(relativeTime);
 dayjs.locale(zh_cn);
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+  <App />,
 );

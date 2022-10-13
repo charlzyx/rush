@@ -1,6 +1,8 @@
 // import { useConfig } from '@/store';
 import { usePluginSettings } from '../Settings';
-import { Cascader } from '@arco-design/web-react';
+import { Button, Cascader } from '@arco-design/web-react';
+import { IconCloud } from '@arco-design/web-react/icon';
+
 import { useMemo } from 'react';
 
 export const Config = () => {
@@ -23,24 +25,33 @@ export const Config = () => {
 
   const val = useMemo(() => {
     if (scope && current?.alias) {
-      return [scope, current.alias];
+      return [scope, current?.alias];
     } else {
       return undefined;
     }
   }, [current?.alias, scope]);
 
   return (
-    <Cascader
-      style={{ width: '140px' }}
-      value={val}
-      onChange={(next) => {
-        const [nextScope, nextAlias] = next as any[];
-        console.log('next', next);
-        setScope(nextScope);
-        actions.setCurrent(nextAlias!, nextScope);
-      }}
-      placeholder="请补充上传配置"
-      options={options}
-    />
+    <div style={{ display: 'flex', width: '160px' }}>
+      <Button
+        style={{
+          marginRight: '-8px',
+        }}
+        icon={<IconCloud></IconCloud>}
+        iconOnly
+        type="default"
+      ></Button>
+      <Cascader
+        style={{ width: '140px' }}
+        value={val}
+        onChange={(next) => {
+          const [nextScope, nextAlias] = next as any[];
+          setScope(nextScope);
+          actions.setCurrent(nextAlias!, nextScope);
+        }}
+        placeholder="请补全上传配置"
+        options={options}
+      />
+    </div>
   );
 };

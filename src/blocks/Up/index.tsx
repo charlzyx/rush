@@ -1,28 +1,21 @@
 import { pic } from '@/assets/svg';
 import { AniSvg } from '@/blocks/AniSvg';
 import { DB } from '@/db';
-import { getPlugin, plugins } from '@/plugins';
+import { getPlugin } from '@/plugins';
+import { notify } from '@/utils/notify';
 import { ProcessServer, Rush } from '@/utils/rush';
-import {
-  Button,
-  Card,
-  Notification,
-  Progress,
-  Radio,
-  Slider,
-  Space,
-  Typography,
-} from '@arco-design/web-react';
+import { Button, Progress, Slider, Space } from '@arco-design/web-react';
+import { IconCloudDownload } from '@arco-design/web-react/icon';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import '../filepond.css';
+import { Config } from '../Header/Config';
 import { usePluginSettings } from '../Settings';
-import './up.css';
-
-const RadioGroup = Radio.Group;
 
 export const Up = () => {
-  const { scope, setScope, current } = usePluginSettings();
+  const { scope, current } = usePluginSettings();
   const [files, setFiles] = useState<any[]>([]);
   const [quality, setQuality] = useState(80);
+  const [syncing, setSyncing] = useState(false);
 
   const wrapper = useRef<HTMLDivElement | null>(null);
 
@@ -50,8 +43,8 @@ export const Up = () => {
       if (!plug) return;
       try {
         const lite = await plug.transform(file as File);
-        const result = await plug.upload(lite);
-        await DB.insert(plug.name, result);
+        const result = await plug.upload(lite, current?.alias);
+        await DB.insert(result);
 
         load(result.url);
         setTimeout(() => {
@@ -61,15 +54,12 @@ export const Up = () => {
         error(e.message);
       }
     },
-    [plug],
+    [current?.alias, plug],
   );
 
   useEffect(() => {
     if (count > 0 && finished === count) {
-      Notification.success({
-        title: '上传完成!',
-        content: `${count} / ${finished}`,
-      });
+      notify.success('上传完成', `${count} / ${finished}`);
     }
   }, [count, finished]);
 
@@ -79,50 +69,53 @@ export const Up = () => {
   }, []);
 
   return (
-    <div>
-      <Card bordered={false}>
-        <Space
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
+    <div className="rush-wrapper">
+      <Space
+        size="small"
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+        }}
+      >
+        <Config></Config>
+        <Slider
+          style={{ width: '240px', transform: 'translate3d(0, 8px, 0)' }}
+          value={quality}
+          marks={{
+            80: '80%',
+          }}
+          onChange={(n) => setQuality(n as number)}
+        ></Slider>
+        <Progress
+          size="small"
+          steps={5}
+          percent={count === 0 ? 0 : Math.ceil((finished / count) * 100)}
+          status={'success'}
+        ></Progress>
+        <Button
+          onClick={() => {
+            setSyncing(true);
+            plug.sync(current?.alias as string).finally(() => {
+              setSyncing(false);
+            });
+          }}
+          iconOnly
+          disabled={plug.supported.sync}
+          type="outline"
+          loading={syncing}
+          icon={<IconCloudDownload></IconCloudDownload>}
+        ></Button>
+        <Button
+          onClick={() => {
+            setFinished(0);
+            setFiles([]);
           }}
         >
-          <RadioGroup
-            type="button"
-            value={scope}
-            onChange={setScope}
-            options={plugins}
-          ></RadioGroup>
+          清空
+        </Button>
+      </Space>
 
-          <Space direction="vertical" style={{ flex: 1 }}>
-            <Typography.Text bold>&nbsp;&nbsp;&nbsp; 压缩质量</Typography.Text>
-            <Slider
-              style={{ width: '400px' }}
-              value={quality}
-              marks={{
-                80: '80%',
-              }}
-              onChange={(n) => setQuality(n as number)}
-            ></Slider>
-          </Space>
-          <Progress
-            size="small"
-            steps={5}
-            percent={count === 0 ? 0 : Math.ceil((finished / count) * 100)}
-            status={'success'}
-          ></Progress>
-          <Button
-            onClick={() => {
-              setFinished(0);
-              setFiles([]);
-            }}
-          >
-            清空
-          </Button>
-        </Space>
-      </Card>
-
-      <div ref={wrapper} style={{ position: 'relative' }}>
+      <div ref={wrapper} className="rush-workspace">
         <Rush
           stylePanelAspectRatio={'4:3'}
           files={files}
@@ -133,7 +126,7 @@ export const Up = () => {
           labelIdle={pic}
         />
         {files.length === 0 ? (
-          <AniSvg name="task" opacity={0.8} className="upload-empty"></AniSvg>
+          <AniSvg name="task" opacity={0.8} className="task-empty"></AniSvg>
         ) : null}
       </div>
     </div>

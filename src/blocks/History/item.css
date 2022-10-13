@@ -1,6 +1,6 @@
 .item-wrapper {
   width: 100%;
-  border-radius: 4px;
+  position: relative;
   overflow: hidden;
   transition: all ease-in-out 0.3s;
   background-position: center;
@@ -13,8 +13,27 @@
   border-radius: 4px;
   overflow: hidden;
   transition: all ease-in-out 0.3s;
+  padding: 16px 10px 30px 10px;
+}
+
+.item-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-end;
-  padding: 16px 10px;
+  color: var(--color-text-1);
+  transition: opacity ease 0.2s;
+}
+
+.item-header-text {
+  height: 3.3em;
+  word-break: break-all;
+  overflow: hidden;
+  transition: all ease-in-out 0.3s;
+  text-overflow: ellipsis;
+}
+
+.item-footer {
+  display: flex;
+  position: absolute;
+  left: 10px; right: 10px;
+  bottom: 0px;
 }

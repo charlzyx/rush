@@ -2576,10 +2576,12 @@ dependencies = [
 name = "rush"
 version = "0.0.0"
 dependencies = [
+ "flate2",
  "lazy_static",
  "qiniu-upload-token",
  "serde",
  "serde_json",
+ "tar",
  "tauri",
  "tauri-build",
  "tauri-plugin-sql",

@@ -1,10 +1,13 @@
 import { Button, Form, Input, Radio, Space } from '@arco-design/web-react';
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useMemo, useRef } from 'react';
+import { shell } from '@tauri-apps/api';
 
 import { PluginConfigSchemaItem } from '@/plugins/Plugin';
+import { IconLaunch } from '@arco-design/web-react/icon';
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 
+const required = [{ required: true }];
 export const SchemaForm = (props: {
   init?: any;
   onSubmit: (neo: any) => Promise<any>;
@@ -15,12 +18,37 @@ export const SchemaForm = (props: {
 
   const items = useMemo(() => {
     return props.schema.map((item) => {
+      const sbinit = item.dataSource
+        ? {
+            initialValue: item.dataSource?.[0].value,
+          }
+        : {};
       return (
-        <FormItem field={item.name} label={item.label} required>
+        <FormItem
+          field={item.name}
+          label={item.label}
+          required={item.required}
+          {...sbinit}
+          help={
+            <div>
+              {item.help}
+              {item.helpLink ? (
+                <IconLaunch
+                  style={{ color: 'rgb(var(--primary-6))' }}
+                  onClick={() => {
+                    shell.open(item.helpLink!);
+                  }}
+                ></IconLaunch>
+              ) : null}
+            </div>
+          }
+          // initialValue={item.required ? item.dataSource?.[0].value : undefined}
+          rules={item.required ? required : []}
+        >
           {item.dataSource ? (
             <RadioGroup
               type="button"
-              defaultValue={item.required ? item.dataSource[0].value : null}
+              // defaultValue={item.required ? item.dataSource[0].value : null}
               options={item.dataSource}
             ></RadioGroup>
           ) : (
@@ -49,6 +77,7 @@ export const SchemaForm = (props: {
           label="别名"
           required
           disabled={props.init?.alias}
+          rules={required}
         >
           <Input />
         </FormItem>

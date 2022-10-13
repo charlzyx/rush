@@ -1,7 +1,7 @@
 import { StoreItem } from '@/shared/typings';
 import tiny from '@mxsir/image-tiny';
 import { TINY_SUPPORTE } from './config';
-import { Fs } from './fs';
+import { Fs } from '@/utils/fs';
 import { Plugin } from './Plugin';
 
 export interface TinyConfig {
@@ -12,12 +12,11 @@ export interface TinyConfig {
 export class TinyPlugin extends Plugin {
   name = 'tiny';
   config: TinyConfig = { quality: 80 };
-  fs: Fs;
 
   constructor(config: TinyConfig) {
     super();
     this.config = { ...this.config, ...config };
-    this.fs = new Fs(this.config.output);
+    Fs.setOutput(this.config.output);
   }
 
   async transform(file: File): Promise<File> {
@@ -29,12 +28,16 @@ export class TinyPlugin extends Plugin {
     }
   }
 
-  async upload(file: File): Promise<StoreItem> {
+  async upload(file: File, alias: string): Promise<StoreItem> {
     const buffer = await file.arrayBuffer();
-    const url = await this.fs.wirte(file.name, buffer);
+    const url = await Fs.wirte(file.name, buffer);
 
-    const ret = {
+    const ret: StoreItem = {
+      size: file.size,
+      extra: '',
+      alias,
       scope: this.name,
+      hash: file.name,
       name: file.name,
       create_time: +new Date(),
       url: `file://${url}`,

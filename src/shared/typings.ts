@@ -1,4 +1,6 @@
 export type PageQuery = {
+  scope: string;
+  alias: string;
   pageNumber: number;
   pageSize: number;
   kw?: string;
@@ -7,9 +9,15 @@ export type PageQuery = {
 };
 
 export type StoreItem = {
+  id?: string;
+  scope: string;
+  size: number;
+  alias: string;
   name: string;
   url: string;
   create_time: number;
+  hash: string;
+  extra?: string;
 };
 
 export type PageResp = {

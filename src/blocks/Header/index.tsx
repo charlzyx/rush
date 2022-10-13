@@ -1,5 +1,4 @@
 import React from 'react';
-import { Config } from './Config';
 import { Menu } from './Menu';
 import { Pin } from './Pin';
 import { Theme } from './Theme';
@@ -37,9 +36,9 @@ export const Header = () => {
         <div style={css.item}>
           <Menu></Menu>
         </div>
-        <div style={css.item}>
+        {/* <div style={css.item}>
           <Config></Config>
-        </div>
+        </div> */}
         <div style={css.item}>
           <Theme></Theme>
         </div>

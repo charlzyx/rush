@@ -1,27 +1,30 @@
 import { pic } from '@/assets/svg';
 import { AniSvg } from '@/blocks/AniSvg';
-import { Fs } from '@/plugins/fs';
 import { TinyPlugin } from '@/plugins/Tiny';
+import { Fs } from '@/utils/fs';
+import { notify } from '@/utils/notify';
 import { ProcessServer, Rush } from '@/utils/rush';
-import {
-  Button,
-  Card,
-  Notification,
-  Progress,
-  Slider,
-  Space,
-  Typography,
-} from '@arco-design/web-react';
-import { IconFolder } from '@arco-design/web-react/icon';
+import { Button, Progress, Slider, Space } from '@arco-design/web-react';
+import { IconLaunch, IconSettings } from '@arco-design/web-react/icon';
 import { shell } from '@tauri-apps/api';
 import { useRafInterval } from 'ahooks';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import '../filepond.css';
 import './zip.css';
 
 export const Zip = () => {
   const [files, setFiles] = useState<any[]>([]);
   const [quality, setQuality] = useState(80);
-  const optimizeMaping = useRef<Record<string, number>>({});
+  const optimizeMaping = useRef<
+    Record<
+      string,
+      {
+        ratio: number;
+        before: number;
+        after: number;
+      }
+    >
+  >({});
   const wrapper = useRef<HTMLDivElement | null>(null);
 
   const plug = useMemo(() => {
@@ -47,11 +50,13 @@ export const Zip = () => {
       const preSize = file.size;
       const lite = await plug.transform(file as File);
       const afterSize = lite.size;
-      const result = await plug.upload(lite);
+      const result = await plug.upload(lite, 'tiny');
 
-      optimizeMaping.current[file.name] = parseFloat(
-        ((afterSize / preSize) * 100).toFixed(2),
-      );
+      optimizeMaping.current[file.name] = {
+        ratio: parseFloat(((afterSize / preSize) * 100).toFixed(2)),
+        before: preSize,
+        after: afterSize,
+      };
 
       load(result.url);
       setTimeout(() => {
@@ -63,10 +68,18 @@ export const Zip = () => {
 
   useEffect(() => {
     if (count > 0 && finished === count) {
-      Notification.success({
-        title: '压缩完成!',
-        content: `${count} / ${finished}`,
-      });
+      const map = optimizeMaping.current;
+      const info = Object.keys(map).reduce(
+        (yyds, name) => {
+          yyds.before += map[name]?.before || 0;
+          yyds.after += map[name]?.before || 0;
+          return yyds;
+        },
+        { before: 0, after: 0 },
+      );
+      const before = `${info.before / 1024}Kb`;
+      const after = `${info.after / 1024}Kb`;
+      notify.success('压缩完成', `${after} / ${before}`);
     }
   }, [count, finished]);
 
@@ -85,7 +98,7 @@ export const Zip = () => {
         '.filepond--file-wrapper legend',
       );
       const name = legend?.innerHTML;
-      const ratio = optimizeMaping.current?.[name || ''];
+      const ratio = optimizeMaping.current?.[name || '']?.ratio;
 
       const text = status?.children?.[0];
       if (!text) return;
@@ -98,62 +111,69 @@ export const Zip = () => {
     });
   };
 
+  fresh();
+
   useRafInterval(() => {
     fresh();
   }, 123);
 
   return (
-    <div>
-      <Card bordered={false}>
-        <Space
+    <div className="rush-wrapper zip">
+      <Space
+        size={'small'}
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+        }}
+      >
+        <Button.Group
           style={{
-            display: 'flex',
-            justifyContent: 'space-between',
+            width: '160px',
           }}
         >
           <Button
             onClick={() => {
+              Fs.getThenSetOuputDir();
+            }}
+            icon={<IconSettings></IconSettings>}
+            type="outline"
+          ></Button>
+          <Button
+            onClick={() => {
               shell.open(Fs.output);
             }}
-            size="small"
-            icon={<IconFolder></IconFolder>}
+            icon={<IconLaunch></IconLaunch>}
             type="outline"
           >
             打开输出录
           </Button>
-          <Space direction="vertical" style={{ flex: 1 }}>
-            <Typography.Text bold>&nbsp;&nbsp;&nbsp; 压缩质量</Typography.Text>
-            <Slider
-              style={{ width: '400px' }}
-              value={quality}
-              marks={{
-                80: '80%',
-              }}
-              onChange={(n) => setQuality(n as number)}
-            ></Slider>
-          </Space>
-          <Progress
-            size="small"
-            steps={5}
-            percent={count === 0 ? 0 : Math.ceil((finished / count) * 100)}
-            status={'success'}
-          ></Progress>
-          <Button
-            onClick={() => {
-              setFinished(0);
-              setFiles([]);
-            }}
-          >
-            清空
-          </Button>
-        </Space>
-      </Card>
+        </Button.Group>
+        <Slider
+          style={{ width: '240px', transform: 'translate3d(0, 8px, 0)' }}
+          value={quality}
+          marks={{
+            80: '80%',
+          }}
+          onChange={(n) => setQuality(n as number)}
+        ></Slider>
+        <Progress
+          size="small"
+          steps={5}
+          percent={count === 0 ? 0 : Math.ceil((finished / count) * 100)}
+          status={'success'}
+        ></Progress>
+        <Button type="text"></Button>
+        <Button
+          onClick={() => {
+            setFinished(0);
+            setFiles([]);
+          }}
+        >
+          清空
+        </Button>
+      </Space>
 
-      <div
-        ref={wrapper}
-        className="tiny-wrapper"
-        style={{ position: 'relative' }}
-      >
+      <div ref={wrapper} className="rush-workspace">
         <Rush
           stylePanelAspectRatio={'4:3'}
           files={files}
@@ -164,7 +184,7 @@ export const Zip = () => {
           labelIdle={pic}
         />
         {files.length === 0 ? (
-          <AniSvg name="task" opacity={0.8} className="upload-empty"></AniSvg>
+          <AniSvg name="task" opacity={0.8} className="task-empty"></AniSvg>
         ) : null}
       </div>
     </div>

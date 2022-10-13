@@ -1,11 +1,9 @@
 import { StoreItem } from '@/shared/typings';
-import { Button, Image, Space, Typography } from '@arco-design/web-react';
-import { IconCloud, IconFile, IconFolder } from '@arco-design/web-react/icon';
-import { path, shell } from '@tauri-apps/api';
+import { Image } from '@arco-design/web-react';
 import { convertFileSrc } from '@tauri-apps/api/tauri';
 import dayjs from 'dayjs';
 import { useMemo, useState } from 'react';
-import { Copyable } from './Copyable';
+import { Copy, Open, Remove } from './Actions';
 import './item.css';
 
 const IMAGE_PATTERN = /\.(jpg|jpeg|png|gif|webp|svg)/;
@@ -14,6 +12,7 @@ const FILE_PATTERN = /file:\/\//;
 export const Box = (props: {
   data: StoreItem;
   fit?: 'cover' | 'contain';
+  onRemove: () => void;
   blur?: number;
 }) => {
   const [hover, setHover] = useState(false);
@@ -61,62 +60,46 @@ export const Box = (props: {
         }}
         onClick={() => (isImage ? setVisible(true) : null)}
       >
-        <div>
-          <Typography.Title
+        <div className="item-header">
+          <div
             style={{
               color: 'var(--color-text-1)',
-              opacity: !isImage || black ? 1 : hover ? 1 : 0,
-              transition: 'opacity ease 0.2s',
+              opacity: !isImage || black ? 1 : hover ? 1 : 0.1,
             }}
-            ellipsis={{
-              cssEllipsis: true,
-              showTooltip: true,
-              rows: 3,
-            }}
-            heading={6}
+            className="item-header-text"
           >
             {displayName}
-          </Typography.Title>
-          <span
-            style={{
-              color: 'var(--color-text-2)',
-            }}
-          >
-            {dayjs(create_time).fromNow()}
-          </span>
+          </div>
+          <div>
+            <Remove onClick={props.onRemove}></Remove>
+          </div>
         </div>
 
         <div
+          className="item-footer"
           onClick={(e) => {
             e.stopPropagation();
           }}
         >
-          {FILE_PATTERN.test(url) ? (
-            <Space>
-              <Button
-                onClick={() => {
-                  shell.open(url);
-                }}
-                size="small"
-                icon={<IconFile></IconFile>}
-                iconOnly
-                type="outline"
-              ></Button>
-              <Button
-                onClick={() => {
-                  path.dirname(url).then((dir) => {
-                    shell.open(dir);
-                  });
-                }}
-                size="small"
-                icon={<IconFolder></IconFolder>}
-                iconOnly
-                type="outline"
-              ></Button>
-            </Space>
-          ) : (
-            <Copyable text={fileUrl}></Copyable>
-          )}
+          <div>
+            <span
+              style={{
+                color: 'var(--color-text-2)',
+              }}
+            >
+              {dayjs(create_time).fromNow()}
+            </span>
+          </div>
+          <div
+            style={{
+              flex: 1,
+              display: 'flex',
+              justifyContent: 'flex-end',
+            }}
+          >
+            <Copy text={fileUrl}></Copy>
+            <Open url={fileUrl}></Open>
+          </div>
         </div>
       </div>
       <Image.Preview

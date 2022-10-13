@@ -8,7 +8,6 @@ import {
   Input,
   Pagination,
   Radio,
-  Select,
 } from '@arco-design/web-react';
 import {
   IconFullscreen,
@@ -19,7 +18,9 @@ import { useDebounce, useSize, useThrottle } from 'ahooks';
 import dayjs from 'dayjs';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { usePluginSettings } from '../Settings';
+import { Config } from '../Header/Config';
 import { Box } from './Box';
+import { getPlugin } from '@/plugins';
 
 const RadioGroup = Radio.Group;
 
@@ -98,12 +99,17 @@ const useResponsiveSize = (wrapperRef: { current: HTMLDivElement | null }) => {
 };
 
 export const History = () => {
-  const { scope, setScope, plugins } = usePluginSettings();
+  const { scope, current } = usePluginSettings();
   const [query, setQuery] = useState({
     list: [] as StoreItem[],
     kw: '',
     dateRange: [] as string[],
   });
+
+  const plug = useMemo(() => {
+    const Plug = getPlugin(scope);
+    return new Plug({ ...current });
+  }, [current, scope]);
 
   const [list, setList] = useState<StoreItem[]>([]);
 
@@ -121,7 +127,7 @@ export const History = () => {
 
   const lazyKw = useDebounce(query.kw, { trailing: true, wait: 233 });
   const wrapper = useRef<HTMLDivElement | null>(null);
-  const { col, pageSize } = useResponsiveSize(wrapper);
+  const { col, row, pageSize } = useResponsiveSize(wrapper);
 
   const rows = useMemo(() => {
     return list.reduce((arr, item, idx) => {
@@ -147,7 +153,9 @@ export const History = () => {
         loading: true,
       };
     });
-    DB.query(scope, {
+    DB.query({
+      scope,
+      alias: current?.alias,
       pageNumber: page.current,
       pageSize: page.pageSize,
       kw: lazyKw,
@@ -175,12 +183,12 @@ export const History = () => {
           };
         });
       });
-  }, [setState, scope, page, lazyKw, query.dateRange]);
+  }, [setState, scope, current?.alias, page, lazyKw, query.dateRange]);
 
   useEffect(() => {
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query, page.pageSize, page.current, lazyKw, scope]);
+  }, [query, page.pageSize, page.current, lazyKw, scope, current?.alias]);
 
   return (
     <div
@@ -203,20 +211,7 @@ export const History = () => {
             display: 'flex',
           }}
         >
-          {plugins.length <= 3 ? (
-            <RadioGroup
-              value={scope}
-              onChange={(v) => setScope(v)}
-              type="button"
-              options={plugins}
-            ></RadioGroup>
-          ) : (
-            <Select
-              value={scope}
-              onChange={(v) => setScope(v)}
-              options={plugins}
-            ></Select>
-          )}
+          <Config></Config>
           <span>&nbsp;&nbsp;</span>
           <div>
             <Input
@@ -236,7 +231,16 @@ export const History = () => {
             ></DatePicker.RangePicker>
           </div>
         </div>
-        <div>
+        <div style={{ display: 'flex' }}>
+          {/* <Button
+            onClick={() => {
+              DB.open();
+            }}
+            type="outline"
+            icon={<IconRefresh></IconRefresh>}
+          >
+            OPEN
+          </Button> */}
           <Button
             onClick={() => {
               load();
@@ -244,6 +248,7 @@ export const History = () => {
             type="outline"
             icon={<IconRefresh></IconRefresh>}
           >
+            {col} x {row}
             刷新
           </Button>
         </div>
@@ -269,12 +274,17 @@ export const History = () => {
                   {group.map((item) => {
                     return (
                       <td
+                        width={`${(100 / col).toFixed(2)}%`}
                         key={item.name + item.create_time}
-                        width={`${Math.floor(100 / col)}%`}
                       >
                         <Box
                           fit={state.fit}
                           key={item.create_time + item.name}
+                          onRemove={() => {
+                            return plug.remove(item).then(() => {
+                              load();
+                            });
+                          }}
                           data={item}
                         ></Box>
                       </td>
@@ -296,7 +306,13 @@ export const History = () => {
           ></AniSvg>
         )}
       </div>
-      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          marginTop: list.length === 0 ? '16px' : 0,
+        }}
+      >
         <div style={{ display: 'flex', flex: 1 }}>
           <RadioGroup
             value={state.fit}

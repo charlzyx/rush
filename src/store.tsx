@@ -20,7 +20,12 @@ export const store = {
   },
 };
 
-type Key = 'config_scope' | 'config_list' | 'config_current' | 'history_state';
+type Key =
+  | 'config_scope'
+  | 'config_list'
+  | 'config_current'
+  | 'history_state'
+  | 'output';
 
 export const useStore = <S extends any>(key: Key, init?: S) => {
   const [state, setState] = useState<S>(store.get(key) ?? init);

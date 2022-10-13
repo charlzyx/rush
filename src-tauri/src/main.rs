@@ -5,12 +5,25 @@
 
 use qiniu_upload_token::{FileType, UploadPolicy, credential::Credential, prelude::*};
 use std::{time::Duration, fmt::Error};
+use std::fs::File;
+use flate2::read::GzDecoder;
+use tar::Archive;
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
 fn greet(name: &str) -> String {
     format!("Hello, {}! You've been greeted from Rust!", name)
 }
+
+// #[tauri::command]
+// fn unzip(file_path: &str, to: &str) -> Result<(), std::io::Error> {
+//   let tar_gz = File::open(file_path)?;
+//   let tar = GzDecoder::new(tar_gz);
+//   let mut archive = Archive::new(tar);
+//   archive.unpack(to)?;
+
+//   Ok(())
+// }
 
 #[tauri::command]
 fn qiniu_get_token(access_key: String, secret_key: String, bucket_name: String, life_time: u64) -> String {
