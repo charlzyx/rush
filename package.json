@@ -14,8 +14,6 @@
   },
   "dependencies": {
     "@arco-design/web-react": "^2.40.2",
-    "@formily/core": "^2.2.5",
-    "@formily/react": "^2.2.5",
     "@mxsir/image-tiny": "^0.1.0",
     "@tauri-apps/api": "^1.1.0",
     "@types/ali-oss": "^6.16.4",
@@ -39,6 +37,7 @@
     "tauri-plugin-sql-api": "github:tauri-apps/tauri-plugin-sql#release"
   },
   "devDependencies": {
+    "@actions/github": "^5.1.1",
     "@tauri-apps/cli": "^1.1.0",
     "@types/node": "^18.7.10",
     "@types/react": "^18.0.15",

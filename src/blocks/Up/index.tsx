@@ -28,6 +28,7 @@ export const Up = () => {
   const count = useMemo(() => {
     return files.length || 0;
   }, [files.length]);
+  console.log('plug', plug.supported);
 
   const uploading: ProcessServer = useCallback(
     async (
@@ -100,7 +101,7 @@ export const Up = () => {
             });
           }}
           iconOnly
-          disabled={plug.supported.sync}
+          disabled={!plug.supported.sync}
           type="outline"
           loading={syncing}
           icon={<IconCloudDownload></IconCloudDownload>}

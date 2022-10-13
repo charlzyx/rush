@@ -15,7 +15,7 @@ export class DB {
   static async connect(): Promise<Database> {
     try {
       DB.db = await Database.load('sqlite:rush.db');
-      console.log('DB connect Success!');
+      // console.log('DB connect Success!');
       return DB.db;
     } catch (e) {
       return Promise.reject(e);
@@ -44,7 +44,7 @@ export class DB {
     if (!DB.db) {
       return Promise.reject('DB not connected.');
     }
-    console.log('batch', data);
+    // console.log('batch', data);
     const batch = data.map((item) => {
       const id = `${+new Date()}_${nanoid()}`;
       const { scope, alias, name, url, hash, extra, create_time } = item;
@@ -162,13 +162,13 @@ ${like}
     const total: { id: string }[] = await DB.db.select(count, [scope, alias]);
     const list = await DB.db.select(sql, [scope, alias]);
     const ret = { list: list as T[], total: total.length };
-    console.log('query', {
-      scope,
-      alias,
-      sql,
-      count,
-      ret,
-    });
+    // console.log('query', {
+    //   scope,
+    //   alias,
+    //   sql,
+    //   count,
+    //   ret,
+    // });
     return ret;
   }
 }

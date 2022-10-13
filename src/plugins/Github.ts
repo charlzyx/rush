@@ -166,7 +166,7 @@ export class GithubPlugin extends Plugin {
       const extra = parse(item.extra!);
       const { url, sha } = extra;
       const { token } = this.config;
-      const ret = await req.delete(url, {
+      await req.delete(url, {
         headers: {
           accept: 'application/vnd.github+json',
           Authorization: `token ${token}`,
@@ -177,7 +177,7 @@ export class GithubPlugin extends Plugin {
           sha,
         },
       });
-      console.log('github remove url', url, ret);
+      // console.log('github remove url', url, ret);
       await DB.remove(item);
       return Promise.resolve(true);
     } catch (error: any) {

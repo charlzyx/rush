@@ -8,16 +8,25 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import zh_cn from 'dayjs/locale/zh-cn';
 import { DB } from '@/db';
 import { autoudpate } from './autoupdate';
+import { notify } from './utils/notify';
 
 autoudpate();
 
 console.log('DB connecting...');
-DB.connect().then(() => {
-  console.log('DB init...');
-  DB.init().then(() => {
-    console.log('DB inited.');
+DB.connect()
+  .then(() => {
+    console.log('DB init...');
+    DB.init()
+      .then(() => {
+        console.log('DB inited.');
+      })
+      .catch((e) => {
+        notify.err('DB', 'DB init Failed.', e.message);
+      });
+  })
+  .catch((e) => {
+    notify.err('DB', 'SQLite connect Failed.', e.message);
   });
-});
 
 dayjs.extend(relativeTime);
 

@@ -9,7 +9,7 @@ export const notify = {
       duration: 1000,
     });
   },
-  err(scope: PluginKey | 'HTTP', title: string, content: string) {
+  err(scope: PluginKey | 'HTTP' | 'DB', title: string, content: string) {
     return Notification.error({
       title: `[${scope}] ${title}`,
       content,
