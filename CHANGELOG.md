@@ -1,7 +1,10 @@
 # CHANGELOG
 
+## v1.1.3
+fix: 压缩提示修复
 ## v1.1.2
 fix: 压缩提示优化
+
 ## v1.1.1
 fix: 修复同步判断错误
 fix: 修复 @actions/github missing, remove @formily/*
