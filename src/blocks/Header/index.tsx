@@ -1,5 +1,8 @@
+import { Button } from '@arco-design/web-react';
+import { IconGithub } from '@arco-design/web-react/icon';
 import React from 'react';
 import { Menu } from './Menu';
+import { shell } from '@tauri-apps/api';
 import { Pin } from './Pin';
 import { Theme } from './Theme';
 import { Win } from './Win';
@@ -36,11 +39,16 @@ export const Header = () => {
         <div style={css.item}>
           <Menu></Menu>
         </div>
-        {/* <div style={css.item}>
-          <Config></Config>
-        </div> */}
         <div style={css.item}>
           <Theme></Theme>
+        </div>
+        <div style={css.item}>
+          <Button
+            onClick={() => {
+              shell.open('https://github.com/charlzyx/rush');
+            }}
+            icon={<IconGithub></IconGithub>}
+          ></Button>
         </div>
         <div>
           <Pin></Pin>

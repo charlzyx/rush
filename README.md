@@ -1,4 +1,4 @@
-# Rush! 冲冲冲!
+# Rush! 冲!
 
 ![logo](./public/brand.svg)
 
@@ -8,8 +8,15 @@
 - 拖拽批量压缩图片, 支持格式 `jpg/png/gif`
 > Drop to optimize, `jpg/png/gif` is supported.
 
-- 拖拽批量上传图片到 阿里云OSS/七牛云, 并默认开启图片压缩
-> Drop to upload to alioss/qiniu Object Storage, and optimize by default.
+- 拖拽批量上传图片到对象存储, 并默认开启图片压缩
+> Drop to upload to Cloud Object Storage Server, and optimize by default.
+
+## 支持 Supoorted
+- 阿里云 OSS
+- 腾讯云 COS
+- 七牛云 Qiniu
+- Github
 
 ## 截图 ScreenShots
-![2022-10-12 16 39 47](https://user-images.githubusercontent.com/18055018/195295182-d4bfa92d-b837-4df3-a21a-b802e9cc4863.gif)
+
+![](https://raw.githubusercontent.com/charlzyx/cloud/master/2022_10_13/image.png)

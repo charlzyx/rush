@@ -8,7 +8,7 @@ export const Pin = () => {
 
   return (
     <Button
-      type={top ? 'primary' : 'outline'}
+      type={top ? 'primary' : 'default'}
       icon={<IconPushpin></IconPushpin>}
       onClick={toggle}
       iconOnly

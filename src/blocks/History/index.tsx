@@ -14,6 +14,7 @@ import {
   IconFullscreenExit,
   IconRefresh,
   IconSave,
+  IconStorage,
 } from '@arco-design/web-react/icon';
 import { useDebounce, useLatest, useSize, useThrottle } from 'ahooks';
 import dayjs from 'dayjs';
@@ -110,7 +111,11 @@ export const History = () => {
 
   const plug = useMemo(() => {
     const Plug = getPlugin(scope);
-    return new Plug({ ...current });
+    let maybe = null;
+    try {
+      maybe = new Plug({ ...current });
+    } catch (error) {}
+    return maybe;
   }, [current, scope]);
 
   const [list, setList] = useState<StoreItem[]>([]);
@@ -125,6 +130,12 @@ export const History = () => {
     loading: false,
     blur: false,
     fit: 'cover' as 'cover' | 'contain',
+  });
+
+  const lazyLoading = useThrottle(state.loading, {
+    wait: 123,
+    trailing: true,
+    leading: true,
   });
 
   const lazyKw = useDebounce(query.kw, { trailing: true, wait: 233 });
@@ -244,16 +255,16 @@ export const History = () => {
                 DB.open();
               }}
               type="outline"
-              icon={<IconSave></IconSave>}
+              icon={<IconStorage></IconStorage>}
             ></Button>
             <Button
               onClick={() => {
                 load();
               }}
               type="outline"
+              loading={lazyLoading}
               icon={<IconRefresh></IconRefresh>}
             >
-              {col} x {row}
               刷新
             </Button>
           </Button.Group>
@@ -287,6 +298,7 @@ export const History = () => {
                           fit={state.fit}
                           key={item.create_time + item.name}
                           onRemove={() => {
+                            if (!plug) return;
                             return plug.remove(item).then(() => {
                               load();
                             });
@@ -303,14 +315,7 @@ export const History = () => {
         </table>
         {list.length === 0 ? (
           <AniSvg abs name="wait" opacity={0.8}></AniSvg>
-        ) : (
-          <AniSvg
-            name="wait"
-            abs
-            visible={state.loading}
-            opacity={0.8}
-          ></AniSvg>
-        )}
+        ) : null}
       </div>
       <div
         style={{
@@ -334,23 +339,13 @@ export const History = () => {
             </Radio>
           </RadioGroup>
           <span>&nbsp;&nbsp;</span>
-          {/* <RadioGroup
-            value={state.blur ? 'true' : 'false'}
-            onChange={(v) => setState((x) => ({ ...x, blur: v === 'true' }))}
-            type="button"
-            defaultValue="true"
-          >
-            <Radio value="true">
-              <IconMosaic></IconMosaic>
-            </Radio>
-            <Radio value="false">
-              <IconImage></IconImage>
-            </Radio>
-          </RadioGroup> */}
         </div>
         <div>
           <Pagination
             current={page.current}
+            showTotal={(total, range) => (
+              <span>{`第 ${range[0]}-${range[1]} 条/总共 ${total} 条`}</span>
+            )}
             pageSize={page.pageSize}
             onChange={(n) =>
               setPage((x) => {

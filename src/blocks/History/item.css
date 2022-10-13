@@ -2,7 +2,7 @@
   width: 100%;
   position: relative;
   overflow: hidden;
-  transition: all ease-in-out 0.3s;
+  transition: all ease-in-out 0.2s;
   background-position: center;
   background-repeat: no-repeat;
   border: 1px solid var(--color-border-1);
@@ -12,7 +12,7 @@
   width: 100%;
   border-radius: 4px;
   overflow: hidden;
-  transition: all ease-in-out 0.3s;
+  transition: all ease-in-out 0.2s;
   padding: 16px 10px 30px 10px;
 }
 
@@ -27,7 +27,7 @@
   height: 3.3em;
   word-break: break-all;
   overflow: hidden;
-  transition: all ease-in-out 0.3s;
+  transition: all ease-in-out 0.2s;
   text-overflow: ellipsis;
 }
 

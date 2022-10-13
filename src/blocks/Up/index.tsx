@@ -21,14 +21,17 @@ export const Up = () => {
 
   const plug = useMemo(() => {
     const Plug = getPlugin(scope);
-    return new Plug({ ...current });
+    let maybe = null;
+    try {
+      maybe = new Plug({ ...current });
+    } catch (error) {}
+    return maybe;
   }, [current, scope]);
 
   const [finished, setFinished] = useState(0);
   const count = useMemo(() => {
     return files.length || 0;
   }, [files.length]);
-  console.log('plug', plug.supported);
 
   const uploading: ProcessServer = useCallback(
     async (
@@ -96,12 +99,13 @@ export const Up = () => {
         <Button
           onClick={() => {
             setSyncing(true);
+            if (!plug) return;
             plug.sync(current?.alias as string).finally(() => {
               setSyncing(false);
             });
           }}
           iconOnly
-          disabled={!plug.supported.sync}
+          disabled={!plug?.supported?.sync}
           type="outline"
           loading={syncing}
           icon={<IconCloudDownload></IconCloudDownload>}
