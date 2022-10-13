@@ -77,9 +77,10 @@ export const Zip = () => {
         },
         { before: 0, after: 0 },
       );
-      const before = `${info.before / 1024}Kb`;
-      const after = `${info.after / 1024}Kb`;
-      notify.success('压缩完成', `${after} / ${before}`);
+      const before = `${(info.before / 1024).toFixed(2)} KB`;
+      const after = `${(info.after / 1024).toFixed(2)} KB`;
+      const ratio = ((info.after / info.before) * 100).toFixed(2);
+      notify.success('压缩完成', `${before} ~> ${after} -${ratio}%`);
     }
   }, [count, finished]);
 
@@ -110,8 +111,6 @@ export const Zip = () => {
       text.innerHTML = tip;
     });
   };
-
-  fresh();
 
   useRafInterval(() => {
     fresh();
