@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v1.1.1
+fix: 修复同步判断错误
+fix: 修复 @actions/github missing, remove @formily/*
+
 ## v1.1.0
 feat: 成吨的优化, 添加 scope/alias 二级空间
 feat: 移除垃圾 gitee
