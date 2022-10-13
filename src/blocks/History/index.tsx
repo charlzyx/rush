@@ -13,8 +13,9 @@ import {
   IconFullscreen,
   IconFullscreenExit,
   IconRefresh,
+  IconSave,
 } from '@arco-design/web-react/icon';
-import { useDebounce, useSize, useThrottle } from 'ahooks';
+import { useDebounce, useLatest, useSize, useThrottle } from 'ahooks';
 import dayjs from 'dayjs';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { usePluginSettings } from '../Settings';
@@ -83,7 +84,8 @@ const useResponsiveSize = (wrapperRef: { current: HTMLDivElement | null }) => {
   }, [height, rect, unit]);
 
   const pageSize = useDebounce(col * row, {
-    wait: 233,
+    wait: 200,
+    leading: true,
     trailing: true,
   });
 
@@ -144,8 +146,23 @@ export const History = () => {
     });
   }, [pageSize]);
 
+  const params = useLatest({
+    scope,
+    alias: current?.alias,
+    pageNumber: page.current,
+    pageSize: page.pageSize,
+    kw: lazyKw,
+    startTime: query.dateRange?.[0]
+      ? +dayjs(query.dateRange[0]).startOf('day')
+      : undefined,
+    endTime: query.dateRange?.[1]
+      ? +dayjs(query.dateRange[1]).endOf('day')
+      : undefined,
+  });
+
   const load = useCallback(() => {
     if (!DB.db) return;
+    // if (auto && page.total > 0 && page.total < params.current.pageSize) return;
 
     setState((x) => {
       return {
@@ -153,19 +170,8 @@ export const History = () => {
         loading: true,
       };
     });
-    DB.query({
-      scope,
-      alias: current?.alias,
-      pageNumber: page.current,
-      pageSize: page.pageSize,
-      kw: lazyKw,
-      startTime: query.dateRange?.[0]
-        ? +dayjs(query.dateRange[0]).startOf('day')
-        : undefined,
-      endTime: query.dateRange?.[1]
-        ? +dayjs(query.dateRange[1]).endOf('day')
-        : undefined,
-    })
+
+    DB.query(params.current)
       .then((data) => {
         setList(data.list as StoreItem[]);
         setPage((x) => {
@@ -183,7 +189,7 @@ export const History = () => {
           };
         });
       });
-  }, [setState, scope, current?.alias, page, lazyKw, query.dateRange]);
+  }, [params, setState]);
 
   useEffect(() => {
     load();
@@ -232,25 +238,25 @@ export const History = () => {
           </div>
         </div>
         <div style={{ display: 'flex' }}>
-          {/* <Button
-            onClick={() => {
-              DB.open();
-            }}
-            type="outline"
-            icon={<IconRefresh></IconRefresh>}
-          >
-            OPEN
-          </Button> */}
-          <Button
-            onClick={() => {
-              load();
-            }}
-            type="outline"
-            icon={<IconRefresh></IconRefresh>}
-          >
-            {col} x {row}
-            刷新
-          </Button>
+          <Button.Group>
+            <Button
+              onClick={() => {
+                DB.open();
+              }}
+              type="outline"
+              icon={<IconSave></IconSave>}
+            ></Button>
+            <Button
+              onClick={() => {
+                load();
+              }}
+              type="outline"
+              icon={<IconRefresh></IconRefresh>}
+            >
+              {col} x {row}
+              刷新
+            </Button>
+          </Button.Group>
         </div>
       </div>
       <div
@@ -342,7 +348,7 @@ export const History = () => {
             </Radio>
           </RadioGroup> */}
         </div>
-        <div style={{}}>
+        <div>
           <Pagination
             current={page.current}
             pageSize={page.pageSize}

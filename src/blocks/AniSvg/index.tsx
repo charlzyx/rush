@@ -55,9 +55,9 @@ export const AniSvg = (props: {
   const Abs = props.abs ? AbsoluteWrapper : React.Fragment;
 
   const lazy = useThrottle(props.visible ?? true, {
-    wait: 233,
+    wait: 68,
     leading: true,
-    trailing: true,
+    // trailing: true,
   });
 
   return lazy ? (

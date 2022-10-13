@@ -25,6 +25,7 @@ export const SchemaForm = (props: {
         : {};
       return (
         <FormItem
+          key={item.name}
           field={item.name}
           label={item.label}
           required={item.required}

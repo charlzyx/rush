@@ -13,7 +13,7 @@ export const notify = {
     return Notification.error({
       title: `[${scope}] ${title}`,
       content,
-      duration: 1000,
+      duration: 2000,
     });
   },
 };

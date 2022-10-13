@@ -1666,6 +1666,11 @@
     magic-string "^0.26.2"
     react-refresh "^0.14.0"
 
+"@xmldom/xmldom@^0.8.2":
+  version "0.8.3"
+  resolved "https://mirrors.cloud.tencent.com/npm/@xmldom%2fxmldom/-/xmldom-0.8.3.tgz#beaf980612532aa9a3004aff7e428943aeaa0711"
+  integrity sha512-Lv2vySXypg4nfa51LY1nU8yDAGo/5YwF+EY/rUZgIbfvwVARcd67ttCM8SMsTeJy51YhHYavEq+FS6R0hW9PFQ==
+
 acorn-jsx@^5.3.2:
   version "5.3.2"
   resolved "https://mirrors.cloud.tencent.com/npm/acorn-jsx/-/acorn-jsx-5.3.2.tgz#7ed5bb55908b3b2f1bc55c6af1653bada7f07937"
@@ -2201,6 +2206,13 @@ core-util-is@^1.0.2, core-util-is@~1.0.0:
   resolved "https://mirrors.cloud.tencent.com/npm/core-util-is/-/core-util-is-1.0.3.tgz#a6042d3634c2b27e9328f837b965fac83808db85"
   integrity sha512-ZQBvi1DcpJ4GDqanjucZ2Hj3wEO5pZDS89BWbkcrvdxksJorwUDDZamX9ldFkp9aw2lmBDLgkObEA4DWNJ9FYQ==
 
+cos-js-sdk-v5@^1.4.6:
+  version "1.4.6"
+  resolved "https://mirrors.cloud.tencent.com/npm/cos-js-sdk-v5/-/cos-js-sdk-v5-1.4.6.tgz#807b9eb4d8228ec1b6624f5bf71eb1e833930102"
+  integrity sha512-FTUXjBqtADiNk3O5pwiaiDLQRiD2bt5ZQnP+34rfBszG6DqH6oa7FNpQeI7lnTiCvsfIyE/EcsuCBt7VVQpioQ==
+  dependencies:
+    "@xmldom/xmldom" "^0.8.2"
+
 cosmiconfig@^7.0.0, cosmiconfig@^7.0.1:
   version "7.0.1"
   resolved "https://mirrors.cloud.tencent.com/npm/cosmiconfig/-/cosmiconfig-7.0.1.tgz#714d756522cace867867ccb4474c5d01bbae5d6d"
@@ -2225,6 +2237,11 @@ crypt@0.0.2:
   version "0.0.2"
   resolved "https://registry.npmmirror.com/crypt/-/crypt-0.0.2.tgz#88d7ff7ec0dfb86f713dc87bbb42d044d3e6c41b"
   integrity sha512-mCxBlsHFYh9C+HVpiEacem8FEBnMXgU9gy4zmNC+SXAZNB/1idgp/aulFJ4FgCi7GPEVbfyng092GqL2k2rmow==
+
+crypto@^1.0.1:
+  version "1.0.1"
+  resolved "https://mirrors.cloud.tencent.com/npm/crypto/-/crypto-1.0.1.tgz#2af1b7cad8175d24c8a1b0778255794a21803037"
+  integrity sha512-VxBKmeNcqQdiUQUW2Tzq0t377b54N2bMtXO/qiLa+6eRRmmC4qT3D4OnTGoT/U6O9aklQ/jTwbOtRMTTY8G0Ig==
 
 csstype@^3.0.2:
   version "3.1.1"
