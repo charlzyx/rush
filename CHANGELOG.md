@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## v1.2.4
+- fix: 🐛 修复 actions
+
 ## v1.2.3
 - fix: 🐛 修复updater again
 
