@@ -5,7 +5,6 @@ import { getPlugin } from '@/plugins';
 import { notify } from '@/utils/notify';
 import { ProcessServer, Rush } from '@/utils/rush';
 import { Button, Progress, Slider, Space } from '@arco-design/web-react';
-import { IconCloudDownload } from '@arco-design/web-react/icon';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import '../filepond.css';
 import { Config } from '../Header/Config';
@@ -15,7 +14,6 @@ export const Up = () => {
   const { scope, current } = usePluginSettings();
   const [files, setFiles] = useState<any[]>([]);
   const [quality, setQuality] = useState(80);
-  const [syncing, setSyncing] = useState(false);
 
   const wrapper = useRef<HTMLDivElement | null>(null);
 
@@ -81,7 +79,17 @@ export const Up = () => {
           justifyContent: 'space-between',
         }}
       >
-        <Config></Config>
+        <Button.Group>
+          <Config></Config>
+          <Button
+            onClick={() => {
+              setFinished(0);
+              setFiles([]);
+            }}
+          >
+            清空记录
+          </Button>
+        </Button.Group>
         <Slider
           style={{ width: '240px', transform: 'translate3d(0, 8px, 0)' }}
           value={quality}
@@ -96,28 +104,6 @@ export const Up = () => {
           percent={count === 0 ? 0 : Math.ceil((finished / count) * 100)}
           status={'success'}
         ></Progress>
-        <Button
-          onClick={() => {
-            setSyncing(true);
-            if (!plug) return;
-            plug.sync(current?.alias as string).finally(() => {
-              setSyncing(false);
-            });
-          }}
-          iconOnly
-          disabled={!plug?.supported?.sync}
-          type="outline"
-          loading={syncing}
-          icon={<IconCloudDownload></IconCloudDownload>}
-        ></Button>
-        <Button
-          onClick={() => {
-            setFinished(0);
-            setFiles([]);
-          }}
-        >
-          清空
-        </Button>
       </Space>
 
       <div ref={wrapper} className="rush-workspace">

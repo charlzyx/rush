@@ -1,16 +1,22 @@
 import { checkUpdate, installUpdate } from '@tauri-apps/api/updater';
 import { relaunch } from '@tauri-apps/api/process';
 
-export const autoudpate = async () => {
+export const autoupdate = async () => {
   try {
     const { shouldUpdate, manifest } = await checkUpdate();
     if (shouldUpdate) {
-      // display dialog
-      await installUpdate();
-      // install complete, restart app
-      await relaunch();
+      return {
+        async install() {
+          await installUpdate();
+          // install complete, restart app
+          await relaunch();
+        },
+      };
+    } else {
+      return {};
     }
   } catch (error) {
     console.log(error);
+    return { error };
   }
 };

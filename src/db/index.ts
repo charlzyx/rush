@@ -15,7 +15,6 @@ export class DB {
   static async connect(): Promise<Database> {
     try {
       DB.db = await Database.load('sqlite:rush.db');
-      // console.log('DB connect Success!');
       return DB.db;
     } catch (e) {
       return Promise.reject(e);

@@ -1,0 +1,28 @@
+.about {
+  display: flex;
+  padding: 16px;
+  height: 100%;
+  flex-direction: column;
+  overflow: scoll;
+}
+
+.about .logo {
+  width: 20%;
+  margin-right: 20px;
+}
+
+.space {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.body {
+  flex: 1;
+}
+
+.about .center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

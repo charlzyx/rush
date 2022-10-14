@@ -2,35 +2,44 @@ import { PluginConfigSchemaItem } from '@/plugins/Plugin';
 import {
   Button,
   Grid,
+  Message,
   Popconfirm,
   Space,
   Table,
   TableColumnProps,
-  Typography,
 } from '@arco-design/web-react';
-import { IconDelete, IconEdit } from '@arco-design/web-react/icon';
+import { IconCopy, IconDelete, IconEdit } from '@arco-design/web-react/icon';
 import React, { useMemo } from 'react';
+import copy from '@arco-design/web-react/es/_util/clipboard';
 
-const LongText = (props: { children: string }) => {
+export const Copy = (props: { text: string }) => {
   return (
-    <Typography.Paragraph
+    <Button
+      type="text"
       style={{
+        textAlign: 'start',
         color: 'var(--color-text-1)',
-        width: '120px',
-        lineHeight: '18px',
-        height: '12px',
+        width: '180px',
+        textOverflow: 'ellipsis',
+        overflow: 'hidden',
       }}
-      ellipsis={{
-        cssEllipsis: true,
-        showTooltip: true,
-        rows: 1,
+      onClick={(e) => {
+        e.stopPropagation();
+        copy(props.text).then(() => {
+          Message.success({
+            content: `已复制 ${props.text}`,
+            duration: 300,
+          });
+        });
       }}
-      copyable
+      size="small"
+      icon={<IconCopy></IconCopy>}
     >
-      {props.children}
-    </Typography.Paragraph>
+      {props.text}
+    </Button>
   );
 };
+
 export const SchemaList = (props: {
   list: any[];
   current: string;
@@ -51,7 +60,7 @@ export const SchemaList = (props: {
               : v;
             return (
               <div style={{ display: 'flex', alignItems: 'center' }}>
-                <LongText>{text}</LongText>
+                <Copy text={text}></Copy>
               </div>
             );
           },
@@ -131,14 +140,17 @@ export const SchemaList = (props: {
                 return (
                   <Grid.Col span={24 / 4} key={key}>
                     {key}:
-                    <Typography.Paragraph
+                    <Copy
+                      text={
+                        dataSource
+                          ? dataSource.find((x) => x.value == v)?.label
+                          : v
+                      }
+                    ></Copy>
+                    {/* <Typography.Paragraph
                       copyable
                       ellipsis={{ cssEllipsis: true, rows: 1 }}
-                    >
-                      {dataSource
-                        ? dataSource.find((x) => x.value == v)?.label
-                        : v}
-                    </Typography.Paragraph>
+                    ></Typography.Paragraph> */}
                   </Grid.Col>
                 );
               })}

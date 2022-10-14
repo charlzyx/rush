@@ -11,9 +11,10 @@ export type PageQuery = {
 export type StoreItem = {
   id?: string;
   scope: string;
-  size: number;
   alias: string;
+  dir: string;
   name: string;
+  size: number;
   url: string;
   create_time: number;
   hash: string;

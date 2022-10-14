@@ -8,8 +8,10 @@ import {
   Input,
   Pagination,
   Radio,
+  Tooltip,
 } from '@arco-design/web-react';
 import {
+  IconCloudDownload,
   IconFullscreen,
   IconFullscreenExit,
   IconRefresh,
@@ -140,7 +142,7 @@ export const History = () => {
 
   const lazyKw = useDebounce(query.kw, { trailing: true, wait: 233 });
   const wrapper = useRef<HTMLDivElement | null>(null);
-  const { col, row, pageSize } = useResponsiveSize(wrapper);
+  const { col, pageSize } = useResponsiveSize(wrapper);
 
   const rows = useMemo(() => {
     return list.reduce((arr, item, idx) => {
@@ -250,18 +252,21 @@ export const History = () => {
         </div>
         <div style={{ display: 'flex' }}>
           <Button.Group>
-            <Button
-              onClick={() => {
-                DB.open();
-              }}
-              type="outline"
-              icon={<IconStorage></IconStorage>}
-            ></Button>
+            <Tooltip content="查看本地 sqlite">
+              <Button
+                onClick={() => {
+                  DB.open();
+                }}
+                // type="outline"
+                icon={<IconStorage></IconStorage>}
+              ></Button>
+            </Tooltip>
+
             <Button
               onClick={() => {
                 load();
               }}
-              type="outline"
+              // type="outline"
               loading={lazyLoading}
               icon={<IconRefresh></IconRefresh>}
             >
@@ -297,6 +302,7 @@ export const History = () => {
                         <Box
                           fit={state.fit}
                           key={item.create_time + item.name}
+                          remoteRemove={plug?.supported?.remove}
                           onRemove={() => {
                             if (!plug) return;
                             return plug.remove(item).then(() => {

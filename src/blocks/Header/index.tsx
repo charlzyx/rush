@@ -42,14 +42,6 @@ export const Header = () => {
         <div style={css.item}>
           <Theme></Theme>
         </div>
-        <div style={css.item}>
-          <Button
-            onClick={() => {
-              shell.open('https://github.com/charlzyx/rush');
-            }}
-            icon={<IconGithub></IconGithub>}
-          ></Button>
-        </div>
         <div>
           <Pin></Pin>
         </div>

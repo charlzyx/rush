@@ -1,6 +1,7 @@
 import { Header } from '@/blocks/Header';
 import { History } from '@/blocks/History';
 import { Settings } from '@/blocks/Settings';
+import { About } from '@/blocks/About';
 import { Up } from '@/blocks/Up';
 import { Zip } from '@/blocks/Zip';
 import React, { useEffect } from 'react';
@@ -67,6 +68,14 @@ const router = createBrowserRouter([
     element: (
       <Page>
         <Zip></Zip>
+      </Page>
+    ),
+  },
+  {
+    path: '/about',
+    element: (
+      <Page>
+        <About></About>
       </Page>
     ),
   },

@@ -76,10 +76,10 @@
     "windows": [
       {
         "title": "Rush!",
-        "width": 800,
-        "height": 640,
-        "minWidth": 800,
-        "minHeight": 640,
+        "width": 888,
+        "height": 666,
+        "minWidth": 888,
+        "minHeight": 666,
         "fileDropEnabled": false,
         "transparent": true,
         "decorations": false

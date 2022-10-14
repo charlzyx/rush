@@ -6,16 +6,22 @@ import tiny from '@mxsir/image-tiny';
 import { invoke } from '@tauri-apps/api';
 import dayjs from 'dayjs';
 import * as qiniu from 'qiniu-js';
+import { getCommentRange } from 'typescript';
 import { TINY_SUPPORTE } from './config';
-import { Plugin, PluginConfigSchemaItem } from './Plugin';
+import {
+  CommonConfig,
+  Plugin,
+  PluginConfigSchemaItem,
+  PluginSupported,
+  compileConfig,
+  getCommonConfigSchema,
+} from './Plugin';
 
-export interface QiNiuConfig {
-  quality: number;
+export interface QiNiuConfig extends CommonConfig {
   accessKey?: string;
   secretKey: string;
   region: string;
   useCdnDomain: string;
-  domain: string;
   bucket: string;
 }
 // seconds
@@ -23,15 +29,15 @@ const ONEDAY = 60 * 60 * 24;
 
 export class QiNiuPlugin extends Plugin {
   name = 'qiniu';
-  supported: Record<'upload' | 'sync' | 'remove', boolean> = {
+  supported: PluginSupported = {
     upload: true,
-    remove: true,
+    clear: true,
+    remove: false,
     sync: false,
   };
   config: QiNiuConfig = {
     ...store.get('config_current')?.qiniu,
     quality: 80,
-    secure: true,
   };
   TOKEN = {
     token: '',
@@ -57,12 +63,6 @@ export class QiNiuPlugin extends Plugin {
     },
     { label: '存储空间', name: 'bucket', required: true },
     {
-      label: '资源域名',
-      name: 'domain',
-      required: false,
-      help: '虽然 上传不是必须的, 但是没有的话, 无法预览图片',
-    },
-    {
       label: '上传服务器',
       name: 'region',
       required: true,
@@ -73,6 +73,7 @@ export class QiNiuPlugin extends Plugin {
         };
       }),
     },
+    ...getCommonConfigSchema(),
     {
       label: '是否使用 CDN 域名',
       name: 'useCdnDomain',
@@ -82,9 +83,12 @@ export class QiNiuPlugin extends Plugin {
       ],
     },
   ];
+
   constructor(config: QiNiuConfig) {
     super();
-    this.config = { ...this.config, ...config };
+    this.config = compileConfig({ ...this.config, ...config });
+    const region = (qiniu.region as any)[this.config.region] ?? qiniu.region.z0;
+    this.config.region = region;
     this.getToken();
   }
 
@@ -99,14 +103,14 @@ export class QiNiuPlugin extends Plugin {
 
     this.TOKEN = {
       token,
-      expired_time: dayjs().add(1, 'day').unix(),
+      expired_time: +dayjs().add(1, 'day'),
     };
 
     return token;
   }
 
   async transform(file: File): Promise<File> {
-    if (this.config.quality < 100 && TINY_SUPPORTE.test(file.name)) {
+    if (this.config.quality! < 100 && TINY_SUPPORTE.test(file.name)) {
       const lite = await tiny(file, this.config.quality);
       return lite;
     } else {
@@ -118,53 +122,28 @@ export class QiNiuPlugin extends Plugin {
    * 垃圾, 只有本地删除
    */
   async remove(item: StoreItem): Promise<boolean> {
-    // const region = (qiniu.region as any)[this.config.region] ?? qiniu.region.z0;
-    // const extra = JSON.parse(item.extra || '{}');
-    // const url = await qiniu.getUploadUrl(
-    //   {
-    //     region,
-    //   },
-    //   this.TOKEN.token,
-    // );
-    // console.log('qiniu url', url, extra, item);
-    // const ret = await fetch(`${url}/${encodeURI(extra.key)}`, {
-    //   method: 'POST',
-    //   mode: 'cors',
-    //   body: '',
-    //   headers: {
-    //     'Content-Type': 'multipart/form-data',
-    //     Authorization: `token ${this.TOKEN.token}`,
-    //   },
-    // }).then((resp) => {
-    //   if (!resp.ok) {
-    //     throw resp.status;
-    //   }
-    // });
-    // console.log('qiniu delete', ret);
     await DB.remove(item);
     return Promise.resolve(true);
   }
 
   // https://github.com/PicGo/PicGo-Core/blob/dev/src/plugins/uploader/qiniu.ts
   async upload(file: File, alias: string): Promise<StoreItem> {
-    const fileName = file.name;
-    const encodeName = encodeURIComponent(fileName);
-    const datePrefix = dayjs().format('YYYY_MM_DD_');
-    const fileKey = `${datePrefix}${encodeName}`;
+    const conf = compileConfig(this.config, file.name);
+    const { customUrl, dir, filePath } = conf;
 
     if (+new Date() - this.TOKEN.expired_time < 10 * 60 * 1000) {
       await this.getToken();
     }
 
     const token = this.TOKEN.token;
-    const waiting = new Promise<any>((resolve, reject) => {
+    const query = new Promise<any>((resolve, reject) => {
       try {
         const region =
           (qiniu.region as any)[this.config.region] ?? qiniu.region.z0;
 
         const live = qiniu.upload(
           file,
-          fileKey,
+          filePath,
           token,
           {},
           {
@@ -174,7 +153,7 @@ export class QiNiuPlugin extends Plugin {
         live.subscribe({
           error(e) {
             const msg = e.message;
-            notify.err('qiniu', '上传失败', msg);
+            notify.err('qiniu', alias, `上传失败:${msg}`);
           },
           complete: resolve,
         });
@@ -183,19 +162,20 @@ export class QiNiuPlugin extends Plugin {
       }
     });
 
-    const resp = await waiting;
+    const resp = await query;
 
     const ret: StoreItem = {
       scope: this.name,
       alias,
+      dir,
       name: file.name,
-      hash: file.name,
+      hash: filePath!,
       size: file.size,
+      url: `${customUrl || 'https://qiniu.com'}/${resp.key}`,
       extra: JSON.stringify({
         key: resp.key,
       }),
       create_time: +new Date(),
-      url: `${this.config.domain}/${resp.key}`,
     };
 
     return ret;

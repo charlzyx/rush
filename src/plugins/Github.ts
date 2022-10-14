@@ -6,17 +6,22 @@ import { notify } from '@/utils/notify';
 import { parse } from '@/utils/parse';
 import { req } from '@/utils/req';
 import tiny from '@mxsir/image-tiny';
+import { confirm } from '@tauri-apps/api/dialog';
 import dayjs from 'dayjs';
 import { TINY_SUPPORTE } from './config';
-import { Plugin, PluginConfigSchemaItem } from './Plugin';
+import {
+  CommonConfig,
+  Plugin,
+  PluginConfigSchemaItem,
+  PluginSupported,
+  compileConfig,
+  getCommonConfigSchema,
+} from './Plugin';
 
-export interface GithubPluginConfig {
-  quality?: number;
+export interface GithubPluginConfig extends CommonConfig {
   repo: string;
   branch: string;
   token: string;
-  path: string;
-  customUrl: string;
 }
 
 const timeOf = (baseUrl: string, branch: string, filePath: string) => {
@@ -61,6 +66,14 @@ const list = async (url: string) => {
 
 export class GithubPlugin extends Plugin {
   name = 'github';
+
+  supported: PluginSupported = {
+    upload: true,
+    clear: true,
+    remove: true,
+    sync: true,
+  };
+
   config: GithubPluginConfig = {
     ...store.get('config_current')?.github,
     quality: 80,
@@ -71,10 +84,10 @@ export class GithubPlugin extends Plugin {
       label: '仓库名称',
       name: 'repo',
       required: true,
-      help: '格式 user/repo',
+      help: '格式 USER/REPO',
       helpLink: 'https://github.com',
     },
-    { label: '分支名称', name: 'branch', required: true },
+    { label: '分支名称', name: 'branch', required: true, default: 'master' },
     {
       label: 'token',
       name: 'token',
@@ -83,23 +96,12 @@ export class GithubPlugin extends Plugin {
       helpLink:
         'https://picgo.github.io/PicGo-Doc/zh/guide/config.html#github%E5%9B%BE%E5%BA%8A',
     },
-    {
-      label: '文件夹',
-      name: 'path',
-      required: false,
-      help: '不管是否设置, 都会在之后追加 YYYY_MM_DD 文件夹格式',
-    },
-    {
-      label: '自定义链接',
-      name: 'customUrl',
-      required: false,
-      help: '通常情况下, 可以用 https://cdn.jsdelivr.net/gh/USER/REPO@BRANCH 来加速',
-    },
+    ...getCommonConfigSchema(),
   ];
 
   constructor(config: GithubPluginConfig) {
     super();
-    this.config = { ...this.config, ...config };
+    this.config = compileConfig({ ...this.config, ...config });
   }
 
   async transform(file: File): Promise<File> {
@@ -112,23 +114,23 @@ export class GithubPlugin extends Plugin {
   }
 
   async upload(file: File, alias: string): Promise<StoreItem> {
-    const fileName = file.name;
-    const dirPrefix = dayjs().format('YYYY_MM_DD');
-    const encodeName = encodeURI(fileName);
-    const { branch, customUrl, path = '', repo, token } = this.config;
+    const { branch, customUrl, repo, token } = this.config;
+    const { dir, fileName, filePath } = compileConfig(this.config, file.name);
 
-    const remotePath = `${encodeURI(path)}${dirPrefix}/${encodeName}`;
-    const url = `https://api.github.com/repos/${repo}/contents/${remotePath}`;
+    const encodeFilePath = encodeURI(filePath!);
+
+    const url = `https://api.github.com/repos/${repo}/contents/${encodeFilePath}`;
+
     const content = await toBase64(file);
 
     const uploading = req
       .put(
         url,
         {
-          message: 'Upload by Rush',
+          message: `Upload ${filePath} by Rush.`,
           branch: branch,
           content: content,
-          path: remotePath,
+          path: encodeFilePath,
         },
         {
           headers: {
@@ -141,21 +143,22 @@ export class GithubPlugin extends Plugin {
       .then((resp) => resp.data)
       .catch((e) => {
         const msg = e?.response?.data?.message || '上传出错啦';
-        notify.err('github', '上传失败', msg);
+        notify.err('github', alias, `上传失败:${msg}`);
       });
 
     const resp = await uploading;
     const ret: StoreItem = {
       scope: this.name,
       alias,
-      size: file.size,
-      extra: JSON.stringify({ sha: resp?.content?.sha }),
-      name: file.name,
+      dir: dir,
+      name: fileName!,
       hash: resp.content?.path + file.name,
-      create_time: +new Date(),
+      size: file.size,
       url: customUrl
-        ? `${customUrl}/${remotePath}`
+        ? `${customUrl}/${filePath}`
         : resp?.content?.download_url!,
+      create_time: +new Date(),
+      extra: JSON.stringify({ sha: resp?.content?.sha }),
     };
 
     return ret;
@@ -173,16 +176,26 @@ export class GithubPlugin extends Plugin {
           'User-Agent': 'Rush',
         },
         data: {
-          message: 'Remove by Rush',
+          message: `Delete ${
+            item.dir ? `${item.dir}/${item.name}` : item.name
+          } by Rush`,
           sha,
         },
       });
-      // console.log('github remove url', url, ret);
       await DB.remove(item);
       return Promise.resolve(true);
     } catch (error: any) {
-      notify.err('github', '删除失败', error?.message);
-      throw error;
+      notify.err('github', item.alias, `远程删除失败: ${error?.message}`);
+      return confirm('要删除本地记录吗?', {
+        title: '要进行本地删除吗',
+      })
+        .then(async () => {
+          await DB.remove(item);
+          return true;
+        })
+        .catch(() => {
+          throw error;
+        });
     }
   }
 
@@ -208,12 +221,13 @@ export class GithubPlugin extends Plugin {
         return {
           scope: this.name,
           alias: alias,
-          create_time: item.create_time,
+          dir: item.path,
           name: item.name,
-          size: item.size,
           hash: `${item.path}/${item.name}`,
+          size: item.size,
           url: item.download_url,
           extra: JSON.stringify({ sha: item.sha, url: item.url }),
+          create_time: item.create_time,
         };
       });
 
@@ -224,7 +238,7 @@ export class GithubPlugin extends Plugin {
         total,
       };
     } catch (error: any) {
-      notify.err('github', '同步失败', error?.message);
+      notify.err('github', alias, `同步失败:${error?.message}`);
       throw error;
     }
   }

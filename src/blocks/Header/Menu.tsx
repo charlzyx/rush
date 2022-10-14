@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Radio } from '@arco-design/web-react';
 import {
   IconHistory,
+  IconInfo,
   IconPrinter,
   IconSettings,
   IconUpload,
@@ -10,7 +11,7 @@ import { Link } from 'react-router-dom';
 
 const RadioGroup = Radio.Group;
 
-type PageNames = 'Hisotry' | 'Up' | 'Zip' | 'Settings';
+type PageNames = 'Hisotry' | 'Up' | 'Zip' | 'Settings' | 'About';
 
 const getPage = (): PageNames => {
   const pathname = window.location.pathname;
@@ -24,7 +25,7 @@ export const Menu = () => {
 
   return (
     <RadioGroup
-      style={{ width: '300px' }}
+      style={{ width: '360px' }}
       value={route}
       type="button"
       defaultValue="Zip"
@@ -58,6 +59,14 @@ export const Menu = () => {
           <div>
             <IconSettings color="rgb(var(--arcoblue-6))"></IconSettings>
             设置
+          </div>
+        </Radio>
+      </Link>
+      <Link to="/about">
+        <Radio onClick={() => setRoute('About')} value="About">
+          <div>
+            <IconInfo color="rgb(var(--arcoblue-6))"></IconInfo>
+            关于
           </div>
         </Radio>
       </Link>

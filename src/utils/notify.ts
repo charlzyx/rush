@@ -6,7 +6,7 @@ export const notify = {
     return Notification.success({
       title,
       content,
-      duration: 1000,
+      duration: 566,
     });
   },
   err(scope: PluginKey | 'HTTP' | 'DB', title: string, content: string) {

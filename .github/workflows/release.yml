@@ -28,7 +28,7 @@ jobs:
         with:
           tag_name: '${{ steps.get_version.outputs.VERSION }}'
           release_name: 'Rush! ${{ steps.get_version.outputs.VERSION }}'
-          body: 'See the assets to download this version and install.'
+          body: 'See the assets to download this version and install. <a href="https://github.com/charlzyx/rush/blob/master/CHANGELOG.md">CHANGELOG</a>'
 
   build-tauri:
     needs: create-release

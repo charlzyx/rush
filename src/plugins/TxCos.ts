@@ -1,5 +1,12 @@
 import { DB } from '@/db';
-import { Plugin, PluginConfigSchemaItem } from './Plugin';
+import {
+  CommonConfig,
+  Plugin,
+  PluginConfigSchemaItem,
+  PluginSupported,
+  compileConfig,
+  getCommonConfigSchema,
+} from './Plugin';
 import { StoreItem } from '@/shared/typings';
 import tiny from '@mxsir/image-tiny';
 import { store } from '@/store';
@@ -9,21 +16,23 @@ import { TINY_SUPPORTE } from './config';
 import dayjs from 'dayjs';
 import { notify } from '@/utils/notify';
 import { parse } from '@/utils/parse';
+import { Modal } from '@arco-design/web-react';
 
-export interface TxCosConfig {
-  quality?: number;
+export interface TxCosConfig extends CommonConfig {
   SecretKey: string;
   APPID: string;
   SecretId: string;
   Region: string;
-  Prefix: string;
   Bucket: string;
-  Domain?: string;
+  // Prefix: string;
+  // Domain?: string;
 }
 
 const loop = async (client: COS, config: TxCosConfig, Marker?: string) => {
+  const conf = compileConfig(config);
+
   const resp = await client.getBucket({
-    Prefix: config.Prefix,
+    Prefix: conf.dir,
     Marker,
     Bucket: config.Bucket,
     Region: config.Region,
@@ -39,6 +48,13 @@ const loop = async (client: COS, config: TxCosConfig, Marker?: string) => {
 
 export class TxCosPlugin extends Plugin {
   name = 'txcos';
+
+  supported: PluginSupported = {
+    clear: true,
+    remove: true,
+    sync: true,
+    upload: true,
+  };
   config: TxCosConfig = {
     ...store.get('config_current')?.TxCos,
     quality: 80,
@@ -70,21 +86,19 @@ export class TxCosPlugin extends Plugin {
     },
     { label: 'APPID', name: 'APPID', required: true, help: 'APPID' },
     { label: '存储区域', name: 'Region', required: true, help: 'Region' },
-    { label: '存储路径', name: 'Prefix', required: true, help: 'Prefix' },
     { label: '存储空间名', name: 'Bucket', required: true, help: 'Bucket' },
-    {
-      label: '空间域名',
-      name: 'Domain',
-      required: true,
-      help: '调用操作存储桶和对象的 API 时自定义请求域名。可以使用模板，如"{Bucket}.cos.{Region}.myqcloud.com".',
-      helpLink:
-        'https://cloud.tencent.com/document/product/436/11459#.E4.B8.8A.E4.BC.A0.E5.AF.B9.E8.B1.A1',
-    },
+    ...getCommonConfigSchema({
+      customUrl: 'https://{Bucket}.cos.{Region}.myqcloud.com',
+    }),
   ];
 
   constructor(config: TxCosConfig) {
     super();
     this.config = { ...this.config, ...config };
+    if (!this.config.customUrl) {
+      this.config.customUrl = 'https://{Bucket}.cos.{Region}.myqcloud.com';
+    }
+    this.config = compileConfig(this.config);
     this.client = new COS(this.config);
   }
 
@@ -98,19 +112,13 @@ export class TxCosPlugin extends Plugin {
   }
 
   async upload(file: File, alias: string): Promise<StoreItem> {
-    const fileName = file.name;
-    const datePrefix = dayjs().format('YYYY_MM_DD_');
-    const encodeName = encodeURIComponent(fileName);
-    const { Bucket, Prefix = '', Region } = this.config;
-
-    const composePrefix = `${Prefix}/${datePrefix}`.replace('//', '/');
-
-    const remotePath = `${composePrefix}${encodeName}`.replace('//', '/');
+    const conf = compileConfig(this.config, file.name);
+    const { Bucket, customUrl, Region, filePath, dir } = conf;
 
     const answer = await this.client
       .uploadFile({
         Body: file,
-        Key: remotePath,
+        Key: filePath!,
         Region,
         Bucket,
         // SliceSize: 1024 * 1024 * 5,     /* 触发分块上传的阈值，超过5MB使用分块上传，非必须 */
@@ -121,17 +129,20 @@ export class TxCosPlugin extends Plugin {
         throw e;
       });
 
-    const ret = {
+    const ret: StoreItem = {
       scope: this.name,
       alias,
+      dir,
+      name: file.name,
+      hash: filePath!,
+      create_time: +new Date(),
+      url: customUrl
+        ? `${customUrl}/${filePath}`
+        : `https://${answer.Location}`,
       size: file.size,
       extra: JSON.stringify({
-        Key: remotePath,
+        Key: filePath,
       }),
-      name: file.name,
-      hash: remotePath,
-      create_time: +new Date(),
-      url: `https://${answer.Location}`,
     };
 
     return ret;
@@ -140,24 +151,34 @@ export class TxCosPlugin extends Plugin {
   async remove(item: StoreItem): Promise<boolean> {
     const extra = parse(item.extra!);
     const { Bucket, Region } = this.config;
-    // console.log('remote', item, extra, Prefix);
     try {
       await this.client?.deleteObject({
         Bucket,
         Region,
         Key: extra.Key || item.hash,
       });
-    } catch (error: any) {
-      notify.err('txcos', '删除失败', error?.message);
-      throw error;
-    } finally {
       await DB.remove(item);
+      return Promise.resolve(true);
+    } catch (error: any) {
+      notify.err('txcos', item.alias, `远程删除失败: ${error?.message}`);
+      const request = new Promise((resolve, reject) => {
+        Modal.confirm({
+          title: '要删除本地记录吗?',
+          okText: '是的',
+          cancelText: '算了',
+          onOk: resolve,
+          onCancel: reject,
+        });
+      });
+
+      await request;
+      await DB.remove(item);
+      return Promise.resolve(true);
     }
-    return Promise.resolve(true);
   }
 
   async sync(alias: string) {
-    const { Domain, Prefix } = this.config;
+    const { customUrl, dir } = this.config;
     try {
       const files = await loop(this.client!, this.config);
       files.sort((a, b) => +dayjs(a.LastModified) - +dayjs(b.LastModified));
@@ -167,10 +188,11 @@ export class TxCosPlugin extends Plugin {
           scope: this.name,
           alias: alias,
           create_time: +dayjs(item.LastModified),
-          name: item.Key.replace(`${Prefix}/`, ''),
-          hash: `${Prefix}/${item.Key}`,
+          dir: dir!,
+          name: item.Key.replace(`${dir}/`, ''),
+          hash: `${item.Key}`,
           size: parseInt(item.Size),
-          url: `${Domain}/${item.Key}`,
+          url: `${customUrl}/${item.Key}`,
           extra: JSON.stringify(item),
         };
       });

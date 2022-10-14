@@ -1,5 +1,6 @@
 import { StoreItem } from '@/shared/typings';
-import { Image } from '@arco-design/web-react';
+import { Image, Tooltip } from '@arco-design/web-react';
+import { IconQuestion } from '@arco-design/web-react/icon';
 import { convertFileSrc } from '@tauri-apps/api/tauri';
 import dayjs from 'dayjs';
 import { useMemo, useState } from 'react';
@@ -12,6 +13,7 @@ const FILE_PATTERN = /file:\/\//;
 export const Box = (props: {
   data: StoreItem;
   fit?: 'cover' | 'contain';
+  remoteRemove?: boolean;
   onRemove: () => void;
   blur?: number;
 }) => {
@@ -71,7 +73,10 @@ export const Box = (props: {
             {displayName}
           </div>
           <div>
-            <Remove onClick={props.onRemove}></Remove>
+            <Remove
+              tip={!props.remoteRemove ? '只在本地删除' : ''}
+              onClick={props.onRemove}
+            ></Remove>
           </div>
         </div>
 

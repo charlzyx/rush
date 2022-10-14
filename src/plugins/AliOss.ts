@@ -1,5 +1,5 @@
 import { DB } from '@/db';
-import { Plugin, PluginConfigSchemaItem } from './Plugin';
+import { Plugin, PluginConfigSchemaItem, PluginSupported } from './Plugin';
 import { StoreItem } from '@/shared/typings';
 import tiny from '@mxsir/image-tiny';
 import { store } from '@/store';
@@ -8,15 +8,14 @@ import { TINY_SUPPORTE } from './config';
 import dayjs from 'dayjs';
 import { notify } from '@/utils/notify';
 import { parse } from '@/utils/parse';
+import { CommonConfig, compileConfig, getCommonConfigSchema } from './Plugin';
+import { Modal } from '@arco-design/web-react';
 
-export interface AliOssConfig {
-  quality?: number;
+export interface AliOssConfig extends CommonConfig {
   accessKeyId: string;
   accessKeySecret: string;
   region: string;
-  prefix: string;
   bucket: string;
-  cdn?: string;
 }
 
 const loop = async (client: OSS, prefix: string, marker?: string) => {
@@ -34,19 +33,20 @@ const loop = async (client: OSS, prefix: string, marker?: string) => {
 
 export class AliOssPlugin extends Plugin {
   name = 'alioss';
+  supported: PluginSupported = {
+    upload: true,
+    clear: true,
+    remove: true,
+    sync: true,
+  };
   config: AliOssConfig = {
     ...store.get('config_current')?.alioss,
     quality: 80,
     secure: true,
   };
   client: OSS;
+
   static configSchema: PluginConfigSchemaItem[] = [
-    // accessKeyId: string;
-    // accessKeySecret: string;
-    // region: string;
-    // prefix: string;
-    // bucket: string;
-    // cdn?: string;
     {
       label: 'accessKeyId',
       name: 'accessKeyId',
@@ -63,20 +63,15 @@ export class AliOssPlugin extends Plugin {
       helpLink:
         'https://picgo.github.io/PicGo-Doc/zh/guide/config.html#%E9%98%BF%E9%87%8C%E4%BA%91oss',
     },
-    { label: '存储区域', name: 'region', required: true, help: 'region' },
-    { label: '存储路径', name: 'prefix', required: true, help: 'prefix' },
-    { label: '存储空间名', name: 'bucket', required: true, help: 'bucket' },
-    {
-      label: '自定义域名',
-      name: 'cdn',
-      required: false,
-      help: '用于拼接类似 CDN 加速的域名',
-    },
+    { label: '存储区域名称', name: 'region', required: true, help: 'region' },
+    { label: '存储空间名称', name: 'bucket', required: true, help: 'bucket' },
+    ...getCommonConfigSchema(),
   ];
 
   constructor(config: AliOssConfig) {
     super();
-    this.config = { ...this.config, ...config };
+    this.config = compileConfig({ ...this.config, ...config });
+
     this.client = new OSS(this.config);
   }
 
@@ -90,19 +85,11 @@ export class AliOssPlugin extends Plugin {
   }
 
   async upload(file: File, alias: string): Promise<StoreItem> {
-    const fileName = file.name;
-    const datePrefix = dayjs().format('YYYY_MM_DD_');
-    const encodeName = encodeURIComponent(fileName);
-
-    const composePrefix = `${this.config.prefix}/${datePrefix}`.replace(
-      '//',
-      '/',
-    );
-
-    const remotePath = `${composePrefix}${encodeName}`.replace('//', '/');
+    const conf = compileConfig(this.config, file.name);
+    const { filePath, dir, customUrl } = conf;
 
     const upload = await this.client
-      ?.multipartUpload(remotePath, file, {
+      ?.multipartUpload(encodeURI(filePath!), file, {
         // progress(p, cpt, res) {
         //   // console.log({ p, cpt, res });
         // },
@@ -115,50 +102,63 @@ export class AliOssPlugin extends Plugin {
         throw e;
       });
 
-    const ret = {
+    const ret: StoreItem = {
       scope: this.name,
       alias,
-      size: file.size,
-      extra: JSON.stringify(upload.data),
+      dir: dir,
       name: file.name,
-      hash: (upload.data as any).url,
+      size: file.size,
+      hash: filePath!,
+      url: customUrl ? `${customUrl}/${upload.name}` : (upload.data as any).url,
       create_time: +new Date(),
-      url: this.config.cdn
-        ? `${this.config.cdn}/${upload.name}`
-        : (upload.data as any).url,
+      extra: JSON.stringify(upload.data),
     };
 
     return ret;
   }
 
   async remove(item: StoreItem): Promise<boolean> {
-    const extra = parse(item.extra!);
     try {
-      await this.client?.delete(extra.name);
+      await this.client?.delete(item.hash);
+      await DB.remove(item);
+      return Promise.resolve(true);
     } catch (error: any) {
-      notify.err('alioss', '删除失败', error?.message);
-      throw error;
+      notify.err('alioss', item.alias, `远程删除失败: ${error?.message}`);
+      const request = new Promise((resolve, reject) => {
+        Modal.confirm({
+          title: '要删除本地记录吗?',
+          okText: '是的',
+          cancelText: '算了',
+          onOk: resolve,
+          onCancel: reject,
+        });
+      });
+
+      await request;
+      await DB.remove(item);
+      return Promise.resolve(true);
     }
-    await DB.remove(item);
-    return Promise.resolve(true);
   }
 
   async sync(alias: string) {
-    const { prefix } = this.config;
+    const { dir, customUrl } = this.config;
+    // const { prefix } = this.config;
     try {
-      const files = await loop(this.client!, prefix);
+      const files = await loop(this.client!, dir!);
       files.sort((a, b) => +dayjs(a.lastModified) - +dayjs(b.lastModified));
 
       const items: StoreItem[] = files.map((item) => {
+        console.log('ali remote item:', item);
         return {
           scope: this.name,
           alias: alias,
-          create_time: +dayjs(item.lastModified),
-          name: item.name,
-          hash: item.url,
+          dir: item.name,
+          name: item.name.replace(`${dir}/`, ''),
+          hash: item.name,
           size: item.size,
-          url: this.config.cdn ? `${this.config.cdn}/${item.name}` : item.url,
+          url: customUrl ? `${customUrl}/${item.name}` : item.url,
           extra: JSON.stringify(item),
+          create_time: +dayjs(item.lastModified),
         };
       });
       await DB.sync(items);
@@ -167,7 +167,7 @@ export class AliOssPlugin extends Plugin {
         total: items.length,
       };
     } catch (error: any) {
-      notify.err('alioss', '同步远程数据失败', error?.message);
+      notify.err('alioss', alias, `同步远程数据失败: ${error?.message}`);
       throw error;
     }
   }

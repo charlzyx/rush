@@ -4,8 +4,18 @@ import { TinyPlugin } from '@/plugins/Tiny';
 import { Fs } from '@/utils/fs';
 import { notify } from '@/utils/notify';
 import { ProcessServer, Rush } from '@/utils/rush';
-import { Button, Progress, Slider, Space } from '@arco-design/web-react';
-import { IconLaunch, IconSettings } from '@arco-design/web-react/icon';
+import {
+  Button,
+  Progress,
+  Slider,
+  Space,
+  Tooltip,
+} from '@arco-design/web-react';
+import {
+  IconDelete,
+  IconLaunch,
+  IconSettings,
+} from '@arco-design/web-react/icon';
 import { shell } from '@tauri-apps/api';
 import { useRafInterval } from 'ahooks';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -125,26 +135,31 @@ export const Zip = () => {
           justifyContent: 'space-between',
         }}
       >
-        <Button.Group
-          style={{
-            width: '160px',
-          }}
-        >
-          <Button
-            onClick={() => {
-              Fs.getThenSetOuputDir();
-            }}
-            icon={<IconSettings></IconSettings>}
-            type="outline"
-          ></Button>
+        <Button.Group style={{}}>
+          <Tooltip content="设置输出目录">
+            <Button
+              onClick={() => {
+                Fs.getThenSetOuputDir();
+              }}
+              icon={<IconSettings></IconSettings>}
+            ></Button>
+          </Tooltip>
           <Button
             onClick={() => {
               shell.open(Fs.output);
             }}
             icon={<IconLaunch></IconLaunch>}
-            type="outline"
           >
-            打开输出录
+            打开输出目录
+          </Button>
+          <Button
+            onClick={() => {
+              setFinished(0);
+              setFiles([]);
+            }}
+            icon={<IconDelete></IconDelete>}
+          >
+            清空记录
           </Button>
         </Button.Group>
         <Slider
@@ -161,15 +176,6 @@ export const Zip = () => {
           percent={count === 0 ? 0 : Math.ceil((finished / count) * 100)}
           status={'success'}
         ></Progress>
-        <Button type="text"></Button>
-        <Button
-          onClick={() => {
-            setFinished(0);
-            setFiles([]);
-          }}
-        >
-          清空
-        </Button>
       </Space>
 
       <div ref={wrapper} className="rush-workspace">

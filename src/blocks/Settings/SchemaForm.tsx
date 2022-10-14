@@ -53,7 +53,12 @@ export const SchemaForm = (props: {
               options={item.dataSource}
             ></RadioGroup>
           ) : (
-            <Input></Input>
+            <Input
+              autoComplete="off"
+              autoCorrect="off"
+              autoCapitalize="off"
+              spellCheck="false"
+            ></Input>
           )}
         </FormItem>
       );
