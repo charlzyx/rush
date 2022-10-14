@@ -1,5 +1,7 @@
 # CHANGELOG
 
+## v1.2.7
+- fix: 🐛 修复 actions ubuntu + 3, 似乎是名字导致的问题
 ## v1.2.6
 - fix: 🐛 修复 actions ubuntu + 2, 似乎是名字导致的问题
 ## v1.2.5

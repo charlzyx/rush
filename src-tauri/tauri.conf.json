@@ -6,7 +6,7 @@
     "distDir": "../dist"
   },
   "package": {
-    "productName": "Rush!",
+    "productName": "Rush",
     "version": "../package.json"
   },
   "tauri": {
