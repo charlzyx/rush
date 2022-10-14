@@ -33,7 +33,7 @@ async function updater() {
   });
 
   const updateData = {
-    name,
+    // name,
     version: tag.name,
     notes: updatelog(tag.name), // use CHANGELOG.md
     pub_date: new Date().toISOString(),

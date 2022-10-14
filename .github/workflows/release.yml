@@ -8,9 +8,9 @@ on:
 
 jobs:
   create-release:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     outputs:
-      RELEASE_UPLOAD_ID: ${{ steps.create_release.outputs.id }}
+      release_id: ${{ steps.create_release.outputs.result }}
 
     steps:
       - uses: actions/checkout@v2
@@ -35,8 +35,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # platform: [macos-latest, ubuntu-latest, windows-latest]
-        platform: [macos-latest, windows-latest]
+        platform: [macos-latest, ubuntu-20.04, windows-latest]
 
     runs-on: ${{ matrix.platform }}
     steps:
@@ -89,7 +88,7 @@ jobs:
           TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
           TAURI_KEY_PASSWORD: ""
         with:
-          releaseId: ${{ needs.create-release.outputs.RELEASE_UPLOAD_ID }}
+          releaseId: ${{ needs.create-release.outputs.release_id }}
 
   updater:
     runs-on: ubuntu-latest

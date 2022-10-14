@@ -3,6 +3,7 @@ import { relaunch } from '@tauri-apps/api/process';
 
 export const autoupdate = async () => {
   try {
+    console.log('chceck');
     const { shouldUpdate, manifest } = await checkUpdate();
     if (shouldUpdate) {
       return {
