@@ -70,7 +70,7 @@
     "updater": {
       "active": true,
       "dialog": false,
-      "endpoints": ["http://localhost:3000/install.json"],
+      "endpoints": ["https://charlzyx.github.io/rush/install.json"],
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDVDNEYzMjUwNjI2QUUxRjcKUldUMzRXcGlVREpQWExyOGoxOGsrT1J6cTZhRW1rdk5RZEJQZjliQWNCQllpUEcyM2QxSkNmck8K"
     },
     "windows": [

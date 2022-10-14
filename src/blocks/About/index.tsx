@@ -59,24 +59,7 @@ export const About = () => {
           onClick={async () => {
             setLoaing(true);
             try {
-              const ret = await autoupdate();
-              if (ret.install) {
-                Modal.confirm({
-                  title: '发现新版本!, 是否安装更新',
-                  onConfirm() {
-                    setLoaing(true);
-                    ret.install!().finally(() => setLoaing(false));
-                  },
-                });
-              } else if (ret.error) {
-                notify.err(
-                  'HTTP',
-                  '无法连接更新服务',
-                  `Reason:${(ret.error as any)?.message}`,
-                );
-              } else {
-                Message.success('已经是最新版本!');
-              }
+              await autoupdate();
             } catch (error) {
             } finally {
               setLoaing(false);

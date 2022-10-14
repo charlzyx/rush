@@ -1,5 +1,7 @@
 # CHANGELOG
 
+## v1.2.3
+- fix: 🐛 修复updater again
 
 ## v1.2.2
 - fix: 🐛 修复updater
