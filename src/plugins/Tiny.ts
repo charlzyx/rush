@@ -34,13 +34,14 @@ export class TinyPlugin extends Plugin {
 
     const ret: StoreItem = {
       size: file.size,
-      extra: '',
       alias,
       scope: this.name,
       hash: file.name,
+      dir: '',
       name: file.name,
-      create_time: +new Date(),
       url: `file://${url}`,
+      create_time: +new Date(),
+      extra: '',
     };
 
     return ret;
