@@ -1,7 +1,10 @@
 # CHANGELOG
+## v1.2.5
+- fix: 🐛 修复 actions ubuntu + 1
+
 
 ## v1.2.4
-- fix: 🐛 修复 actions
+- fix: 🐛 ubuntu build
 
 ## v1.2.3
 - fix: 🐛 修复updater again
