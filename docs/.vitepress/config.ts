@@ -5,7 +5,7 @@
   title: "Rush!",
   description: "一个兴趣使然的图片压缩客户端",
   lastUpdated: true,
-  base: "/rush",
+  // base: "/rush",
   // lang: 'zh-CN',
   head: [["link", { rel: "icon", type: "svg", href: "/assets/logo.svg" }]],
   themeConfig: {
