@@ -2,7 +2,6 @@ import { pic } from '@/assets/svg';
 import { AniSvg } from '@/blocks/AniSvg';
 import { TinyPlugin } from '@/plugins/Tiny';
 import { Fs } from '@/utils/fs';
-import { notify } from '@/utils/notify';
 import { ProcessServer, Rush } from '@/utils/rush';
 import {
   Button,
@@ -17,10 +16,12 @@ import {
   IconSettings,
 } from '@arco-design/web-react/icon';
 import { shell } from '@tauri-apps/api';
-import { useRafInterval } from 'ahooks';
+import { DB } from '@/db';
+import { FPProps } from './fp';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import '../filepond.css';
 import './zip.css';
+import { useRafInterval } from 'ahooks';
 
 export const Zip = () => {
   const [files, setFiles] = useState<any[]>([]);
@@ -62,37 +63,28 @@ export const Zip = () => {
       const afterSize = lite.size;
       const result = await plug.upload(lite, 'tiny');
 
+      load(result.url);
       optimizeMaping.current[file.name] = {
         ratio: parseFloat(((afterSize / preSize) * 100).toFixed(2)),
         before: preSize,
         after: afterSize,
       };
 
-      load(result.url);
-      setTimeout(() => {
-        setFinished((x) => x + 1);
-      }, 666);
+      setFinished((x) => x + 1);
+
+      try {
+        if (afterSize < preSize) {
+          await DB.record({
+            name: file.name,
+            before: preSize,
+            after: afterSize,
+            create_time: +new Date(),
+          });
+        }
+      } catch (e) {}
     },
     [plug],
   );
-
-  useEffect(() => {
-    if (count > 0 && finished === count) {
-      const map = optimizeMaping.current;
-      const info = Object.keys(map).reduce(
-        (yyds, name) => {
-          yyds.before += map[name]?.before || 0;
-          yyds.after += map[name]?.after || 0;
-          return yyds;
-        },
-        { before: 0, after: 0 },
-      );
-      const before = `${(info.before / 1024).toFixed(2)} KB`;
-      const after = `${(info.after / 1024).toFixed(2)} KB`;
-      const ratio = ((info.after / info.before) * 100).toFixed(2);
-      notify.success('压缩完成', `${before} ~> ${after} -${ratio}%`);
-    }
-  }, [count, finished]);
 
   useEffect(() => {
     setFinished(0);
@@ -113,18 +105,18 @@ export const Zip = () => {
 
       const text = status?.children?.[0];
       if (!text) return;
-      const tip = 100 - ratio > 0 ? `-${(100 - ratio).toFixed(2)}%` : '';
-      if (tip) {
-        text.setAttribute('data-tiny', tip);
+      const isFinished = text.innerHTML === '压缩完成';
+      if (isFinished) {
+        console.log('text', { text, ratio });
+        const tip = 100 - ratio >= 0 ? `-${(100 - ratio).toFixed(2)}%` : '';
+        text.innerHTML = tip.toString();
       }
-
-      text.innerHTML = tip;
     });
   };
 
   useRafInterval(() => {
     fresh();
-  }, 123);
+  }, 68);
 
   return (
     <div className="rush-wrapper zip">
@@ -180,6 +172,7 @@ export const Zip = () => {
 
       <div ref={wrapper} className="rush-workspace">
         <Rush
+          {...FPProps}
           stylePanelAspectRatio={'4:3'}
           files={files}
           onupdatefiles={setFiles}

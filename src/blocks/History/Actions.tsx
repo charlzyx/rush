@@ -10,7 +10,7 @@ export const Copy = (props: { text: string }) => {
         e.stopPropagation();
         copy(props.text).then(() => {
           Message.success({
-            content: `链接已经复制到剪切板 ${props.text}`,
+            content: `已复制 ${props.text}`,
             duration: 300,
           });
         });

@@ -171,9 +171,13 @@ export class TxCosPlugin extends Plugin {
         });
       });
 
-      await request;
-      await DB.remove(item);
-      return Promise.resolve(true);
+      try {
+        await request;
+        await DB.remove(item);
+        return true;
+      } catch (e) {
+        throw error;
+      }
     }
   }
 

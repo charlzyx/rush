@@ -5,8 +5,8 @@ import { toBase64 } from '@/utils/fs';
 import { notify } from '@/utils/notify';
 import { parse } from '@/utils/parse';
 import { req } from '@/utils/req';
+import { Modal } from '@arco-design/web-react';
 import tiny from '@mxsir/image-tiny';
-import { confirm } from '@tauri-apps/api/dialog';
 import dayjs from 'dayjs';
 import { TINY_SUPPORTE } from './config';
 import {
@@ -85,7 +85,6 @@ export class GithubPlugin extends Plugin {
       name: 'repo',
       required: true,
       help: '格式 USER/REPO',
-      helpLink: 'https://github.com',
     },
     { label: '分支名称', name: 'branch', required: true, default: 'master' },
     {
@@ -93,8 +92,7 @@ export class GithubPlugin extends Plugin {
       name: 'token',
       required: true,
       help: 'Github Personal access token',
-      helpLink:
-        'https://picgo.github.io/PicGo-Doc/zh/guide/config.html#github%E5%9B%BE%E5%BA%8A',
+      helpLink: 'https://github.com/settings/tokens',
     },
     ...getCommonConfigSchema(),
   ];
@@ -186,16 +184,23 @@ export class GithubPlugin extends Plugin {
       return Promise.resolve(true);
     } catch (error: any) {
       notify.err('github', item.alias, `远程删除失败: ${error?.message}`);
-      return confirm('要删除本地记录吗?', {
-        title: '要进行本地删除吗',
-      })
-        .then(async () => {
-          await DB.remove(item);
-          return true;
-        })
-        .catch(() => {
-          throw error;
+      const request = new Promise((resolve, reject) => {
+        Modal.confirm({
+          title: '要删除本地记录吗?',
+          okText: '是的',
+          cancelText: '算了',
+          onOk: resolve,
+          onCancel: reject,
         });
+      });
+
+      try {
+        await request;
+        await DB.remove(item);
+        return true;
+      } catch (e) {
+        throw error;
+      }
     }
   }
 

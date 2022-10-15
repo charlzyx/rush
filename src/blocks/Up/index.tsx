@@ -2,13 +2,13 @@ import { pic } from '@/assets/svg';
 import { AniSvg } from '@/blocks/AniSvg';
 import { DB } from '@/db';
 import { getPlugin } from '@/plugins';
-import { notify } from '@/utils/notify';
 import { ProcessServer, Rush } from '@/utils/rush';
 import { Button, Progress, Slider, Space } from '@arco-design/web-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import '../filepond.css';
 import { Config } from '../Header/Config';
 import { usePluginSettings } from '../Settings';
+import { FPProps } from './fp';
 
 export const Up = () => {
   const { scope, current } = usePluginSettings();
@@ -44,26 +44,28 @@ export const Up = () => {
     ) => {
       if (!plug) return;
       try {
+        const preSize = file.size;
         const lite = await plug.transform(file as File);
+        const afterSize = file.size;
         const result = await plug.upload(lite, current?.alias);
         await DB.insert(result);
 
         load(result.url);
-        setTimeout(() => {
-          setFinished((x) => x + 1);
-        }, 666);
+        setFinished((x) => x + 1);
+        if (afterSize < preSize) {
+          DB.record({
+            before: preSize,
+            after: afterSize,
+            name: file.name,
+            create_time: +new Date(),
+          });
+        }
       } catch (e: any) {
         error(e.message);
       }
     },
     [current?.alias, plug],
   );
-
-  useEffect(() => {
-    if (count > 0 && finished === count) {
-      notify.success('上传完成', `${count} / ${finished}`);
-    }
-  }, [count, finished]);
 
   useEffect(() => {
     setFinished(0);
@@ -108,6 +110,7 @@ export const Up = () => {
 
       <div ref={wrapper} className="rush-workspace">
         <Rush
+          {...FPProps}
           stylePanelAspectRatio={'4:3'}
           files={files}
           onupdatefiles={setFiles}

@@ -21,6 +21,14 @@ export type StoreItem = {
   extra?: string;
 };
 
+export type StatisticsItem = {
+  id?: string;
+  name: string;
+  before: number;
+  after: number;
+  create_time: number;
+};
+
 export type PageResp = {
   total: number;
   list: StoreItem[];

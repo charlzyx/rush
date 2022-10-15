@@ -82,6 +82,7 @@ export const SchemaForm = (props: {
           field="alias"
           label="别名"
           required
+          help="设置之后无法修改,请谨慎"
           disabled={props.init?.alias}
           rules={required}
         >

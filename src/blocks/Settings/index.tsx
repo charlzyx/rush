@@ -163,6 +163,7 @@ export function Settings() {
             tmp.current = null;
             setView('edit');
           }}
+          size="small"
           type="primary"
         >
           加个配置

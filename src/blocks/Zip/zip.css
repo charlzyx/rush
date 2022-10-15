@@ -1,3 +1,7 @@
 .zip .filepond--file-status-sub {
   display: none !important;
 }
+
+.zip .filepond--file-status-main {
+  font-size: 1em;
+}
