@@ -50,7 +50,7 @@ export const Config = () => {
   return (
     <div style={{ display: 'inline-flex' }}>
       <Tooltip
-        content={plug?.supported?.sync ? '同步远程数据' : '不支持同步远程数据'}
+        content={plug?.supported?.sync ? '拉取远程数据' : '不支持拉取远程数据'}
       >
         <Button
           style={{

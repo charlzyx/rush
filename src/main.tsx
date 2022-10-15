@@ -18,6 +18,7 @@ DB.connect()
         console.log('DB inited.');
       })
       .catch((e) => {
+        console.log(e);
         notify.err('DB', 'DB init Failed.', e.message);
       });
   })

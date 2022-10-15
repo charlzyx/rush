@@ -38,19 +38,19 @@ export const Menu = () => {
           </div>
         </Radio>
       </Link>
-      <Link to="/hisotry">
-        <Radio onClick={() => setRoute('Hisotry')} value="Hisotry">
-          <div>
-            <IconHistory color="rgb(var(--arcoblue-6))"></IconHistory>
-            历史
-          </div>
-        </Radio>
-      </Link>
       <Link to="/up">
         <Radio onClick={() => setRoute('Up')} value="Up">
           <div>
             <IconUpload color="rgb(var(--arcoblue-6))"></IconUpload>
             上传
+          </div>
+        </Radio>
+      </Link>
+      <Link to="/hisotry">
+        <Radio onClick={() => setRoute('Hisotry')} value="Hisotry">
+          <div>
+            <IconHistory color="rgb(var(--arcoblue-6))"></IconHistory>
+            历史
           </div>
         </Radio>
       </Link>

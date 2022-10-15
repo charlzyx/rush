@@ -1,6 +1,6 @@
 import Database from 'tauri-plugin-sql-api';
-import { DROP, INIT, TABLE } from './init';
-import { PageQuery, StoreItem } from '@/shared/typings';
+import { DROP, INIT, TABLE, TABLE_STATS } from './init';
+import { PageQuery, StatisticsItem, StoreItem } from '@/shared/typings';
 import { path, shell } from '@tauri-apps/api';
 import { nanoid } from 'nanoid';
 
@@ -63,6 +63,48 @@ ${batch.join('\n')}
     return ret;
   }
 
+  static async record(data: Omit<StatisticsItem, 'id'>) {
+    if (!DB.db) {
+      return Promise.reject('DB not connected.');
+    }
+
+    const id = `${+new Date()}_${nanoid()}`;
+
+    const sql = `INSERT INTO ${TABLE_STATS} (id, name, before, after, create_time) VALUES($1, $2, $3, $4, $5)`;
+
+    const ret = await DB.db.execute(sql, [
+      id,
+      data.name,
+      data.before,
+      data.after,
+      +new Date(),
+    ]);
+    return ret;
+  }
+
+  static async countclear() {
+    if (!DB.db) {
+      return Promise.reject('DB not connected.');
+    }
+    const sql = `DELETE FROM ${TABLE_STATS} WHERE id NOT NULL`;
+    const ok = await DB.db.execute(sql, []);
+    return ok;
+  }
+
+  static async count(): Promise<StatisticsItem[]> {
+    if (!DB.db) {
+      return Promise.reject('DB not connected.');
+    }
+    const sql = `
+SELECT * FROM ${TABLE_STATS}
+ORDER BY create_time DESC
+`
+      .split('\n')
+      .join(' ');
+    const list = await DB.db.select(sql, []);
+    return list as any;
+  }
+
   static async insert(data: Omit<StoreItem, 'id'>) {
     if (!DB.db) {
       return Promise.reject('DB not connected.');
@@ -87,7 +129,7 @@ ${batch.join('\n')}
   static async update(data: Partial<StoreItem>) {
     const id = data.id;
     if (!id) {
-      return Promise.reject('Cannot DELETE without id!');
+      return Promise.reject('Cannot UPDATE without id!');
     }
     if (!DB.db) {
       return Promise.reject('DB not connected.');

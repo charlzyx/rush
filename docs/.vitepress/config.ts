@@ -14,7 +14,7 @@
       { text: "首页", link: "/" },
       {
         text: "配置文档",
-        link: "/settings",
+        link: "/settings/index",
       },
     ],
     socialLinks: [{ icon: "github", link: "https://github.com/charlzyx" }],

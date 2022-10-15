@@ -1,20 +1,41 @@
-import { useState } from 'react';
-import { Button, Message, Modal, Typography } from '@arco-design/web-react';
-import {
-  IconBug,
-  IconCheck,
-  IconGithub,
-  IconQuestion,
-  IconStar,
-} from '@arco-design/web-react/icon';
 import { autoupdate } from '@/autoupdate';
+import { DB } from '@/db';
+import { StatisticsItem } from '@/shared/typings';
+import { Button, Statistic, Typography } from '@arco-design/web-react';
+import { IconBug, IconGithub, IconQuestion } from '@arco-design/web-react/icon';
 import { shell } from '@tauri-apps/api';
+import dayjs from 'dayjs';
+import { useEffect, useMemo, useState } from 'react';
 import './about.css';
-import { notify } from '@/utils/notify';
 
-const { Title, Paragraph, Text } = Typography;
+const { Title } = Typography;
 export const About = () => {
   const [loading, setLoaing] = useState(false);
+
+  const [list, setList] = useState<StatisticsItem[]>([]);
+
+  const counts = useMemo(() => {
+    const firstTime = list[0]
+      ? dayjs(list[0].create_time).format('YYYY-MM-DD')
+      : null;
+    const before = list.reduce((c, i) => c + i.before, 0);
+    const after = list.reduce((c, i) => c + i.after, 0);
+
+    return {
+      from: firstTime,
+      len: list.length,
+      before: (before / 1024).toFixed(2),
+      after: (after / 1024).toFixed(2),
+      p: (((before - after) / before) * 100).toFixed(2),
+    };
+  }, [list]);
+
+  useEffect(() => {
+    DB.count().then((res) => {
+      setList(res);
+    });
+  }, []);
+
   return (
     <div className="about">
       <div className="space">
@@ -22,26 +43,50 @@ export const About = () => {
           <img className="logo" src="/brand.svg" alt="" />
         </div>
         <div>
-          <Button.Group>
-            <Button
-              onClick={() => {
-                shell.open('https://github.com/charlzyx/rush');
-              }}
-              type="text"
-              icon={<IconStar></IconStar>}
-            ></Button>
-          </Button.Group>
+          <Button
+            onClick={() => {
+              shell.open('https://github.com/charlzyx/rush');
+            }}
+            type="text"
+            icon={<IconGithub></IconGithub>}
+          ></Button>
         </div>
       </div>
       <div className="body">
-        <img
-          onClick={() => {
-            shell.open('https://github.com/charlzyx/rush');
+        <Title heading={4}>从 {counts.from} 至今, Rush 共计为你</Title>
+        <div className="space">
+          <Statistic
+            value={`${counts.len} 张`}
+            title="压缩图片"
+            // extra="张图片"
+          ></Statistic>
+          <Statistic
+            value={`${counts.before} Kb`}
+            title="将图片大小从 "
+            // extra="Kb"
+          ></Statistic>
+          <Statistic
+            title="减少到"
+            value={`${counts.after} Kb`}
+            // extra="Kb"
+          ></Statistic>
+          <Statistic
+            title="文件大小"
+            value={`-${counts.p}%`}
+            // extra="存储空间"
+          ></Statistic>
+        </div>
+        <div
+          style={{
+            paddingTop: 16,
+            fontSize: 16,
+            textDecoration: 'underline',
+            fontStyle: 'italic',
+            color: `var(--color-text-2)`,
           }}
-          src="https://gh-card.dev/repos/charlzyx/rush.svg"
-          width="460px"
-          alt="git"
-        />
+        >
+          <div>⚡ 感谢你为提升用户网络体验做出的贡献.</div>
+        </div>
       </div>
       <div className="center">
         <Button
@@ -56,6 +101,7 @@ export const About = () => {
         </Button>
         &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
         <Button
+          loading={loading}
           onClick={async () => {
             setLoaing(true);
             try {

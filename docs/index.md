@@ -1,29 +1,28 @@
 ---
 layout: home
 
-title: 首页
+title: Rush 官方文档
 
 hero:
-  name: Rush
-  text: tiny image
-  tagline: and upload
+  name: Rush!
+  text: 图片压缩 & 上传工具
+  tagline: 这是一个兴趣使然的项目, 希望 Rush 能让这个世界的网络资源浪费减少一点点
   image:
     src: /assets/brand.svg
     alt: logo
   actions:
-    - theme: alt
-      text: GitHub
-      link: https://github.com/charlzyx/rush
+    - theme: brand
+      text: 下载
+      link: https://github.com/charlzyx/rush/releases/latest
 features:
-  - icon: ⚡️
-    title: 光速压缩
-    details: POWERED BY WASM
-  - icon: 🖖
+  - icon: ⚡️ ️
+    title: 很快的
+    details: Powered By WASM & tauri
+  - icon: 💡
     title: 操作友好
-    details: 支持拖拽/粘贴/点选文件
-  - icon: 🛠️
-    title: 云同步
-    details: 个人网盘 滑稽.jpg
----
+    details: 支持拖拽/粘贴/点选多种方式
+  - icon: ☁️
+    title: 能当图床
+    details: github/阿里云OSS/腾讯云COS...
 
-<!-- ![screenshot1](https://charlzyx-1256238431.cos.ap-beijing.myqcloud.com/image.png) -->
+---
