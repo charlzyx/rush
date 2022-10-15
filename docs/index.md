@@ -8,7 +8,7 @@ hero:
   text: 图片压缩 & 上传工具
   tagline: 这是一个兴趣使然的项目, 希望 Rush 能让这个世界的网络资源浪费减少一点点
   image:
-    src: /assets/brand.svg
+    src: /rush/assets/brand.svg
     alt: logo
   actions:
     - theme: brand
