@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## v1.2.9
+- feat: 添加 vercel 文档
+
 ## v1.2.8
 - fix: 🐛 是名字里面的感叹号导致的问题
 

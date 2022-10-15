@@ -1,10 +1,15 @@
 import { Button, Radio, Space } from '@arco-design/web-react';
-import { IconPlus } from '@arco-design/web-react/icon';
+import {
+  IconLaunch,
+  IconPlus,
+  IconQuestion,
+} from '@arco-design/web-react/icon';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { SchemaForm } from './SchemaForm';
 import { SchemaList } from './SchemaList';
 import { useStore } from '@/store';
 import { PluginKey, getPluginSchema, plugins } from '@/plugins';
+import { shell } from '@tauri-apps/api';
 
 export const usePluginSettings = () => {
   const [scope, setScope] = useStore<PluginKey>('config_scope', 'qiniu');
@@ -156,18 +161,31 @@ export function Settings() {
             {current?.alias || '配置完成后, 点击别名启用该配置'}
           </Button>
         </div>
+        <div>
+          <Button
+            icon={<IconQuestion></IconQuestion>}
+            onClick={() => {
+              shell.open('https://rushapp.vercel.app/');
+            }}
+            size="small"
+            type="text"
+          >
+            说明
+            {/* <IconLaunch></IconLaunch> */}
+          </Button>
 
-        <Button
-          icon={<IconPlus></IconPlus>}
-          onClick={() => {
-            tmp.current = null;
-            setView('edit');
-          }}
-          size="small"
-          type="primary"
-        >
-          加个配置
-        </Button>
+          <Button
+            icon={<IconPlus></IconPlus>}
+            onClick={() => {
+              tmp.current = null;
+              setView('edit');
+            }}
+            size="small"
+            type="primary"
+          >
+            加个配置
+          </Button>
+        </div>
       </Space>
       {view === 'list' ? (
         <SchemaList

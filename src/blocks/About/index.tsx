@@ -55,37 +55,13 @@ export const About = () => {
       <div className="body">
         <Title heading={4}>从 {counts.from} 至今, Rush 共计为你</Title>
         <div className="space">
-          <Statistic
-            value={`${counts.len} 张`}
-            title="压缩图片"
-            // extra="张图片"
-          ></Statistic>
+          <Statistic value={`${counts.len} 张`} title="压缩图片"></Statistic>
           <Statistic
             value={`${counts.before} Kb`}
             title="将图片大小从 "
-            // extra="Kb"
           ></Statistic>
-          <Statistic
-            title="减少到"
-            value={`${counts.after} Kb`}
-            // extra="Kb"
-          ></Statistic>
-          <Statistic
-            title="文件大小"
-            value={`-${counts.p}%`}
-            // extra="存储空间"
-          ></Statistic>
-        </div>
-        <div
-          style={{
-            paddingTop: 16,
-            fontSize: 16,
-            textDecoration: 'underline',
-            fontStyle: 'italic',
-            color: `var(--color-text-2)`,
-          }}
-        >
-          <div>⚡ 感谢你为提升用户网络体验做出的贡献.</div>
+          <Statistic title="减少到" value={`${counts.after} Kb`}></Statistic>
+          <Statistic title="存储空间" value={`-${counts.p}%`}></Statistic>
         </div>
       </div>
       <div className="center">

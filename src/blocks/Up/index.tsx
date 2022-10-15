@@ -46,7 +46,7 @@ export const Up = () => {
       try {
         const preSize = file.size;
         const lite = await plug.transform(file as File);
-        const afterSize = file.size;
+        const afterSize = lite.size;
         const result = await plug.upload(lite, current?.alias);
         await DB.insert(result);
 
