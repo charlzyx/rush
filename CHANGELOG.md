@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## v2.0.0
+- docs: 文档更新, 正式发布
+
 ## v1.3.0
 - docs: 添加 github pages
 

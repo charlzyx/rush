@@ -165,13 +165,12 @@ export function Settings() {
           <Button
             icon={<IconQuestion></IconQuestion>}
             onClick={() => {
-              shell.open('https://rushapp.vercel.app/');
+              shell.open('https://charlzyx.github.io/rush');
             }}
             size="small"
             type="text"
           >
             说明
-            {/* <IconLaunch></IconLaunch> */}
           </Button>
 
           <Button
