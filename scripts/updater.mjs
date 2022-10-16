@@ -4,6 +4,9 @@ import fs from 'fs';
 
 import updatelog from './updatelog.mjs';
 
+// const WORKDIR = 'updater';
+const WORKDIR = './docs/.vitepress/dist';
+
 const token = process.env.GITHUB_TOKEN;
 
 async function updater() {
@@ -83,11 +86,11 @@ async function updater() {
   });
   await Promise.allSettled(promises);
 
-  if (!fs.existsSync('updater')) {
-    fs.mkdirSync('updater');
+  if (!fs.existsSync(WORKDIR)) {
+    fs.mkdirSync(WORKDIR, { recursive: true });
   }
   fs.writeFileSync(
-    './updater/install.json',
+    `${WORKDIR}/install.json`,
     JSON.stringify(updateData, null, 2),
   );
   console.log('Generate updater/install.json');

@@ -90,20 +90,21 @@ jobs:
         with:
           releaseId: ${{ needs.create-release.outputs.RELEASE_UPLOAD_ID }}
 
-  updater:
+  git-pages-and-updater:
     runs-on: ubuntu-latest
     needs: [create-release, build-tauri]
 
     steps:
       - uses: actions/checkout@v2
       - run: yarn
-      - run: yarn updater
+      - run: yarn docs:build && yarn updater
         env:
           GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+          BASE: true
 
       - name: Deploy install.json
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.ACCESS_TOKEN }}
-          publish_dir: ./updater
+          publish_dir: ./docs/.vitepress/dist
           force_orphan: true

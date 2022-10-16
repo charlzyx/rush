@@ -12,10 +12,10 @@ hero:
     alt: logo
   actions:
     - theme: brand
-      text: 获取最新版本
+      text: 🎉 获取最新版本
       link: https://github.com/charlzyx/rush/releases/latest
     - theme: alt
-      text: 查看截图
+      text: 🖼 功能截图
       link: /screenshots
 
 features:
@@ -26,6 +26,6 @@ features:
     title: 界面简单, 操作友好
     details: 支持拖拽/粘贴/点选多种方式选择文件
   - icon: ☁️
-    title: 对象存储服务做云盘
+    title: 真正的个人云盘 🙈
     details: 目前支持 github/阿里云OSS/腾讯云COS...
 ---

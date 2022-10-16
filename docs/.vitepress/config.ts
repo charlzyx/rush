@@ -1,11 +1,12 @@
 /**
  * @type {import('vitepress').UserConfig}
  */
- const config = {
+
+const config = {
   title: "Rush!",
   description: "一个兴趣使然的图片压缩客户端. ting image, tiny png.",
   lastUpdated: true,
-  // base: "/rush",
+  base: process.env.BASE ? "/rush" :"/",
   // lang: 'zh-CN',
   head: [["link", { rel: "icon", type: "svg", href: "/assets/logo.svg" }]],
   themeConfig: {
@@ -22,7 +23,7 @@
       },
     ],
     footer: {
-      message: 'Released under the MIT License. <a href="">Powered by tauri.</a>',
+      message: 'Released under the MIT License. <a href="https://tauri.app/">Powered by tauri.</a>',
       copyright: 'Copyright © 2019-present charlzyx'
     },
     socialLinks: [{ icon: "github", link: "https://github.com/charlzyx" }],
