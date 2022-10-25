@@ -3,6 +3,7 @@ import tiny from '@mxsir/image-tiny';
 import { TINY_SUPPORTE } from './config';
 import { Fs } from '@/utils/fs';
 import { Plugin } from './Plugin';
+import dayjs from 'dayjs';
 
 export interface TinyConfig {
   quality: number;
@@ -30,15 +31,16 @@ export class TinyPlugin extends Plugin {
 
   async upload(file: File, alias: string): Promise<StoreItem> {
     const buffer = await file.arrayBuffer();
-    const url = await Fs.wirte(file.name, buffer);
+    const fileName = `${+dayjs()}_${file.name}`;
+    const url = await Fs.wirte(fileName, buffer);
 
     const ret: StoreItem = {
       size: file.size,
       alias,
       scope: this.name,
-      hash: file.name,
+      hash: fileName,
       dir: '',
-      name: file.name,
+      name: fileName,
       url: `file://${url}`,
       create_time: +new Date(),
       extra: '',
