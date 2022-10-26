@@ -3,6 +3,7 @@ import { AniSvg } from '@/blocks/AniSvg';
 import { DB } from '@/db';
 import { getPlugin } from '@/plugins';
 import { useProgress } from '@/Progress';
+import { useRoute } from '@/Route';
 import { ProcessServer, Rush } from '@/utils/rush';
 import { Button, Progress, Slider, Space } from '@arco-design/web-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -16,6 +17,7 @@ export const Up = () => {
   const [files, setFiles] = useState<any[]>([]);
   const [quality, setQuality] = useState(80);
   const { up, setUp } = useProgress();
+  const route = useRoute();
 
   const wrapper = useRef<HTMLDivElement | null>(null);
 
@@ -45,6 +47,15 @@ export const Up = () => {
       transfer,
     ) => {
       if (!plug) return;
+      console.log('up uploading', {
+        fieldName,
+        file,
+        metadata,
+        load,
+        error,
+        progress,
+        abort,
+      });
       try {
         const preSize = file.size;
         const lite = await plug.transform(file as File);
@@ -117,6 +128,7 @@ export const Up = () => {
       <div ref={wrapper} className="rush-workspace">
         <Rush
           {...FPProps}
+          disabled={route.now !== 'up'}
           stylePanelAspectRatio={'21:9'}
           files={files}
           onupdatefiles={setFiles}

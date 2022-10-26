@@ -23,11 +23,13 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import '../filepond.css';
 import './zip.css';
 import { useRafInterval } from 'ahooks';
+import { useRoute } from '@/Route';
 
 export const Zip = () => {
   const [files, setFiles] = useState<any[]>([]);
   const [quality, setQuality] = useState(80);
   const { zip, setZip } = useProgress();
+  const route = useRoute();
   const optimizeMaping = useRef<
     Record<
       string,
@@ -60,6 +62,15 @@ export const Zip = () => {
       abort,
       transfer,
     ) => {
+      console.log('zip uploading', {
+        fieldName,
+        file,
+        metadata,
+        load,
+        error,
+        progress,
+        abort,
+      });
       const preSize = file.size;
       const lite = await plug.transform(file as File);
       const afterSize = lite.size;
@@ -185,7 +196,8 @@ export const Zip = () => {
           {...FPProps}
           stylePanelAspectRatio={'21:9'}
           files={files}
-          acceptedFileTypes={['image/png', 'image/jpeg', 'image/gif']}
+          disabled={route.now !== '/'}
+          acceptedFileTypes={['.jpg,.jpeg,.png,gif']}
           onupdatefiles={setFiles}
           allowMultiple={true}
           server={{ process: uploading }}

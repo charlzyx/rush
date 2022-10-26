@@ -75,18 +75,18 @@ const format = (
   },
 ) => {
   const answer = x.replace(/\{([^}]+)\}/g, (m) => {
-    console.log('m is', m);
+    // console.log('m is', m);
     const tpl = m.replace('{', '').replace('}', '');
     const ret = o[tpl] || o.render;
     if (typeof ret === 'function') {
-      console.log('tpl is ', tpl, ' ret is ', ret(tpl));
+      // console.log('tpl is ', tpl, ' ret is ', ret(tpl));
       return ret(tpl);
     } else {
-      console.log('tpl is ', tpl, ' ret is ', ret);
+      // console.log('tpl is ', tpl, ' ret is ', ret);
       return ret;
     }
   });
-  console.log('input: ', x, 'ouput:', answer);
+  // console.log('input: ', x, 'ouput:', answer);
   return answer;
 };
 

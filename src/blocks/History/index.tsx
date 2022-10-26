@@ -54,8 +54,8 @@ const useResponsiveSize = (wrapperRef: { current: HTMLDivElement | null }) => {
   const w = size?.width || rect?.width || bodyWH().w;
   const h = size?.height || rect?.height || bodyWH().h;
 
-  const width = useThrottle(w, { wait: 100, leading: true });
-  const height = useThrottle(h, { wait: 100, leading: true });
+  const width = useThrottle(w, { wait: 100 });
+  const height = useThrottle(h, { wait: 100 });
 
   const [col, setCol] = useState(computedCol(width));
 
@@ -73,6 +73,7 @@ const useResponsiveSize = (wrapperRef: { current: HTMLDivElement | null }) => {
 
   const row = useMemo(() => {
     const easy = Math.floor(height / unit);
+    console.log('easy row', easy);
     if (!rect) {
       return easy;
     }
@@ -80,6 +81,7 @@ const useResponsiveSize = (wrapperRef: { current: HTMLDivElement | null }) => {
     const BOTTOMOFFSET = 48;
     const wanted = bodyWH().h - rect.top - BOTTOMOFFSET;
     if (rect.height > wanted) {
+      console.log('commputed row', wanted, unit);
       return Math.floor(wanted / unit);
     } else {
       return easy;
@@ -135,7 +137,7 @@ export const History = () => {
   });
 
   const lazyLoading = useThrottle(state.loading, {
-    wait: 123,
+    wait: 128,
     trailing: true,
     leading: true,
   });
@@ -153,11 +155,14 @@ export const History = () => {
     }, [] as StoreItem[][]);
   }, [col, list]);
 
+  const lazyPage = useDebounce(pageSize, { wait: 233 });
+
   useEffect(() => {
+    console.log('lazyPage', lazyPage);
     setPage((x) => {
-      return { ...x, pageSize };
+      return { ...x, pageSize: lazyPage };
     });
-  }, [pageSize]);
+  }, [lazyPage]);
 
   const params = useLatest({
     scope,

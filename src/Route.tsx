@@ -1,4 +1,10 @@
-import React, { createContext, useCallback, useContext, useState } from 'react';
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+} from 'react';
 
 interface Route {
   now: RouteKey;
@@ -8,7 +14,6 @@ interface Route {
 
 interface RouteMap {
   '/': '/';
-  zip: 'zip';
   history: 'history';
   up: 'up';
   settings: 'settings';
@@ -55,18 +60,22 @@ export const useRoute = () => {
 };
 
 export const KeepPage = (props: React.PropsWithChildren<{ show: boolean }>) => {
-  return (
-    <div
-      style={{
-        height: '100%',
-        position: props.show ? undefined : 'fixed',
-        // transform: `translate3d(${props.show ? 0 : '200%'}, 0, 0)`,
-        right: props.show ? 0 : '200%',
-        opacity: props.show ? 1 : 0,
-        transition: 'all ease 0.123s',
-      }}
-    >
-      {props.children}
-    </div>
-  );
+  const style = useMemo((): React.CSSProperties => {
+    return props.show
+      ? {
+          height: '100%',
+          transform: `translate3d(0, 0, 0)`,
+          opacity: props.show ? 1 : 0,
+          transition: 'all ease-in-out 0.2s',
+        }
+      : {
+          position: 'fixed',
+          height: '100%',
+          transform: `translate3d(200%, 0, 0)`,
+          opacity: props.show ? 1 : 0,
+          transition: 'all ease-in-out 0.2s',
+        };
+  }, [props.show]);
+
+  return <div style={style}>{props.children}</div>;
 };
