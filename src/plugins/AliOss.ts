@@ -1,14 +1,21 @@
 import { DB } from '@/db';
-import { Plugin, PluginConfigSchemaItem, PluginSupported } from './Plugin';
-import { StoreItem } from '@/shared/typings';
 import { tiny } from '@/lib/pngtiny';
+import { StoreItem } from '@/shared/typings';
 import { store } from '@/store';
-import OSS from 'ali-oss';
-import { TINY_SUPPORTE } from './config';
-import dayjs from 'dayjs';
 import { notify } from '@/utils/notify';
-import { CommonConfig, compileConfig, getCommonConfigSchema } from './Plugin';
 import { Modal } from '@arco-design/web-react';
+import OSS from 'ali-oss';
+import dayjs from 'dayjs';
+import { TINY_SUPPORTE } from './config';
+import {
+  CommonConfig,
+  Plugin,
+  PluginConfigSchemaItem,
+  PluginSupported,
+  compileConfig,
+  getCommonConfigSchema,
+  renameFile,
+} from './Plugin';
 
 export interface AliOssConfig extends CommonConfig {
   accessKeyId: string;
@@ -75,16 +82,22 @@ export class AliOssPlugin extends Plugin {
   }
 
   async transform(file: File): Promise<File> {
+    const conf = compileConfig(this.config, file.name);
+    // 阻止文件名二次编译
+    this.config.fileName = conf.fileName;
     if (this.config.quality! < 100 && TINY_SUPPORTE.test(file.name)) {
       const lite = await tiny(file, this.config.quality);
-      return lite;
+      const renamed = renameFile(lite, conf.fileName!);
+
+      return renamed;
     } else {
-      return Promise.resolve(file);
+      const renamed = renameFile(file, conf.fileName!);
+      return Promise.resolve(renamed);
     }
   }
 
   async upload(file: File, alias: string): Promise<StoreItem> {
-    const conf = compileConfig(this.config, file.name);
+    const conf = compileConfig(this.config);
     const { filePath, dir, customUrl } = conf;
 
     const upload = await this.client

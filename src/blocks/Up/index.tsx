@@ -47,29 +47,21 @@ export const Up = () => {
       transfer,
     ) => {
       if (!plug) return;
-      console.log('up uploading', {
-        fieldName,
-        file,
-        metadata,
-        load,
-        error,
-        progress,
-        abort,
-      });
       try {
         const preSize = file.size;
-        const lite = await plug.transform(file as File);
+        let lite = await plug.transform(file as File);
         const afterSize = lite.size;
         const result = await plug.upload(lite, current?.alias);
         await DB.insert(result);
 
+        progress(true, lite.size, preSize);
         load(result.url);
         setFinished((x) => x + 1);
         if (afterSize < preSize) {
           DB.record({
             before: preSize,
             after: afterSize,
-            name: file.name,
+            name: lite.name,
             create_time: +new Date(),
           });
         }

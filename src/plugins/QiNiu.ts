@@ -1,12 +1,11 @@
 import { DB } from '@/db';
+import { tiny } from '@/lib/pngtiny';
 import { StoreItem } from '@/shared/typings';
 import { store } from '@/store';
 import { notify } from '@/utils/notify';
-import { tiny } from '@/lib/pngtiny';
 import { invoke } from '@tauri-apps/api';
 import dayjs from 'dayjs';
 import * as qiniu from 'qiniu-js';
-import { getCommentRange } from 'typescript';
 import { TINY_SUPPORTE } from './config';
 import {
   CommonConfig,
@@ -15,6 +14,7 @@ import {
   PluginSupported,
   compileConfig,
   getCommonConfigSchema,
+  renameFile,
 } from './Plugin';
 
 export interface QiNiuConfig extends CommonConfig {
@@ -114,11 +114,17 @@ export class QiNiuPlugin extends Plugin {
   }
 
   async transform(file: File): Promise<File> {
+    const conf = compileConfig(this.config, file.name);
+    // 阻止文件名二次编译
+    this.config.fileName = conf.fileName;
     if (this.config.quality! < 100 && TINY_SUPPORTE.test(file.name)) {
       const lite = await tiny(file, this.config.quality);
-      return lite;
+      const renamed = renameFile(lite, conf.fileName!);
+
+      return renamed;
     } else {
-      return Promise.resolve(file);
+      const renamed = renameFile(file, conf.fileName!);
+      return Promise.resolve(renamed);
     }
   }
 
@@ -132,7 +138,7 @@ export class QiNiuPlugin extends Plugin {
 
   // https://github.com/PicGo/PicGo-Core/blob/dev/src/plugins/uploader/qiniu.ts
   async upload(file: File, alias: string): Promise<StoreItem> {
-    const conf = compileConfig(this.config, file.name);
+    const conf = compileConfig(this.config);
     const { customUrl, dir, filePath } = conf;
 
     if (+new Date() - this.TOKEN.expired_time < 10 * 60 * 1000) {

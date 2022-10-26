@@ -73,7 +73,6 @@ const useResponsiveSize = (wrapperRef: { current: HTMLDivElement | null }) => {
 
   const row = useMemo(() => {
     const easy = Math.floor(height / unit);
-    console.log('easy row', easy);
     if (!rect) {
       return easy;
     }
@@ -81,7 +80,6 @@ const useResponsiveSize = (wrapperRef: { current: HTMLDivElement | null }) => {
     const BOTTOMOFFSET = 48;
     const wanted = bodyWH().h - rect.top - BOTTOMOFFSET;
     if (rect.height > wanted) {
-      console.log('commputed row', wanted, unit);
       return Math.floor(wanted / unit);
     } else {
       return easy;
@@ -158,7 +156,6 @@ export const History = () => {
   const lazyPage = useDebounce(pageSize, { wait: 233 });
 
   useEffect(() => {
-    console.log('lazyPage', lazyPage);
     setPage((x) => {
       return { ...x, pageSize: lazyPage };
     });

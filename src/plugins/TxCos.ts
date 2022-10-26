@@ -1,4 +1,9 @@
 import { DB } from '@/db';
+import { tiny } from '@/lib/pngtiny';
+import { StoreItem } from '@/shared/typings';
+import { store } from '@/store';
+import COS from 'cos-js-sdk-v5';
+import { TINY_SUPPORTE } from './config';
 import {
   CommonConfig,
   Plugin,
@@ -6,17 +11,13 @@ import {
   PluginSupported,
   compileConfig,
   getCommonConfigSchema,
+  renameFile,
 } from './Plugin';
-import { StoreItem } from '@/shared/typings';
-import { tiny } from '@/lib/pngtiny';
-import { store } from '@/store';
-import COS from 'cos-js-sdk-v5';
-import { TINY_SUPPORTE } from './config';
 // import * as crypto from 'crypto';
-import dayjs from 'dayjs';
 import { notify } from '@/utils/notify';
 import { parse } from '@/utils/parse';
 import { Modal } from '@arco-design/web-react';
+import dayjs from 'dayjs';
 
 export interface TxCosConfig extends CommonConfig {
   SecretKey: string;
@@ -103,16 +104,21 @@ export class TxCosPlugin extends Plugin {
   }
 
   async transform(file: File): Promise<File> {
+    const conf = compileConfig(this.config, file.name);
+    // 阻止文件名二次编译
+    this.config.fileName = conf.fileName;
     if (this.config.quality! < 100 && TINY_SUPPORTE.test(file.name)) {
       const lite = await tiny(file, this.config.quality);
-      return lite;
+      const renamed = renameFile(lite, conf.fileName!);
+
+      return renamed;
     } else {
-      return Promise.resolve(file);
+      const renamed = renameFile(file, conf.fileName!);
+      return Promise.resolve(renamed);
     }
   }
-
   async upload(file: File, alias: string): Promise<StoreItem> {
-    const conf = compileConfig(this.config, file.name);
+    const conf = compileConfig(this.config);
     const { Bucket, customUrl, Region, filePath, dir } = conf;
 
     const answer = await this.client

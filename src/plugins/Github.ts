@@ -1,4 +1,5 @@
 import { DB } from '@/db';
+import { tiny } from '@/lib/pngtiny';
 import { StoreItem } from '@/shared/typings';
 import { store } from '@/store';
 import { toBase64 } from '@/utils/fs';
@@ -6,7 +7,6 @@ import { notify } from '@/utils/notify';
 import { parse } from '@/utils/parse';
 import { req } from '@/utils/req';
 import { Modal } from '@arco-design/web-react';
-import { tiny } from '@/lib/pngtiny';
 import dayjs from 'dayjs';
 import { TINY_SUPPORTE } from './config';
 import {
@@ -16,6 +16,7 @@ import {
   PluginSupported,
   compileConfig,
   getCommonConfigSchema,
+  renameFile,
 } from './Plugin';
 
 export interface GithubPluginConfig extends CommonConfig {
@@ -103,17 +104,24 @@ export class GithubPlugin extends Plugin {
   }
 
   async transform(file: File): Promise<File> {
+    const conf = compileConfig(this.config, file.name);
+    // 阻止文件名二次编译
+    this.config.fileName = conf.fileName;
     if (this.config.quality! < 100 && TINY_SUPPORTE.test(file.name)) {
       const lite = await tiny(file, this.config.quality);
-      return lite;
+      const renamed = renameFile(lite, conf.fileName!);
+
+      return renamed;
     } else {
-      return Promise.resolve(file);
+      const renamed = renameFile(file, conf.fileName!);
+      return Promise.resolve(renamed);
     }
   }
 
   async upload(file: File, alias: string): Promise<StoreItem> {
     const { branch, customUrl, repo, token } = this.config;
-    const { dir, fileName, filePath } = compileConfig(this.config, file.name);
+    const { dir, fileName, filePath } = compileConfig(this.config);
+    console.log('fileName, filePath', { fileName, filePath });
 
     const encodeFilePath = encodeURI(filePath!);
 

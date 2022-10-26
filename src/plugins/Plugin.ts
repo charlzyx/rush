@@ -1,7 +1,7 @@
-import { PageQuery, PageResp, StoreItem } from '@/shared/typings';
 import { DB } from '@/db';
-import React from 'react';
+import { PageQuery, PageResp, StoreItem } from '@/shared/typings';
 import dayjs from 'dayjs';
+import React from 'react';
 
 export interface PluginConfigSchemaItem {
   label: string;
@@ -88,6 +88,12 @@ const format = (
   });
   // console.log('input: ', x, 'ouput:', answer);
   return answer;
+};
+
+export const renameFile = (file: File, newName: string) => {
+  if (newName === file.name) return file;
+  const renamed = new File([file], newName);
+  return renamed;
 };
 
 export const compileConfig = <T extends CommonConfig>(

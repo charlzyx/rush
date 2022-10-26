@@ -24,6 +24,7 @@ import '../filepond.css';
 import './zip.css';
 import { useRafInterval } from 'ahooks';
 import { useRoute } from '@/Route';
+import { TINY_SUPPORTE } from '@/plugins/config';
 
 export const Zip = () => {
   const [files, setFiles] = useState<any[]>([]);
@@ -46,6 +47,9 @@ export const Zip = () => {
     return new TinyPlugin({ quality });
   }, [quality]);
 
+  const fpIds = useRef<Record<string, string>>({});
+  const [render, setRender] = useState(0);
+
   const [finished, setFinished] = useState(0);
   const count = useMemo(() => {
     return files.length || 0;
@@ -61,35 +65,46 @@ export const Zip = () => {
       progress,
       abort,
       transfer,
+      ...others
     ) => {
-      console.log('zip uploading', {
-        fieldName,
-        file,
-        metadata,
-        load,
-        error,
-        progress,
-        abort,
-      });
       const preSize = file.size;
       const lite = await plug.transform(file as File);
+      // console.log({ before: file, after: lite });
       const afterSize = lite.size;
       const result = await plug.upload(lite, 'tiny');
-
-      load(result.url);
-      progress(true, lite.size, lite.size);
-      optimizeMaping.current[file.name] = {
+      // transfer(lite.name);
+      // console.log({
+      //   fieldName,
+      //   file,
+      //   metadata,
+      //   load,
+      //   error,
+      //   progress,
+      //   abort,
+      //   transfer,
+      //   others,
+      // });
+      // 根据原始名字获取id
+      const fileId = fpIds.current[file.name];
+      optimizeMaping.current[fileId] = {
         ratio: parseFloat(((afterSize / preSize) * 100).toFixed(2)),
         before: preSize,
         after: afterSize,
       };
+      optimizeMaping.current[`${fileId}empty`] = {
+        ratio: parseFloat(((afterSize / preSize) * 100).toFixed(2)),
+        before: preSize,
+        after: afterSize,
+      };
+      progress(true, lite.size, lite.size);
+      load(result.url);
 
       setFinished((x) => x + 1);
 
       try {
         if (afterSize < preSize) {
           await DB.record({
-            name: file.name,
+            name: lite.name,
             before: preSize,
             after: afterSize,
             create_time: +new Date(),
@@ -107,30 +122,24 @@ export const Zip = () => {
 
   const fresh = () => {
     if (!wrapper.current) return;
-    const list = Array.from(
-      wrapper.current.querySelectorAll('.filepond--file-status'),
-    );
-    list.forEach((status) => {
-      const legend = status.parentElement?.parentElement?.querySelector(
-        '.filepond--file-wrapper legend',
-      );
-      const name = legend?.innerHTML;
-      const ratio = optimizeMaping.current?.[name || '']?.ratio;
-
-      const text = status?.children?.[0];
-      if (!text) return;
-      const isFinished = text.innerHTML === '压缩完成';
-      if (isFinished) {
-        // console.log('text', { text, ratio });
-        const tip = 100 - ratio >= 0 ? `-${(100 - ratio).toFixed(2)}%` : '';
-        text.innerHTML = tip.toString();
+    const map = optimizeMaping.current;
+    for (const id in map) {
+      if (Object.prototype.hasOwnProperty.call(map, id)) {
+        const li = wrapper.current?.querySelector(`#filepond--item-${id}`);
+        const status = li?.querySelector('.filepond--file-status-main');
+        console.log('status', li, status?.innerHTML);
+        if (status && status.innerHTML === '压缩完成') {
+          const ratio = map[id].ratio;
+          const tip = 100 - ratio >= 0 ? `-${(100 - ratio).toFixed(2)}%` : '';
+          status.innerHTML = tip.toString();
+        }
       }
-    });
+    }
   };
 
-  useRafInterval(() => {
+  useEffect(() => {
     fresh();
-  }, 68);
+  }, [zip]);
 
   useEffect(() => {
     setZip(count === 0 ? 0 : Math.ceil((finished / count) * 100));
@@ -196,9 +205,29 @@ export const Zip = () => {
           {...FPProps}
           stylePanelAspectRatio={'21:9'}
           files={files}
+          onprocessfiles={() => {
+            fresh();
+            console.log('alllldne');
+          }}
           disabled={route.now !== '/'}
-          acceptedFileTypes={['.jpg,.jpeg,.png,gif']}
-          onupdatefiles={setFiles}
+          beforeAddFile={(item) => {
+            return TINY_SUPPORTE.test(item.fileType);
+          }}
+          beforeDropFile={(item) => {
+            return typeof item === 'string'
+              ? true
+              : TINY_SUPPORTE.test(item.fileType);
+          }}
+          onupdatefiles={(list) => {
+            // const supported = list.filter((item) =>
+            //   TINY_SUPPORTE.test(item.fileType),
+            // );
+            // setFiles(supported);
+            list.forEach((item) => {
+              fpIds.current[item.file.name] = item.id;
+            });
+            setFiles(list);
+          }}
           allowMultiple={true}
           server={{ process: uploading }}
           name="files"
