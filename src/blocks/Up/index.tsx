@@ -10,7 +10,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import '../filepond.css';
 import { Config } from '../Header/Config';
 import { usePluginSettings } from '../Settings';
+import { useAnalyzer } from '../useAnalyzer';
 import { FPProps } from './fp';
+import { uniquName } from '@/utils';
 
 export const Up = () => {
   const { scope, current } = usePluginSettings();
@@ -20,6 +22,16 @@ export const Up = () => {
   const route = useRoute();
 
   const wrapper = useRef<HTMLDivElement | null>(null);
+  const { refs, updateDOM, clear } = useAnalyzer({
+    wrapper,
+    finishedText: FPProps.labelFileProcessingComplete,
+  });
+
+  const reset = useCallback(() => {
+    setFinished(0);
+    setFiles([]);
+    clear();
+  }, [clear]);
 
   const plug = useMemo(() => {
     const Plug = getPlugin(scope);
@@ -53,8 +65,14 @@ export const Up = () => {
         const afterSize = lite.size;
         const result = await plug.upload(lite, current?.alias);
         await DB.insert(result);
+        // 根据原始名字获取id
+        const fileId = refs.current.ids[file.name];
+        refs.current.map[fileId] = {
+          ratio: parseFloat(((afterSize / preSize) * 100).toFixed(2)),
+          before: preSize,
+          after: afterSize,
+        };
 
-        progress(true, lite.size, preSize);
         load(result.url);
         setFinished((x) => x + 1);
         if (afterSize < preSize) {
@@ -69,13 +87,18 @@ export const Up = () => {
         error(e.message);
       }
     },
-    [current?.alias, plug],
+    [current?.alias, plug, refs],
   );
 
   useEffect(() => {
-    setFinished(0);
-    setFiles([]);
+    reset();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    updateDOM();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [finished]);
 
   useEffect(() => {
     setUp(count === 0 ? 0 : Math.ceil((finished / count) * 100));
@@ -94,8 +117,7 @@ export const Up = () => {
           <Config></Config>
           <Button
             onClick={() => {
-              setFinished(0);
-              setFiles([]);
+              clear();
             }}
           >
             清空记录
@@ -123,7 +145,25 @@ export const Up = () => {
           disabled={route.now !== 'up'}
           stylePanelAspectRatio={'21:9'}
           files={files}
-          onupdatefiles={setFiles}
+          onprocessfiles={() => {
+            updateDOM();
+          }}
+          onerror={() => {
+            updateDOM();
+          }}
+          onprocessfileabort={() => {
+            updateDOM();
+          }}
+          onupdatefiles={(list) => {
+            list.forEach((item) => {
+              refs.current.ids[item.file.name] = item.id;
+            });
+            setFiles(list);
+          }}
+          fileRenameFunction={({ name, basename, extension }) => {
+            const fileName = uniquName(refs.current.ids, basename, extension);
+            return fileName;
+          }}
           allowMultiple={true}
           server={{ process: uploading }}
           name="files"

@@ -24,8 +24,7 @@ export class TinyPlugin extends Plugin {
     if (TINY_SUPPORTE.test(file.name)) {
       // https://pqina.nl/blog/rename-a-file-with-javascript/
       const lite = await tiny(file, this.config.quality);
-      const renamed = renameFile(lite, `${+dayjs()}_${lite.name}`);
-      return renamed;
+      return lite;
     } else {
       return Promise.resolve(file);
     }

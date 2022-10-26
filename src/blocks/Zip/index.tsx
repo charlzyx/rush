@@ -22,38 +22,38 @@ import { FPProps } from './fp';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import '../filepond.css';
 import './zip.css';
-import { useRafInterval } from 'ahooks';
 import { useRoute } from '@/Route';
+import { useAnalyzer } from '../useAnalyzer';
 import { TINY_SUPPORTE } from '@/plugins/config';
+import { uniquName } from '@/utils';
 
 export const Zip = () => {
   const [files, setFiles] = useState<any[]>([]);
   const [quality, setQuality] = useState(80);
   const { zip, setZip } = useProgress();
   const route = useRoute();
-  const optimizeMaping = useRef<
-    Record<
-      string,
-      {
-        ratio: number;
-        before: number;
-        after: number;
-      }
-    >
-  >({});
+
   const wrapper = useRef<HTMLDivElement | null>(null);
 
   const plug = useMemo(() => {
     return new TinyPlugin({ quality });
   }, [quality]);
 
-  const fpIds = useRef<Record<string, string>>({});
-  const [render, setRender] = useState(0);
+  const { refs, updateDOM, clear } = useAnalyzer({
+    wrapper,
+    finishedText: FPProps.labelFileProcessingComplete,
+  });
 
   const [finished, setFinished] = useState(0);
   const count = useMemo(() => {
     return files.length || 0;
   }, [files.length]);
+
+  const reset = useCallback(() => {
+    setFinished(0);
+    setFiles([]);
+    clear();
+  }, [clear]);
 
   const uploading: ProcessServer = useCallback(
     async (
@@ -65,38 +65,20 @@ export const Zip = () => {
       progress,
       abort,
       transfer,
-      ...others
     ) => {
+      console.log('file.name', file.name);
       const preSize = file.size;
       const lite = await plug.transform(file as File);
-      // console.log({ before: file, after: lite });
       const afterSize = lite.size;
       const result = await plug.upload(lite, 'tiny');
-      // transfer(lite.name);
-      // console.log({
-      //   fieldName,
-      //   file,
-      //   metadata,
-      //   load,
-      //   error,
-      //   progress,
-      //   abort,
-      //   transfer,
-      //   others,
-      // });
       // 根据原始名字获取id
-      const fileId = fpIds.current[file.name];
-      optimizeMaping.current[fileId] = {
+      const fileId = refs.current.ids[file.name];
+      refs.current.map[fileId] = {
         ratio: parseFloat(((afterSize / preSize) * 100).toFixed(2)),
         before: preSize,
         after: afterSize,
       };
-      optimizeMaping.current[`${fileId}empty`] = {
-        ratio: parseFloat(((afterSize / preSize) * 100).toFixed(2)),
-        before: preSize,
-        after: afterSize,
-      };
-      progress(true, lite.size, lite.size);
+
       load(result.url);
 
       setFinished((x) => x + 1);
@@ -112,34 +94,18 @@ export const Zip = () => {
         }
       } catch (e) {}
     },
-    [plug],
+    [plug, refs],
   );
 
   useEffect(() => {
-    setFinished(0);
-    setFiles([]);
+    reset();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const fresh = () => {
-    if (!wrapper.current) return;
-    const map = optimizeMaping.current;
-    for (const id in map) {
-      if (Object.prototype.hasOwnProperty.call(map, id)) {
-        const li = wrapper.current?.querySelector(`#filepond--item-${id}`);
-        const status = li?.querySelector('.filepond--file-status-main');
-        console.log('status', li, status?.innerHTML);
-        if (status && status.innerHTML === '压缩完成') {
-          const ratio = map[id].ratio;
-          const tip = 100 - ratio >= 0 ? `-${(100 - ratio).toFixed(2)}%` : '';
-          status.innerHTML = tip.toString();
-        }
-      }
-    }
-  };
-
   useEffect(() => {
-    fresh();
-  }, [zip]);
+    updateDOM();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [finished]);
 
   useEffect(() => {
     setZip(count === 0 ? 0 : Math.ceil((finished / count) * 100));
@@ -173,8 +139,7 @@ export const Zip = () => {
           </Button>
           <Button
             onClick={() => {
-              setFinished(0);
-              setFiles([]);
+              reset();
             }}
             icon={<IconDelete></IconDelete>}
           >
@@ -206,8 +171,13 @@ export const Zip = () => {
           stylePanelAspectRatio={'21:9'}
           files={files}
           onprocessfiles={() => {
-            fresh();
-            console.log('alllldne');
+            updateDOM();
+          }}
+          onerror={() => {
+            updateDOM();
+          }}
+          onprocessfileabort={() => {
+            updateDOM();
           }}
           disabled={route.now !== '/'}
           beforeAddFile={(item) => {
@@ -219,14 +189,14 @@ export const Zip = () => {
               : TINY_SUPPORTE.test(item.fileType);
           }}
           onupdatefiles={(list) => {
-            // const supported = list.filter((item) =>
-            //   TINY_SUPPORTE.test(item.fileType),
-            // );
-            // setFiles(supported);
             list.forEach((item) => {
-              fpIds.current[item.file.name] = item.id;
+              refs.current.ids[item.file.name] = item.id;
             });
             setFiles(list);
+          }}
+          fileRenameFunction={({ name, basename, extension }) => {
+            const fileName = uniquName(refs.current.ids, basename, extension);
+            return fileName;
           }}
           allowMultiple={true}
           server={{ process: uploading }}

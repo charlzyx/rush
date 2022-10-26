@@ -104,23 +104,17 @@ export class GithubPlugin extends Plugin {
   }
 
   async transform(file: File): Promise<File> {
-    const conf = compileConfig(this.config, file.name);
-    // 阻止文件名二次编译
-    this.config.fileName = conf.fileName;
     if (this.config.quality! < 100 && TINY_SUPPORTE.test(file.name)) {
       const lite = await tiny(file, this.config.quality);
-      const renamed = renameFile(lite, conf.fileName!);
-
-      return renamed;
+      return lite;
     } else {
-      const renamed = renameFile(file, conf.fileName!);
-      return Promise.resolve(renamed);
+      return Promise.resolve(file);
     }
   }
 
   async upload(file: File, alias: string): Promise<StoreItem> {
     const { branch, customUrl, repo, token } = this.config;
-    const { dir, fileName, filePath } = compileConfig(this.config);
+    const { dir, fileName, filePath } = compileConfig(this.config, file.name);
     console.log('fileName, filePath', { fileName, filePath });
 
     const encodeFilePath = encodeURI(filePath!);

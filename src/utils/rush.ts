@@ -5,11 +5,18 @@ import { FilePond, registerPlugin } from 'react-filepond';
 import * as FilePonds from 'filepond';
 import 'filepond/dist/filepond.min.css';
 import zhCN from 'filepond/locale/zh-cn.js';
+import FilePondPluginFileRename from 'filepond-plugin-file-rename';
 
 // Register the plugins
-registerPlugin(FilePondPluginImageExifOrientation, FilePondPluginImagePreview);
+registerPlugin(
+  FilePondPluginImageExifOrientation,
+  FilePondPluginImagePreview,
+  FilePondPluginFileRename,
+);
 
-FilePonds.setOptions(zhCN);
+FilePonds.setOptions({
+  ...zhCN,
+});
 
 export const Rush = FilePond;
 
