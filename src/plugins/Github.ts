@@ -6,7 +6,7 @@ import { notify } from '@/utils/notify';
 import { parse } from '@/utils/parse';
 import { req } from '@/utils/req';
 import { Modal } from '@arco-design/web-react';
-import tiny from '@mxsir/image-tiny';
+import { tiny } from '@/lib/pngtiny';
 import dayjs from 'dayjs';
 import { TINY_SUPPORTE } from './config';
 import {

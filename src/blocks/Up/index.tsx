@@ -2,6 +2,7 @@ import { pic } from '@/assets/svg';
 import { AniSvg } from '@/blocks/AniSvg';
 import { DB } from '@/db';
 import { getPlugin } from '@/plugins';
+import { useProgress } from '@/Progress';
 import { ProcessServer, Rush } from '@/utils/rush';
 import { Button, Progress, Slider, Space } from '@arco-design/web-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -14,6 +15,7 @@ export const Up = () => {
   const { scope, current } = usePluginSettings();
   const [files, setFiles] = useState<any[]>([]);
   const [quality, setQuality] = useState(80);
+  const { up, setUp } = useProgress();
 
   const wrapper = useRef<HTMLDivElement | null>(null);
 
@@ -72,6 +74,10 @@ export const Up = () => {
     setFiles([]);
   }, []);
 
+  useEffect(() => {
+    setUp(count === 0 ? 0 : Math.ceil((finished / count) * 100));
+  }, [count, finished, setUp]);
+
   return (
     <div className="rush-wrapper">
       <Space
@@ -103,15 +109,15 @@ export const Up = () => {
         <Progress
           size="small"
           steps={5}
-          percent={count === 0 ? 0 : Math.ceil((finished / count) * 100)}
-          status={'success'}
+          percent={up}
+          color="rgb(var(--primary-6))"
         ></Progress>
       </Space>
 
       <div ref={wrapper} className="rush-workspace">
         <Rush
           {...FPProps}
-          stylePanelAspectRatio={'4:3'}
+          stylePanelAspectRatio={'21:9'}
           files={files}
           onupdatefiles={setFiles}
           allowMultiple={true}

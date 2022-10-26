@@ -16,7 +16,6 @@
   },
   "dependencies": {
     "@arco-design/web-react": "^2.40.2",
-    "@mxsir/image-tiny": "^0.1.0",
     "@tauri-apps/api": "^1.1.0",
     "@types/ali-oss": "^6.16.4",
     "@types/md5": "^2.3.2",
@@ -37,7 +36,6 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-filepond": "^7.1.2",
-    "react-router-dom": "^6.4.2",
     "tauri-plugin-sql-api": "github:tauri-apps/tauri-plugin-sql#release"
   },
   "devDependencies": {
@@ -53,7 +51,6 @@
     "less": "^4.1.3",
     "node-fetch": "^3.2.10",
     "png-to-ico": "^2.1.8",
-    "rollup-plugin-copy": "^3.4.0",
     "typescript": "^4.6.4",
     "vite": "^3.0.2",
     "vite-plugin-babel": "^1.1.2",

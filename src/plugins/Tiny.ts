@@ -1,5 +1,5 @@
 import { StoreItem } from '@/shared/typings';
-import tiny from '@mxsir/image-tiny';
+import { tiny } from '@/lib/pngtiny';
 import { TINY_SUPPORTE } from './config';
 import { Fs } from '@/utils/fs';
 import { Plugin } from './Plugin';

@@ -10,6 +10,7 @@ import {
   Space,
   Tooltip,
 } from '@arco-design/web-react';
+import { useProgress } from '@/Progress';
 import {
   IconDelete,
   IconLaunch,
@@ -26,6 +27,7 @@ import { useRafInterval } from 'ahooks';
 export const Zip = () => {
   const [files, setFiles] = useState<any[]>([]);
   const [quality, setQuality] = useState(80);
+  const { zip, setZip } = useProgress();
   const optimizeMaping = useRef<
     Record<
       string,
@@ -64,6 +66,7 @@ export const Zip = () => {
       const result = await plug.upload(lite, 'tiny');
 
       load(result.url);
+      progress(true, lite.size, lite.size);
       optimizeMaping.current[file.name] = {
         ratio: parseFloat(((afterSize / preSize) * 100).toFixed(2)),
         before: preSize,
@@ -107,7 +110,7 @@ export const Zip = () => {
       if (!text) return;
       const isFinished = text.innerHTML === '压缩完成';
       if (isFinished) {
-        console.log('text', { text, ratio });
+        // console.log('text', { text, ratio });
         const tip = 100 - ratio >= 0 ? `-${(100 - ratio).toFixed(2)}%` : '';
         text.innerHTML = tip.toString();
       }
@@ -117,6 +120,10 @@ export const Zip = () => {
   useRafInterval(() => {
     fresh();
   }, 68);
+
+  useEffect(() => {
+    setZip(count === 0 ? 0 : Math.ceil((finished / count) * 100));
+  }, [count, finished, setZip]);
 
   return (
     <div className="rush-wrapper zip">
@@ -155,7 +162,10 @@ export const Zip = () => {
           </Button>
         </Button.Group>
         <Slider
-          style={{ width: '240px', transform: 'translate3d(0, 8px, 0)' }}
+          style={{
+            width: '240px',
+            transform: 'translate3d(0, 8px, 0)',
+          }}
           value={quality}
           marks={{
             80: '80%',
@@ -165,7 +175,7 @@ export const Zip = () => {
         <Progress
           size="small"
           steps={5}
-          percent={count === 0 ? 0 : Math.ceil((finished / count) * 100)}
+          percent={zip}
           status={'success'}
         ></Progress>
       </Space>
@@ -173,8 +183,9 @@ export const Zip = () => {
       <div ref={wrapper} className="rush-workspace">
         <Rush
           {...FPProps}
-          stylePanelAspectRatio={'4:3'}
+          stylePanelAspectRatio={'21:9'}
           files={files}
+          acceptedFileTypes={['image/png', 'image/jpeg', 'image/gif']}
           onupdatefiles={setFiles}
           allowMultiple={true}
           server={{ process: uploading }}

@@ -5,97 +5,70 @@ import { About } from '@/blocks/About';
 import { Up } from '@/blocks/Up';
 import { Zip } from '@/blocks/Zip';
 import React, { useEffect } from 'react';
+import { KeepPage, RouteProvider, useRoute } from './Route';
+import { ProgressProvider } from './Progress';
 
 import { ConfigProvider } from '@arco-design/web-react';
-import { RouterProvider, createBrowserRouter } from 'react-router-dom';
-
 import './App.css';
 
-const Page = (props: React.PropsWithChildren<{}>) => {
+const WithRoute = (props: React.PropsWithChildren<{}>) => {
+  const route = useRoute();
   return (
-    <ConfigProvider>
-      <div
-        style={{
-          height: '100%',
-          display: 'flex',
-          overflow: 'hidden',
-          flexDirection: 'column',
-        }}
-      >
-        <div>
-          <Header></Header>
+    <React.Fragment>
+      <ConfigProvider>
+        <div
+          style={{
+            height: '100%',
+            display: 'flex',
+            overflow: 'hidden',
+            flexDirection: 'column',
+          }}
+        >
+          <div>
+            <Header></Header>
+          </div>
+          <div style={{ flex: 1, height: '100%' }}>
+            <KeepPage key="/" show={route.is('/')}>
+              <Zip></Zip>
+            </KeepPage>
+            <KeepPage key="up" show={route.is('up')}>
+              <Up></Up>
+            </KeepPage>
+            <KeepPage key="history" show={route.is('history')}>
+              <History></History>
+            </KeepPage>
+            <KeepPage key="settings" show={route.is('settings')}>
+              <Settings></Settings>
+            </KeepPage>
+            <KeepPage key="about" show={route.is('about')}>
+              <About></About>
+            </KeepPage>
+          </div>
         </div>
-        <div style={{ flex: 1, height: '100%' }}>{props.children}</div>
-      </div>
-    </ConfigProvider>
+      </ConfigProvider>
+    </React.Fragment>
   );
 };
-const router = createBrowserRouter([
-  {
-    path: '/',
-    element: (
-      <Page>
-        <Zip></Zip>
-      </Page>
-    ),
-  },
-  {
-    path: '/hisotry',
-    element: (
-      <Page>
-        <History></History>
-      </Page>
-    ),
-  },
-  {
-    path: '/settings',
-    element: (
-      <Page>
-        <Settings></Settings>
-      </Page>
-    ),
-  },
-  {
-    path: '/up',
-    element: (
-      <Page>
-        <Up></Up>
-      </Page>
-    ),
-  },
-  {
-    path: '/zip',
-    element: (
-      <Page>
-        <Zip></Zip>
-      </Page>
-    ),
-  },
-  {
-    path: '/about',
-    element: (
-      <Page>
-        <About></About>
-      </Page>
-    ),
-  },
-]);
+
 const App = () => {
   useEffect(() => {
     // 防止拖一个图片进来, 被浏览器打开了
     window.addEventListener('drop', (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+    });
+    window.addEventListener('dragover', (e) => {
+      e.stopPropagation();
       e.preventDefault();
     });
   }, []);
+
   return (
-    <RouterProvider
-      fallbackElement={
-        <Page>
-          <Zip></Zip>
-        </Page>
-      }
-      router={router}
-    ></RouterProvider>
+    <RouteProvider>
+      <ProgressProvider>
+        <WithRoute></WithRoute>
+      </ProgressProvider>
+    </RouteProvider>
   );
 };
 

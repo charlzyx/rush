@@ -2,7 +2,7 @@ import { DB } from '@/db';
 import { StoreItem } from '@/shared/typings';
 import { store } from '@/store';
 import { notify } from '@/utils/notify';
-import tiny from '@mxsir/image-tiny';
+import { tiny } from '@/lib/pngtiny';
 import { invoke } from '@tauri-apps/api';
 import dayjs from 'dayjs';
 import * as qiniu from 'qiniu-js';
@@ -94,19 +94,23 @@ export class QiNiuPlugin extends Plugin {
 
   async getToken(): Promise<string> {
     const { accessKey, secretKey, bucket } = this.config;
-    const token = (await invoke('qiniu_get_token', {
-      accessKey,
-      secretKey,
-      bucketName: bucket,
-      lifeTime: ONEDAY,
-    })) as string;
+    try {
+      const token = (await invoke('qiniu_get_token', {
+        accessKey,
+        secretKey,
+        bucketName: bucket,
+        lifeTime: ONEDAY,
+      })) as string;
 
-    this.TOKEN = {
-      token,
-      expired_time: +dayjs().add(1, 'day'),
-    };
+      this.TOKEN = {
+        token,
+        expired_time: +dayjs().add(1, 'day'),
+      };
 
-    return token;
+      return token;
+    } catch (error) {
+      return '';
+    }
   }
 
   async transform(file: File): Promise<File> {

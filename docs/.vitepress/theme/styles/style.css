@@ -14,32 +14,54 @@
   background-color: var(--vp-c-bg);
 }
 
+#app .origin {
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.origin .title {
+  position: relative;
+  top: -16px;
+  padding: 8px;
+  font-size: 24px;
+}
+
+#app iframe {
+  width: 100%;
+  border-radius: 12px;
+  background: var(--vp-c-bg-soft);
+  height: 800px;
+}
+
 
 p img {
   margin-top: 2px;
 }
 
+@media (min-width: 640px) {
+  #app .origin {
+    padding: 48px;
+  }
+}
 
 @media (min-width: 960px) {
   #app .VPHero {
       margin-top: 0;
   }
-}
 
-@media (max-width: 960px) {
   #app .image {
       margin-top: -75px;
   }
 
   #app .VPHomeHero {
       margin-bottom: 5px;
+  }
 
+  #app .origin {
+    padding: 64px;
   }
 }
 
-@media (min-width: 960px) {
-
-}
 /**
  * Colors
  * -------------------------------------------------------------------------- */

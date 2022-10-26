@@ -1,13 +1,12 @@
 import { DB } from '@/db';
 import { Plugin, PluginConfigSchemaItem, PluginSupported } from './Plugin';
 import { StoreItem } from '@/shared/typings';
-import tiny from '@mxsir/image-tiny';
+import { tiny } from '@/lib/pngtiny';
 import { store } from '@/store';
 import OSS from 'ali-oss';
 import { TINY_SUPPORTE } from './config';
 import dayjs from 'dayjs';
 import { notify } from '@/utils/notify';
-import { parse } from '@/utils/parse';
 import { CommonConfig, compileConfig, getCommonConfigSchema } from './Plugin';
 import { Modal } from '@arco-design/web-react';
 

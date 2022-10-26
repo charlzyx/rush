@@ -1,26 +1,12 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import svgr from 'vite-plugin-svgr';
-import copy from 'rollup-plugin-copy';
 
 import path from 'path';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [
-    react(),
-    svgr(),
-    copy({
-      targets: [
-        {
-          src: 'node_modules/@mxsir/image-tiny/dist/pngtiny-custom.wasm',
-          dest: 'public',
-        },
-      ],
-      verbose: true,
-      hook: 'writeBundle',
-    }),
-  ],
+  plugins: [react(), svgr()],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),

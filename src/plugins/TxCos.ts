@@ -8,7 +8,7 @@ import {
   getCommonConfigSchema,
 } from './Plugin';
 import { StoreItem } from '@/shared/typings';
-import tiny from '@mxsir/image-tiny';
+import { tiny } from '@/lib/pngtiny';
 import { store } from '@/store';
 import COS from 'cos-js-sdk-v5';
 import { TINY_SUPPORTE } from './config';
