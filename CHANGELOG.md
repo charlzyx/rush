@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## v2.1.0
+## v2.1.1
 - [master 8618e05] perf: ⚡️ 路由替换, 追加文档&在线链接
 - 解决上传中切换页面导致上传/压缩终止问题
 - 替换 wasm 为 https://github.com/skyfish-qc/pngtiny 原始版本
