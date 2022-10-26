@@ -3,6 +3,12 @@
   "private": true,
   "version": "2.1.0",
   "type": "module",
+  "licenses" : [
+    {
+      "type": "MIT",
+      "url": "https://www.opensource.org/licenses/mit-license.php"
+    }
+  ],
   "scripts": {
     "dev": "vite",
     "docs:dev": "vitepress dev docs",

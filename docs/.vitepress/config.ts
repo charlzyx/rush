@@ -18,7 +18,7 @@ const config = {
         link: "/settings/index",
       },
       {
-        text: "鸣谢",
+        text: "致谢",
         link: "/thanks",
       },
     ],

@@ -1,4 +1,4 @@
-# Thanks 鸣谢
+# Thanks 致谢
 
 Rush 的诞生离不开以下这些开源项目
 
