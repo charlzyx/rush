@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## v2.2.2
+- chore: release 脚本失败了
+
 ## v2.2.1
 - chore: release 脚本失败了
 
