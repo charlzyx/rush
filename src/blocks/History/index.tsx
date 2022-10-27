@@ -1,6 +1,7 @@
 import { AniSvg } from '@/blocks/AniSvg';
 import { DB } from '@/db';
 import { getPlugin } from '@/plugins';
+import { useRoute } from '@/Route';
 import { StoreItem } from '@/shared/typings';
 import { useStore } from '@/store';
 import {
@@ -95,13 +96,14 @@ const useResponsiveSize = (wrapperRef: { current: HTMLDivElement | null }) => {
       setCol(nextCol);
     }
   }, [col, width]);
-  console.log({ col, row, pageSize });
+  // console.log({ col, row, pageSize });
 
   return { col, row, pageSize };
 };
 
 export const History = () => {
   const { scope, current } = usePluginSettings();
+  const route = useRoute();
   const [query, setQuery] = useState({
     list: [] as StoreItem[],
     kw: '',
@@ -128,7 +130,7 @@ export const History = () => {
   const [state, setState] = useStore('history_state', {
     loading: false,
     blur: false,
-    fit: 'cover' as 'cover' | 'contain',
+    fit: 'contain' as 'cover' | 'contain',
   });
 
   const lazyLoading = useThrottle(state.loading, {
@@ -204,9 +206,18 @@ export const History = () => {
   }, [params, setState]);
 
   useEffect(() => {
+    if (route.now !== 'history') return;
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query, page.pageSize, page.current, lazyKw, scope, current?.alias]);
+  }, [
+    query,
+    route.now,
+    page.pageSize,
+    page.current,
+    lazyKw,
+    scope,
+    current?.alias,
+  ]);
 
   return (
     <div

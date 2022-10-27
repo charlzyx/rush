@@ -4,7 +4,7 @@
 
 const config = {
   title: "Rush!",
-  description: "一个兴趣使然的图片压缩客户端. ting image, tiny png.",
+  description: "一个兴趣使然的图片压缩客户端. tiny image.",
   lastUpdated: true,
   base: process.env.BASE ? "/rush" :"/",
   // lang: 'zh-CN',

@@ -33,9 +33,10 @@ export const Up = () => {
     let maybe = null;
     try {
       maybe = new Plug({ ...current });
+      reset();
     } catch (error) {}
     return maybe;
-  }, [current, scope]);
+  }, [current, reset, scope]);
 
   const [finished, setFinished] = useState(0);
   const count = useMemo(() => {
@@ -128,6 +129,7 @@ export const Up = () => {
           disabled={route.now !== 'up'}
           stylePanelAspectRatio={'21:9'}
           files={files}
+          tinyQuality={quality}
           onupdatefiles={setFiles}
           fileRenameFunction={({ name, basename, extension }) => {
             const map = files

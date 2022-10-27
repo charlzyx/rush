@@ -1,14 +1,9 @@
 import { usePluginSettings } from '../Settings';
 import { Button, Cascader, Tooltip } from '@arco-design/web-react';
-import {
-  IconCloud,
-  IconCloudDownload,
-  IconSync,
-} from '@arco-design/web-react/icon';
+import { IconCloudDownload } from '@arco-design/web-react/icon';
 
 import { useMemo, useState } from 'react';
 import { getPlugin } from '@/plugins';
-import { isPropertySignature } from 'typescript';
 
 export const Config = () => {
   const { actions, scope, current, plugins, setScope, allList } =
@@ -69,10 +64,7 @@ export const Config = () => {
           disabled={!plug?.supported?.sync}
           type="default"
           loading={syncing}
-        >
-          {/* &nbsp; */}
-          {/* <IconSync></IconSync> */}
-        </Button>
+        ></Button>
       </Tooltip>
       <Cascader
         style={{ width: '148px' }}

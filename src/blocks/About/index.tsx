@@ -122,7 +122,7 @@ export const About = () => {
             onClick={() => {
               shell.open('https://github.com/charlzyx/rush/releases/latest');
             }}
-            src="https://img.shields.io/github/downloads/charlzyx/rush/latest/total?color=rgba%2890%2C%20183%2C%20222%29&label=%F0%9F%93%A6%20rush%40latest&style=for-the-badge"
+            src="https://img.shields.io/github/v/release/charlzyx/rush?color=rgb%2864%2C%20128%2C%20255%29&label=Rush%21&logoColor=rgb%2864%2C%20128%2C%20255%29&style=for-the-badge"
             alt=""
           />
           {/* <Button
@@ -199,7 +199,7 @@ export const About = () => {
           }}
           icon={<IconQuestion></IconQuestion>}
           long
-          type="primary"
+          type="outline"
         >
           检查更新
         </Button>

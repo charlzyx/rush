@@ -2,6 +2,23 @@
   border-bottom: 1px solid var(--vp-c-divider-light);
 }
 
+#app .action:first-child > a {
+  padding-right: 60px;
+}
+
+#app .action:first-child::before {
+  position: absolute;
+  left: 0;
+  transform: translate3d(130px, 10px, 0);
+  content: '';
+  display: block;
+  height: 20px;
+  width: 100px;
+  /* background-color: red; */
+  background-image: url("https://img.shields.io/github/v/release/charlzyx/rush?color=%230095FF&label=%20&logoColor=rgba%28255%2C%20255%2C%20255%29&style=flat-square");
+  background-repeat: no-repeat;
+}
+
 .font-icon {
   padding: 2px 8px;
   border-radius: 4px;
