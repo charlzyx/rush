@@ -1,9 +1,6 @@
-import { tiny } from '@/lib/pngtiny';
 import { StoreItem } from '@/shared/typings';
 import { Fs } from '@/utils/fs';
-import dayjs from 'dayjs';
-import { TINY_SUPPORTE } from './config';
-import { Plugin, renameFile } from './Plugin';
+import { Plugin } from './Plugin';
 
 export interface TinyConfig {
   quality: number;
@@ -20,16 +17,6 @@ export class TinyPlugin extends Plugin {
     Fs.setOutput(this.config.output);
   }
 
-  async transform(file: File): Promise<File> {
-    if (TINY_SUPPORTE.test(file.name)) {
-      // https://pqina.nl/blog/rename-a-file-with-javascript/
-      const lite = await tiny(file, this.config.quality);
-      return lite;
-    } else {
-      return Promise.resolve(file);
-    }
-  }
-
   async upload(file: File, alias: string): Promise<StoreItem> {
     const buffer = await file.arrayBuffer();
     const fileName = file.name;
@@ -42,7 +29,7 @@ export class TinyPlugin extends Plugin {
       hash: fileName,
       dir: '',
       name: fileName,
-      url: `file://${url}`,
+      url: `asset://${url}`,
       create_time: +new Date(),
       extra: '',
     };

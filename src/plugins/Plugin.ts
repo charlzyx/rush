@@ -142,10 +142,6 @@ export abstract class Plugin {
 
   static configSchema: PluginConfigSchemaItem[] = [];
 
-  async transform(file: File): Promise<File> {
-    return Promise.resolve(file);
-  }
-
   async testConnect(config: any): Promise<boolean> {
     return Promise.resolve(true);
   }

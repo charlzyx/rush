@@ -7,7 +7,30 @@ import { shell } from '@tauri-apps/api';
 import dayjs from 'dayjs';
 import { useEffect, useMemo, useState } from 'react';
 import './about.css';
-
+const readable = (limit: number) => {
+  var size = '';
+  if (limit < 1 * 1024) {
+    //小于1KB，则转化成B
+    size = `${limit.toFixed(2)}Bytes`;
+  } else if (limit < 1 * 1024 * 1024) {
+    //小于1MB，则转化成KB
+    size = `${(limit / 1024).toFixed(2)}KB`;
+  } else if (limit < 1 * 1024 * 1024 * 1024) {
+    //小于1GB，则转化成MB
+    size = `${(limit / (1024 * 1024)).toFixed(2)}MB`;
+  } else {
+    //其他转化成GB
+    size = `${(limit / (1024 * 1024 * 1024)).toFixed(2)}GB`;
+  }
+  var sizeStr = `${size}`; //转成字符串
+  var index = sizeStr.indexOf('.'); //获取小数点处的索引
+  var dou = sizeStr.slice(index + 1, 2); //获取小数点后两位的值
+  if (dou === '00') {
+    //判断后两位是否为00，如果是则删除00
+    return sizeStr.substring(0, index) + sizeStr.substr(index + 3, 2);
+  }
+  return size;
+};
 const links = [
   {
     link: 'https://github.com/skyfish-qc/pngtiny',
@@ -36,7 +59,7 @@ const links = [
 ];
 const Link = (props: { link: string; children: string }) => {
   return (
-    <div
+    <span
       onClick={() => {
         shell.open(props.link);
       }}
@@ -46,7 +69,7 @@ const Link = (props: { link: string; children: string }) => {
       }}
     >
       - {props.children}
-    </div>
+    </span>
   );
 };
 
@@ -66,8 +89,8 @@ export const About = () => {
     return {
       from: firstTime,
       len: list.length,
-      before: (before / 1024).toFixed(2),
-      after: (after / 1024).toFixed(2),
+      before,
+      after,
       p: (((before - after) / before) * 100).toFixed(2),
     };
   }, [list]);
@@ -95,14 +118,21 @@ export const About = () => {
           />
         </div>
         <div>
-          <Button
+          <img
+            onClick={() => {
+              shell.open('https://github.com/charlzyx/rush/releases/latest');
+            }}
+            src="https://img.shields.io/github/downloads/charlzyx/rush/latest/total?color=rgba%2890%2C%20183%2C%20222%29&label=%F0%9F%93%A6%20rush%40latest&style=for-the-badge"
+            alt=""
+          />
+          {/* <Button
             onClick={() => {
               shell.open('https://github.com/charlzyx/rush');
             }}
             size="large"
             type="text"
             icon={<IconGithub></IconGithub>}
-          ></Button>
+          ></Button> */}
         </div>
       </div>
       <div className="body">
@@ -110,10 +140,13 @@ export const About = () => {
         <div className="space">
           <Statistic value={`${counts.len} 张`} title="压缩图片"></Statistic>
           <Statistic
-            value={`${counts.before} Kb`}
+            value={`${readable(counts.before)}`}
             title="将图片大小从 "
           ></Statistic>
-          <Statistic title="减少到" value={`${counts.after} Kb`}></Statistic>
+          <Statistic
+            title="减少到"
+            value={`${readable(counts.after)}`}
+          ></Statistic>
           <Statistic title="存储空间" value={`-${counts.p}%`}></Statistic>
         </div>
         <div>
@@ -131,9 +164,11 @@ export const About = () => {
           <div>
             {links.map((item) => {
               return (
-                <Link key={item.link} link={item.link}>
-                  {item.text}
-                </Link>
+                <div key={item.link}>
+                  <Link key={item.link} link={item.link}>
+                    {item.text}
+                  </Link>
+                </div>
               );
             })}
           </div>

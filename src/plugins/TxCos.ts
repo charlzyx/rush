@@ -1,9 +1,7 @@
 import { DB } from '@/db';
-import { tiny } from '@/lib/pngtiny';
 import { StoreItem } from '@/shared/typings';
 import { store } from '@/store';
 import COS from 'cos-js-sdk-v5';
-import { TINY_SUPPORTE } from './config';
 import {
   CommonConfig,
   Plugin,
@@ -11,9 +9,7 @@ import {
   PluginSupported,
   compileConfig,
   getCommonConfigSchema,
-  renameFile,
 } from './Plugin';
-// import * as crypto from 'crypto';
 import { notify } from '@/utils/notify';
 import { parse } from '@/utils/parse';
 import { Modal } from '@arco-design/web-react';
@@ -103,17 +99,9 @@ export class TxCosPlugin extends Plugin {
     this.client = new COS(this.config);
   }
 
-  async transform(file: File): Promise<File> {
-    if (this.config.quality! < 100 && TINY_SUPPORTE.test(file.name)) {
-      const lite = await tiny(file, this.config.quality);
-      return lite;
-    } else {
-      return Promise.resolve(file);
-    }
-  }
   async upload(file: File, alias: string): Promise<StoreItem> {
     const conf = compileConfig(this.config, file.name);
-    const { Bucket, customUrl, Region, filePath, dir } = conf;
+    const { Bucket, customUrl, fileName, Region, filePath, dir } = conf;
 
     const answer = await this.client
       .uploadFile({
@@ -133,7 +121,7 @@ export class TxCosPlugin extends Plugin {
       scope: this.name,
       alias,
       dir,
-      name: file.name,
+      name: fileName!,
       hash: filePath!,
       create_time: +new Date(),
       url: customUrl

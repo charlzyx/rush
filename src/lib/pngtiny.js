@@ -476,33 +476,29 @@ Z();
  * @param {Number} quality 压缩质量，10-90，建议 80
  * @return {Promise<File>} 压缩过的 File 文件对象
  */
- export const tiny = (file, quality = 80) => {
+ export const tiny = (
+  /** @type File */
+  file,
+  quality = 80
+) => {
   pngtiny.run()
-  return new Promise((resolve, reject) => {
-    try {
-      const reader = new FileReader()
-      reader.readAsArrayBuffer(file)
-      reader.onload = function(e) {
-        const fcont = new Uint8Array(e.target.result)
-        const fsize = fcont.byteLength
-        const dataptr = pngtiny._malloc(fsize)
-        const retdata = pngtiny._malloc(4)
-        pngtiny.HEAPU8.set(fcont, dataptr)
-        pngtiny._tiny(dataptr, fsize, retdata, quality)
-        let rdata = new Int32Array(pngtiny.HEAPU8.buffer, retdata, 1)
-        const size = rdata[0]
-        rdata = new Uint8Array(pngtiny.HEAPU8.buffer, dataptr, size)
-        const blob = new Blob([rdata], { type: file.type })
-        let outFile = new File([blob], file.name, { type: file.type })
-        if (outFile.size === 0) {
-          outFile = file
-        }
-        resolve(outFile)
-        pngtiny._free(dataptr)
-        pngtiny._free(retdata)
-      }
-    } catch (error) {
-      reject(error)
+  return file.arrayBuffer().then(buffer => {
+    const fcont = new Uint8Array(buffer)
+    const fsize = fcont.byteLength
+    const dataptr = pngtiny._malloc(fsize)
+    const retdata = pngtiny._malloc(4)
+    pngtiny.HEAPU8.set(fcont, dataptr)
+    pngtiny._tiny(dataptr, fsize, retdata, quality)
+    let rdata = new Int32Array(pngtiny.HEAPU8.buffer, retdata, 1)
+    const size = rdata[0]
+    rdata = new Uint8Array(pngtiny.HEAPU8.buffer, dataptr, size)
+    const blob = new Blob([rdata], { type: file.type })
+    let outFile = new File([blob], file.name, { type: file.type })
+    if (outFile.size === 0) {
+      outFile = file
     }
-  })
+    pngtiny._free(dataptr)
+    pngtiny._free(retdata)
+    return outFile;
+  });
 }

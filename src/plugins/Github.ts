@@ -1,5 +1,4 @@
 import { DB } from '@/db';
-import { tiny } from '@/lib/pngtiny';
 import { StoreItem } from '@/shared/typings';
 import { store } from '@/store';
 import { toBase64 } from '@/utils/fs';
@@ -8,7 +7,6 @@ import { parse } from '@/utils/parse';
 import { req } from '@/utils/req';
 import { Modal } from '@arco-design/web-react';
 import dayjs from 'dayjs';
-import { TINY_SUPPORTE } from './config';
 import {
   CommonConfig,
   Plugin,
@@ -16,7 +14,6 @@ import {
   PluginSupported,
   compileConfig,
   getCommonConfigSchema,
-  renameFile,
 } from './Plugin';
 
 export interface GithubPluginConfig extends CommonConfig {
@@ -103,19 +100,9 @@ export class GithubPlugin extends Plugin {
     this.config = compileConfig({ ...this.config, ...config });
   }
 
-  async transform(file: File): Promise<File> {
-    if (this.config.quality! < 100 && TINY_SUPPORTE.test(file.name)) {
-      const lite = await tiny(file, this.config.quality);
-      return lite;
-    } else {
-      return Promise.resolve(file);
-    }
-  }
-
   async upload(file: File, alias: string): Promise<StoreItem> {
     const { branch, customUrl, repo, token } = this.config;
     const { dir, fileName, filePath } = compileConfig(this.config, file.name);
-    console.log('fileName, filePath', { fileName, filePath });
 
     const encodeFilePath = encodeURI(filePath!);
 
@@ -142,6 +129,7 @@ export class GithubPlugin extends Plugin {
       )
       .then((resp) => resp.data)
       .catch((e) => {
+        console.log('e', e);
         const msg = e?.response?.data?.message || '上传出错啦';
         notify.err('github', alias, `上传失败:${msg}`);
       });

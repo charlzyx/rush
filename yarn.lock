@@ -1631,6 +1631,11 @@
   resolved "https://mirrors.cloud.tencent.com/npm/@types%2fali-oss/-/ali-oss-6.16.5.tgz#4774bba951e081af55645ac0688f400be811390e"
   integrity sha512-t0hEN0VEVBE8kcmAeC/+ztHdzx9gvehowsD5z1Z3O/jMAecQPuArwGwq4zL4FEUwJWsNBUFTZ5wEwVsNM9RQ1A==
 
+"@types/eases@^1.0.2":
+  version "1.0.2"
+  resolved "https://mirrors.cloud.tencent.com/npm/@types%2feases/-/eases-1.0.2.tgz#11473706705d5025d423826414d460956bcb5434"
+  integrity sha512-XVMdH9hz0mwa3cOUIjAXuQWfF9+eGgEXpFwssWH/H2g1NZHs2QKYCNuf+rAjUvI7fF8Pq6rb5FrNo2RNxrPI+w==
+
 "@types/js-cookie@^2.x.x":
   version "2.2.7"
   resolved "https://mirrors.cloud.tencent.com/npm/@types%2fjs-cookie/-/js-cookie-2.2.7.tgz#226a9e31680835a6188e887f3988e60c04d3f6a3"
@@ -2678,6 +2683,11 @@ dom-helpers@^5.0.1:
     "@babel/runtime" "^7.8.7"
     csstype "^3.0.2"
 
+eases@^1.0.8:
+  version "1.0.8"
+  resolved "https://mirrors.cloud.tencent.com/npm/eases/-/eases-1.0.8.tgz#f1f5069a6b6ed2ea510f9c6110398d63efe9aee6"
+  integrity sha1-8fUGmmtu0upRD5xhEDmNY+/pruY=
+
 ee-first@~1.1.1:
   version "1.1.1"
   resolved "https://mirrors.cloud.tencent.com/npm/ee-first/-/ee-first-1.1.1.tgz#590c61156b0ae2f4f0255732a158b266bc56b21d"
@@ -3403,6 +3413,16 @@ filepond-plugin-image-preview@^4.6.11:
   version "4.6.11"
   resolved "https://mirrors.cloud.tencent.com/npm/filepond-plugin-image-preview/-/filepond-plugin-image-preview-4.6.11.tgz#706a66ac859fa91dd7153958b2325b512fe2f0c6"
   integrity sha512-0EmQ9HnOb/X0xc5rLcNRhhmdUbp7oiicRwQrcr90ZfVmPJOOZoX3ZGUEsEPj7luMI55huguhcVozdESxtqnuRw==
+
+filepond-plugin-image-resize@^2.0.10:
+  version "2.0.10"
+  resolved "https://mirrors.cloud.tencent.com/npm/filepond-plugin-image-resize/-/filepond-plugin-image-resize-2.0.10.tgz#23c1ac8956191d7dd6750565db9cf47a7dc9cfd0"
+  integrity sha512-irX+J275u8Ph1KcciCeSQmxeFjbu0+co5XVCkiwdSNnz6KiqrCKN7RXTvEbdgSdDzyi5omr2oP1rKWps5L1RsQ==
+
+filepond-plugin-image-transform@^3.8.7:
+  version "3.8.7"
+  resolved "https://mirrors.cloud.tencent.com/npm/filepond-plugin-image-transform/-/filepond-plugin-image-transform-3.8.7.tgz#6d32fff899366359a77b158f9ac75ae5971e768a"
+  integrity sha512-vgKwyIDG2y5twanf7YpqZvxkaLudTjwd9vRcoq5sQDB8egUlX5/NA0bQ0823pocrm0fjbFeetICu44mkqeDkIA==
 
 filepond@^4.30.4:
   version "4.30.4"
@@ -4732,6 +4752,13 @@ react-is@^16.13.1:
   version "16.13.1"
   resolved "https://mirrors.cloud.tencent.com/npm/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
   integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
+
+react-number-easing@^1.0.2:
+  version "1.0.2"
+  resolved "https://mirrors.cloud.tencent.com/npm/react-number-easing/-/react-number-easing-1.0.2.tgz#b37d5948dafcf0d548dec9df7150e429a2c1edc6"
+  integrity sha512-md5vahNBxXv9EFMt/V+YO5ojwSxf3kcgL6Bxe1ZIGUgK9CaO5OCGYG/s6nBf8GhQNKAIJ8wySEo2nlT5v8YZZQ==
+  dependencies:
+    eases "^1.0.8"
 
 react-refresh@^0.14.0:
   version "0.14.0"

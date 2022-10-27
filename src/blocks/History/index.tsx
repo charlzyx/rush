@@ -1,5 +1,6 @@
 import { AniSvg } from '@/blocks/AniSvg';
 import { DB } from '@/db';
+import { getPlugin } from '@/plugins';
 import { StoreItem } from '@/shared/typings';
 import { useStore } from '@/store';
 import {
@@ -11,20 +12,17 @@ import {
   Tooltip,
 } from '@arco-design/web-react';
 import {
-  IconCloudDownload,
   IconFullscreen,
   IconFullscreenExit,
   IconRefresh,
-  IconSave,
   IconStorage,
 } from '@arco-design/web-react/icon';
 import { useDebounce, useLatest, useSize, useThrottle } from 'ahooks';
 import dayjs from 'dayjs';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { usePluginSettings } from '../Settings';
 import { Config } from '../Header/Config';
+import { usePluginSettings } from '../Settings';
 import { Box } from './Box';
-import { getPlugin } from '@/plugins';
 
 const RadioGroup = Radio.Group;
 
@@ -77,9 +75,10 @@ const useResponsiveSize = (wrapperRef: { current: HTMLDivElement | null }) => {
       return easy;
     }
     // 下面分页的高度
-    const BOTTOMOFFSET = 48;
+    const BOTTOMOFFSET = 60;
     const wanted = bodyWH().h - rect.top - BOTTOMOFFSET;
-    if (rect.height > wanted) {
+    // console.log('wanted', easy, wanted, { bodyH: bodyWH().h, top: rect.top });
+    if (wanted > 0 && rect.height > wanted) {
       return Math.floor(wanted / unit);
     } else {
       return easy;
@@ -88,8 +87,6 @@ const useResponsiveSize = (wrapperRef: { current: HTMLDivElement | null }) => {
 
   const pageSize = useDebounce(col * row, {
     wait: 200,
-    leading: true,
-    trailing: true,
   });
 
   useEffect(() => {
@@ -98,7 +95,7 @@ const useResponsiveSize = (wrapperRef: { current: HTMLDivElement | null }) => {
       setCol(nextCol);
     }
   }, [col, width]);
-  // console.log({ col, row, x: (height / unit).toFixed(2), width, height, unit });
+  console.log({ col, row, pageSize });
 
   return { col, row, pageSize };
 };

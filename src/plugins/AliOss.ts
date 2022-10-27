@@ -1,12 +1,10 @@
 import { DB } from '@/db';
-import { tiny } from '@/lib/pngtiny';
 import { StoreItem } from '@/shared/typings';
 import { store } from '@/store';
 import { notify } from '@/utils/notify';
 import { Modal } from '@arco-design/web-react';
 import OSS from 'ali-oss';
 import dayjs from 'dayjs';
-import { TINY_SUPPORTE } from './config';
 import {
   CommonConfig,
   Plugin,
@@ -14,7 +12,6 @@ import {
   PluginSupported,
   compileConfig,
   getCommonConfigSchema,
-  renameFile,
 } from './Plugin';
 
 export interface AliOssConfig extends CommonConfig {
@@ -81,24 +78,12 @@ export class AliOssPlugin extends Plugin {
     this.client = new OSS(this.config);
   }
 
-  async transform(file: File): Promise<File> {
-    if (this.config.quality! < 100 && TINY_SUPPORTE.test(file.name)) {
-      const lite = await tiny(file, this.config.quality);
-      return lite;
-    } else {
-      return Promise.resolve(file);
-    }
-  }
-
   async upload(file: File, alias: string): Promise<StoreItem> {
     const conf = compileConfig(this.config, file.name);
-    const { filePath, dir, customUrl } = conf;
+    const { filePath, fileName, dir, customUrl } = conf;
 
     const upload = await this.client
       ?.multipartUpload(encodeURI(filePath!), file, {
-        // progress(p, cpt, res) {
-        //   // console.log({ p, cpt, res });
-        // },
         parallel: 4,
         partSize: 102400 * 200,
       })
@@ -112,7 +97,7 @@ export class AliOssPlugin extends Plugin {
       scope: this.name,
       alias,
       dir: dir,
-      name: file.name,
+      name: fileName!,
       size: file.size,
       hash: filePath!,
       url: customUrl ? `${customUrl}/${upload.name}` : (upload.data as any).url,
@@ -152,7 +137,6 @@ export class AliOssPlugin extends Plugin {
 
   async sync(alias: string) {
     const { dir, customUrl } = this.config;
-    // const { prefix } = this.config;
     try {
       const files = await loop(this.client!, dir!);
       files.sort((a, b) => +dayjs(a.lastModified) - +dayjs(b.lastModified));

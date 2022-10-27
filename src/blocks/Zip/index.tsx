@@ -2,14 +2,8 @@ import { pic } from '@/assets/svg';
 import { AniSvg } from '@/blocks/AniSvg';
 import { TinyPlugin } from '@/plugins/Tiny';
 import { Fs } from '@/utils/fs';
-import { ProcessServer, Rush } from '@/utils/rush';
-import {
-  Button,
-  Progress,
-  Slider,
-  Space,
-  Tooltip,
-} from '@arco-design/web-react';
+import { ProcessServer, Rush } from '@/fp';
+import { Button, Slider, Space, Tooltip } from '@arco-design/web-react';
 import { useProgress } from '@/Progress';
 import {
   IconDelete,
@@ -19,30 +13,23 @@ import {
 import { shell } from '@tauri-apps/api';
 import { DB } from '@/db';
 import { FPProps } from './fp';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import '../filepond.css';
 import './zip.css';
 import { useRoute } from '@/Route';
-import { useAnalyzer } from '../useAnalyzer';
 import { TINY_SUPPORTE } from '@/plugins/config';
 import { uniquName } from '@/utils';
+import { NumberEasing } from '../NumberEasing';
 
 export const Zip = () => {
   const [files, setFiles] = useState<any[]>([]);
   const [quality, setQuality] = useState(80);
-  const { zip, setZip } = useProgress();
+  const { setZip } = useProgress();
   const route = useRoute();
-
-  const wrapper = useRef<HTMLDivElement | null>(null);
 
   const plug = useMemo(() => {
     return new TinyPlugin({ quality });
   }, [quality]);
-
-  const { refs, updateDOM, clear } = useAnalyzer({
-    wrapper,
-    finishedText: FPProps.labelFileProcessingComplete,
-  });
 
   const [finished, setFinished] = useState(0);
   const count = useMemo(() => {
@@ -52,8 +39,7 @@ export const Zip = () => {
   const reset = useCallback(() => {
     setFinished(0);
     setFiles([]);
-    clear();
-  }, [clear]);
+  }, []);
 
   const uploading: ProcessServer = useCallback(
     async (
@@ -66,46 +52,32 @@ export const Zip = () => {
       abort,
       transfer,
     ) => {
-      console.log('file.name', file.name);
-      const preSize = file.size;
-      const lite = await plug.transform(file as File);
-      const afterSize = lite.size;
-      const result = await plug.upload(lite, 'tiny');
-      // 根据原始名字获取id
-      const fileId = refs.current.ids[file.name];
-      refs.current.map[fileId] = {
-        ratio: parseFloat(((afterSize / preSize) * 100).toFixed(2)),
-        before: preSize,
-        after: afterSize,
-      };
+      const {
+        tiny: { before, after },
+      } = metadata;
+      const result = await plug.upload(file as File, 'tiny');
 
       load(result.url);
-
       setFinished((x) => x + 1);
 
       try {
-        if (afterSize < preSize) {
+        if (after < before) {
           await DB.record({
-            name: lite.name,
-            before: preSize,
-            after: afterSize,
+            name: file.name,
+            before: before,
+            after: after,
             create_time: +new Date(),
           });
         }
       } catch (e) {}
     },
-    [plug, refs],
+    [plug],
   );
 
   useEffect(() => {
     reset();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useEffect(() => {
-    updateDOM();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [finished]);
 
   useEffect(() => {
     setZip(count === 0 ? 0 : Math.ceil((finished / count) * 100));
@@ -157,28 +129,20 @@ export const Zip = () => {
           }}
           onChange={(n) => setQuality(n as number)}
         ></Slider>
-        <Progress
-          size="small"
-          steps={5}
-          percent={zip}
+        <NumberEasing value={finished} count={count}></NumberEasing>
+        {/* <Progress
+          percent={finished}
+          formatText={(val) => `${val} / ${count}`}
           status={'success'}
-        ></Progress>
+        ></Progress> */}
       </Space>
 
-      <div ref={wrapper} className="rush-workspace">
+      <div className="rush-workspace">
         <Rush
           {...FPProps}
           stylePanelAspectRatio={'21:9'}
           files={files}
-          onprocessfiles={() => {
-            updateDOM();
-          }}
-          onerror={() => {
-            updateDOM();
-          }}
-          onprocessfileabort={() => {
-            updateDOM();
-          }}
+          tinyQuality={quality}
           disabled={route.now !== '/'}
           beforeAddFile={(item) => {
             return TINY_SUPPORTE.test(item.fileType);
@@ -188,14 +152,15 @@ export const Zip = () => {
               ? true
               : TINY_SUPPORTE.test(item.fileType);
           }}
-          onupdatefiles={(list) => {
-            list.forEach((item) => {
-              refs.current.ids[item.file.name] = item.id;
-            });
-            setFiles(list);
-          }}
+          onupdatefiles={setFiles}
           fileRenameFunction={({ name, basename, extension }) => {
-            const fileName = uniquName(refs.current.ids, basename, extension);
+            const map = files
+              .map((item) => item.name)
+              .reduce((m, k) => {
+                m[k] = true;
+                return m;
+              }, {});
+            const fileName = uniquName(map, basename, extension);
             return fileName;
           }}
           allowMultiple={true}

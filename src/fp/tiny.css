@@ -1,0 +1,59 @@
+.file-tiny {
+  border-radius: 8px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+/* .file-tiny-bgimg {
+  border-radius: 8px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.66666;
+  display: none;
+} */
+
+.file-tiny:hover > .file-tiny-box {
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
+}
+
+.file-tiny-blur {
+  background: rgba(0, 0, 0, 0.2333);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.file-tiny-box {
+  /* border-radius: 8px; */
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  padding: 20px 16px 8px 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-end;
+  transition: all ease-in-out 0.2333s;
+}
+
+
+.file-tiny-size {
+  font-size: 12px !important;
+}
+
+.file-tiny-optimize {
+  font-size: 32px !important;
+}

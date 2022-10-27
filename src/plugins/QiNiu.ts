@@ -1,12 +1,10 @@
 import { DB } from '@/db';
-import { tiny } from '@/lib/pngtiny';
 import { StoreItem } from '@/shared/typings';
 import { store } from '@/store';
 import { notify } from '@/utils/notify';
 import { invoke } from '@tauri-apps/api';
 import dayjs from 'dayjs';
 import * as qiniu from 'qiniu-js';
-import { TINY_SUPPORTE } from './config';
 import {
   CommonConfig,
   Plugin,
@@ -14,7 +12,6 @@ import {
   PluginSupported,
   compileConfig,
   getCommonConfigSchema,
-  renameFile,
 } from './Plugin';
 
 export interface QiNiuConfig extends CommonConfig {
@@ -113,15 +110,6 @@ export class QiNiuPlugin extends Plugin {
     }
   }
 
-  async transform(file: File): Promise<File> {
-    if (this.config.quality! < 100 && TINY_SUPPORTE.test(file.name)) {
-      const lite = await tiny(file, this.config.quality);
-      return lite;
-    } else {
-      return Promise.resolve(file);
-    }
-  }
-
   /**
    * 垃圾, 只有本地删除
    */
@@ -133,7 +121,7 @@ export class QiNiuPlugin extends Plugin {
   // https://github.com/PicGo/PicGo-Core/blob/dev/src/plugins/uploader/qiniu.ts
   async upload(file: File, alias: string): Promise<StoreItem> {
     const conf = compileConfig(this.config, file.name);
-    const { customUrl, dir, filePath } = conf;
+    const { customUrl, dir, filePath, fileName } = conf;
 
     if (+new Date() - this.TOKEN.expired_time < 10 * 60 * 1000) {
       await this.getToken();
@@ -172,7 +160,7 @@ export class QiNiuPlugin extends Plugin {
       scope: this.name,
       alias,
       dir,
-      name: file.name,
+      name: fileName!,
       hash: filePath!,
       size: file.size,
       url: `${customUrl || 'https://qiniu.com'}/${resp.key}`,

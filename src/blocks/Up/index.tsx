@@ -4,34 +4,29 @@ import { DB } from '@/db';
 import { getPlugin } from '@/plugins';
 import { useProgress } from '@/Progress';
 import { useRoute } from '@/Route';
-import { ProcessServer, Rush } from '@/utils/rush';
-import { Button, Progress, Slider, Space } from '@arco-design/web-react';
+import { ProcessServer, Rush } from '@/fp';
+import { Button, Slider, Space } from '@arco-design/web-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import '../filepond.css';
 import { Config } from '../Header/Config';
 import { usePluginSettings } from '../Settings';
-import { useAnalyzer } from '../useAnalyzer';
 import { FPProps } from './fp';
 import { uniquName } from '@/utils';
+import { NumberEasing } from '../NumberEasing';
 
 export const Up = () => {
   const { scope, current } = usePluginSettings();
   const [files, setFiles] = useState<any[]>([]);
   const [quality, setQuality] = useState(80);
-  const { up, setUp } = useProgress();
+  const { setUp } = useProgress();
   const route = useRoute();
 
   const wrapper = useRef<HTMLDivElement | null>(null);
-  const { refs, updateDOM, clear } = useAnalyzer({
-    wrapper,
-    finishedText: FPProps.labelFileProcessingComplete,
-  });
 
   const reset = useCallback(() => {
     setFinished(0);
     setFiles([]);
-    clear();
-  }, [clear]);
+  }, []);
 
   const plug = useMemo(() => {
     const Plug = getPlugin(scope);
@@ -60,26 +55,18 @@ export const Up = () => {
     ) => {
       if (!plug) return;
       try {
-        const preSize = file.size;
-        let lite = await plug.transform(file as File);
-        const afterSize = lite.size;
-        const result = await plug.upload(lite, current?.alias);
+        const {
+          tiny: { before, after },
+        } = metadata;
+        const result = await plug.upload(file as File, current?.alias);
         await DB.insert(result);
-        // 根据原始名字获取id
-        const fileId = refs.current.ids[file.name];
-        refs.current.map[fileId] = {
-          ratio: parseFloat(((afterSize / preSize) * 100).toFixed(2)),
-          before: preSize,
-          after: afterSize,
-        };
-
         load(result.url);
         setFinished((x) => x + 1);
-        if (afterSize < preSize) {
+        if (after < before) {
           DB.record({
-            before: preSize,
-            after: afterSize,
-            name: lite.name,
+            before,
+            after,
+            name: file.name,
             create_time: +new Date(),
           });
         }
@@ -87,18 +74,13 @@ export const Up = () => {
         error(e.message);
       }
     },
-    [current?.alias, plug, refs],
+    [current?.alias, plug],
   );
 
   useEffect(() => {
     reset();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useEffect(() => {
-    updateDOM();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [finished]);
 
   useEffect(() => {
     setUp(count === 0 ? 0 : Math.ceil((finished / count) * 100));
@@ -117,7 +99,7 @@ export const Up = () => {
           <Config></Config>
           <Button
             onClick={() => {
-              clear();
+              reset();
             }}
           >
             清空记录
@@ -131,12 +113,13 @@ export const Up = () => {
           }}
           onChange={(n) => setQuality(n as number)}
         ></Slider>
-        <Progress
-          size="small"
-          steps={5}
-          percent={up}
+        <NumberEasing value={finished} count={count}></NumberEasing>
+
+        {/* <Progress
+          percent={finished}
+          formatText={(val) => `${val} / ${count}`}
           color="rgb(var(--primary-6))"
-        ></Progress>
+        ></Progress> */}
       </Space>
 
       <div ref={wrapper} className="rush-workspace">
@@ -145,23 +128,15 @@ export const Up = () => {
           disabled={route.now !== 'up'}
           stylePanelAspectRatio={'21:9'}
           files={files}
-          onprocessfiles={() => {
-            updateDOM();
-          }}
-          onerror={() => {
-            updateDOM();
-          }}
-          onprocessfileabort={() => {
-            updateDOM();
-          }}
-          onupdatefiles={(list) => {
-            list.forEach((item) => {
-              refs.current.ids[item.file.name] = item.id;
-            });
-            setFiles(list);
-          }}
+          onupdatefiles={setFiles}
           fileRenameFunction={({ name, basename, extension }) => {
-            const fileName = uniquName(refs.current.ids, basename, extension);
+            const map = files
+              .map((item) => item.name)
+              .reduce((m, k) => {
+                m[k] = true;
+                return m;
+              }, {});
+            const fileName = uniquName(map, basename, extension);
             return fileName;
           }}
           allowMultiple={true}

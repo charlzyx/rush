@@ -55,10 +55,10 @@ export const Box = (props: {
       <div
         className="item-inner"
         style={{
-          WebkitBackdropFilter: !hover
+          WebkitBackdropFilter: hover
             ? 'blur(0px)'
-            : `blur(${props.blur ?? 6}px)`,
-          backdropFilter: !hover ? 'blur(0px)' : `blur(${props.blur ?? 6}px)`,
+            : `blur(${props.blur ?? 8}px)`,
+          backdropFilter: hover ? 'blur(0px)' : `blur(${props.blur ?? 8}px)`,
         }}
         onClick={() => (isImage ? setVisible(true) : null)}
       >
@@ -66,7 +66,7 @@ export const Box = (props: {
           <div
             style={{
               color: 'var(--color-text-1)',
-              opacity: !isImage || black ? 1 : hover ? 1 : 0.1,
+              opacity: !isImage || black ? 1 : !hover ? 1 : 0.1,
             }}
             className="item-header-text"
           >
