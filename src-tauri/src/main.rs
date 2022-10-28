@@ -1,7 +1,13 @@
 #![cfg_attr(
-    all(not(debug_assertions), target_os = "windows"),
-    windows_subsystem = "windows"
+  all(not(debug_assertions), target_os = "windows"),
+  windows_subsystem = "windows"
 )]
+
+#[cfg(target_os = "macos")]
+#[macro_use]
+extern crate objc;
+#[macro_use]
+extern crate lazy_static;
 
 use qiniu_upload_token::{FileType, UploadPolicy, credential::Credential, prelude::*};
 use std::{time::Duration};

@@ -19,9 +19,11 @@ serde = { version = "1.0", features = ["derive"] }
 tauri = { version = "1.1", features = ["api-all", "macos-private-api", "updater"] }
 window-vibrancy = "0.3.0"
 lazy_static = "1.4.0"
+# https://github.com/mantou132/nesbox/blob/dev/packages/tauriapp/Cargo.toml#L23
 tauri-plugin-window-state = "0.1.0"
 window-shadows = "0.2"
 qiniu-upload-token = "0.2.0"
+
 
 [dependencies.tauri-plugin-sql]
 git = "https://github.com/tauri-apps/tauri-plugin-sql"
@@ -30,9 +32,12 @@ features = ["sqlite"] # or "postgres", or "mysql"
 branch = "release"
 
 [target.'cfg(target_os = "windows")'.dependencies]
-webview2-com = "0.19.1"
+webview2-com = "0.21.0"
+windows = "0.43.0"
 
 [target.'cfg(target_os = "macos")'.dependencies]
+objc = "0.2.7"
+cocoa = "0.24.0"
 
 [features]
 # by default Tauri runs in production mode
