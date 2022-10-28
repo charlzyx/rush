@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## v2.2.6
+- 修复 linux 无法运行问题
+
 ## v2.2.5
 - 界面优化, 增加圆角, for windows!
 
