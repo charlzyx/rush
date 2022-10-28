@@ -122,12 +122,15 @@ export const compileConfig = <T extends CommonConfig>(
       } as any)
     : conf.customUrl;
 
+  const decodeName = originFileName
+    ? encodeURIComponent(fileName || '')
+    : fileName;
   return {
     ...conf,
     customUrl,
     dir,
-    fileName,
-    filePath: dir ? `${dir}/${fileName}` : fileName,
+    fileName: decodeName,
+    filePath: dir ? `${dir}/${decodeName}` : decodeName,
   };
 };
 

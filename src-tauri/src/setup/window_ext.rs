@@ -113,19 +113,21 @@ impl WindowExt for Window {
 impl WindowExt for Window {
     fn set_background(&self) {
         self.with_webview(|w| unsafe {
-            w.controller()
-                .cast::<ICoreWebView2Controller2>()
-                .map(|controller2| {
-                    controller2
-                        .SetDefaultBackgroundColor(COREWEBVIEW2_COLOR {
-                            R: 0,
-                            G: 0,
-                            B: 0,
-                            A: 255,
-                        })
-                        .ok();
-                })
-                .ok();
+          // do nothing
+          // let webview2 = w.controller().CoreWebView2().unwrap();
+          // webview2.
+                // .cast::<ICoreWebView2Controller2>()
+                // .map(|controller2| {
+                //     controller2
+                //         .SetDefaultBackgroundColor(COREWEBVIEW2_COLOR {
+                //             R: 0,
+                //             G: 0,
+                //             B: 0,
+                //             A: 255,
+                //         })
+                //         .ok();
+                // })
+                // .ok();
         })
         .ok();
     }

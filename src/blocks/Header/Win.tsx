@@ -1,8 +1,7 @@
 import React from 'react';
 import { IconClose, IconMax, IconSleep } from '@/assets/index';
 import { appWindow } from '@tauri-apps/api/window';
-import { AniSvg } from '@/blocks/AniSvg';
-import './icon.css';
+import './style.css';
 
 export const Win = () => {
   return (
@@ -19,14 +18,6 @@ export const Win = () => {
         alignItems: 'center',
       }}
     >
-      {/* <div
-        className="icon-box red"
-        onClick={() => {
-          appWindow.close();
-        }}
-      >
-        <IconClose className="arco-icon ani"></IconClose>
-      </div>
       <div
         className="icon-box yellow"
         onClick={() => {
@@ -43,9 +34,14 @@ export const Win = () => {
       >
         <IconMax className="arco-icon ani"></IconMax>
       </div>
-      <div data-tauri-drag-region className="header-title">
-        <AniSvg name="brand"></AniSvg>
-      </div> */}
+      <div
+        className="icon-box red"
+        onClick={() => {
+          appWindow.close();
+        }}
+      >
+        <IconClose className="arco-icon ani"></IconClose>
+      </div>
     </div>
   );
 };

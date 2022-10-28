@@ -1,9 +1,9 @@
-import { Button } from '@arco-design/web-react';
-import { IconGithub } from '@arco-design/web-react/icon';
-import React from 'react';
+import { os } from '@tauri-apps/api';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Menu } from './Menu';
-import { shell } from '@tauri-apps/api';
 import { Pin } from './Pin';
+import { Logo } from './Logo';
+import './style.css';
 import { Theme } from './Theme';
 import { Win } from './Win';
 
@@ -13,7 +13,24 @@ const css: Record<string, React.CSSProperties> = {
   },
 };
 
+const useOsType = () => {
+  const [osType, setOsType] = useState<os.OsType | null>(null);
+  useEffect(() => {
+    os.type().then(setOsType);
+  }, []);
+
+  return osType;
+};
+
 export const Header = () => {
+  const osType = useOsType();
+  const notMac = useMemo(() => {
+    return osType !== 'Darwin';
+  }, [osType]);
+
+  const flexDirection = useMemo(() => {
+    return notMac ? 'row-reverse' : 'row';
+  }, [notMac]);
   return (
     <div
       data-tauri-drag-region
@@ -22,18 +39,18 @@ export const Header = () => {
         paddingRight: '13px',
         paddingLeft: '13px',
         display: 'flex',
+        flexDirection,
         justifyContent: 'space-between',
         alignItems: 'flex-start',
       }}
     >
-      <div>
-        <Win></Win>
-        <div data-tauri-drag-region style={{ flex: 1 }}></div>
-      </div>
+      {notMac ? <Win></Win> : null}
+      <div data-tauri-drag-region style={{ flex: 1 }}></div>
       <div
         style={{
           display: 'flex',
           justifyContent: 'space-between',
+          flexDirection,
         }}
       >
         <div style={css.item}>
@@ -42,8 +59,11 @@ export const Header = () => {
         <div style={css.item}>
           <Theme></Theme>
         </div>
-        <div>
+        <div style={css.item}>
           <Pin></Pin>
+        </div>
+        <div style={notMac ? css.item : {}}>
+          <Logo></Logo>
         </div>
       </div>
     </div>
