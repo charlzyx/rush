@@ -8,10 +8,10 @@ use window_vibrancy::{apply_blur, apply_vibrancy, NSVisualEffectMaterial};
 pub fn init(app: &mut App) -> std::result::Result<(), Box<dyn std::error::Error>> {
     let window = app.get_window("main").unwrap();
 
-    set_shadow(&window, true).expect("Unsupported platform!");
 
     #[cfg(target_os = "macos")]
     {
+        set_shadow(&window, true).expect("Unsupported platform!");
         use window_ext::WindowExt;
         window.set_background();
         window.set_transparent_titlebar();
@@ -21,6 +21,7 @@ pub fn init(app: &mut App) -> std::result::Result<(), Box<dyn std::error::Error>
 
     #[cfg(target_os = "windows")]
     {
+        set_shadow(&window, true).expect("Unsupported platform!");
         use window_ext::WindowExt;
         window.set_background();
         window.set_transparent_titlebar();
