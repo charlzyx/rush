@@ -6,7 +6,6 @@ import './style.css';
 export const Win = () => {
   return (
     <div
-      data-tauri-drag-region
       style={{
         fontSize: '1.4rem',
         display: 'flex',

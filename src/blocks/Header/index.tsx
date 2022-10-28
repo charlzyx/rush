@@ -45,7 +45,7 @@ export const Header = () => {
       }}
     >
       {notMac ? <Win></Win> : null}
-      <div data-tauri-drag-region style={{ flex: 1 }}></div>
+      <div style={{ flex: 1 }}></div>
       <div
         style={{
           display: 'flex',
