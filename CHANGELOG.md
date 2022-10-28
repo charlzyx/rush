@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## v2.2.3
+- 界面优化, 增加圆角, windows 不一定好使
+
 ## v2.2.2
 - chore: release 脚本失败了
 

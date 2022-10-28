@@ -133,7 +133,7 @@ export function Settings() {
   return (
     <div
       style={{
-        padding: 16,
+        padding: 13,
       }}
     >
       <Space

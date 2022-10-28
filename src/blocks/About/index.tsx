@@ -31,6 +31,11 @@ const readable = (limit: number) => {
   }
   return size;
 };
+const shield = (color: string) => {
+  return `https://img.shields.io/github/v/release/charlzyx/rush?color=${encodeURI(
+    color,
+  )}&label=Rush%21&logoColor=rgb%2864%2C%20128%2C%20128%29&style=flat-square`;
+};
 const links = [
   {
     link: 'https://github.com/skyfish-qc/pngtiny',
@@ -122,8 +127,8 @@ export const About = () => {
             onClick={() => {
               shell.open('https://github.com/charlzyx/rush/releases/latest');
             }}
-            src="https://img.shields.io/github/v/release/charlzyx/rush?color=rgb%2864%2C%20128%2C%20255%29&label=Rush%21&logoColor=rgb%2864%2C%20128%2C%20255%29&style=for-the-badge"
-            alt=""
+            src={shield('rgba(105, 241, 198)')}
+            alt="rush"
           />
           {/* <Button
             onClick={() => {
@@ -181,7 +186,7 @@ export const About = () => {
           }}
           icon={<IconBug></IconBug>}
           long
-          type="default"
+          type="text"
         >
           上报问题
         </Button>
@@ -199,7 +204,7 @@ export const About = () => {
           }}
           icon={<IconQuestion></IconQuestion>}
           long
-          type="outline"
+          type="text"
         >
           检查更新
         </Button>

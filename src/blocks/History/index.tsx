@@ -223,7 +223,7 @@ export const History = () => {
     <div
       style={{
         height: '100%',
-        padding: '16px',
+        padding: '13px',
         display: 'flex',
         flexDirection: 'column',
       }}
@@ -232,7 +232,7 @@ export const History = () => {
         style={{
           display: 'flex',
           justifyContent: 'space-between',
-          paddingBottom: '16px',
+          paddingBottom: '13px',
         }}
       >
         <div
@@ -337,7 +337,7 @@ export const History = () => {
         style={{
           display: 'flex',
           justifyContent: 'space-between',
-          marginTop: list.length === 0 ? '16px' : 0,
+          marginTop: list.length === 0 ? '13px' : 0,
         }}
       >
         <div style={{ display: 'flex', flex: 1 }}>

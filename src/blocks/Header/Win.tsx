@@ -11,13 +11,15 @@ export const Win = () => {
       style={{
         fontSize: '1.4rem',
         display: 'flex',
+        width: 140,
+        height: 30,
         position: 'relative',
         top: '-3px',
         justifyContent: 'space-between',
         alignItems: 'center',
       }}
     >
-      <div
+      {/* <div
         className="icon-box red"
         onClick={() => {
           appWindow.close();
@@ -43,7 +45,7 @@ export const Win = () => {
       </div>
       <div data-tauri-drag-region className="header-title">
         <AniSvg name="brand"></AniSvg>
-      </div>
+      </div> */}
     </div>
   );
 };
