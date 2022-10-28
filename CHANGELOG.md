@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## v2.2.5
+- 界面优化, 增加圆角, for windows!
+
 ## v2.2.4
 - 界面优化, 增加圆角, windows 不一定好使
 
