@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v2.2.7
+- 尝试修复 windows 11 拖拽窗口卡顿漂移的问题
+[master 8a9035d] fix: 🐛 有没有一种可能是 多个 daa-tauri-drag-region 导致的问题
+
 ## v2.2.6
 - 修复 linux 无法运行问题
 
