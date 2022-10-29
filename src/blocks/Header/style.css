@@ -88,7 +88,13 @@
   width: 44px;
   height: 32px;
 }
-.brand  .moveable {
+
+.brand > svg {
+  width: 44px;
+  height: 32px;
+}
+
+.brand .moveable {
   position: absolute;
   top: 0;
   left: 0;

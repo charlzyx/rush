@@ -80,8 +80,7 @@
         "height": 666,
         "minWidth": 888,
         "minHeight": 666,
-        "fileDropEnabled": false,
-        "transparent": true
+        "fileDropEnabled": false
       }
     ]
   }

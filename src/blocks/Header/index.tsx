@@ -33,7 +33,6 @@ export const Header = () => {
   }, [notMac]);
   return (
     <div
-      data-tauri-drag-region
       style={{
         paddingTop: '13px',
         paddingRight: '13px',

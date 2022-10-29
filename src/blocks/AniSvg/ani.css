@@ -10,13 +10,13 @@
 .ooop {
   width: 100%;
   height: 100%;
-  transition: opacity ease 1s;
+  transition: opacity linear 1s;
 }
 
 .ooop path {
   stroke-dasharray: 100;
   stroke-dashoffset: 100;
-  animation: fill-line 5s ease-in-out infinite;
+  animation: fill-line 10s linear infinite;
 }
 
 /* .ooop path {
