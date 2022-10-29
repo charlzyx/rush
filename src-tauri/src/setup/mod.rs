@@ -1,4 +1,5 @@
-pub mod window_ext;
+#[cfg(target_os = "mac")]
+pub mod mac;
 
 use tauri::{App, Manager};
 use window_shadows::set_shadow;
@@ -11,10 +12,8 @@ pub fn init(app: &mut App) -> std::result::Result<(), Box<dyn std::error::Error>
 
     #[cfg(target_os = "macos")]
     {
+        mac::set_transparent_titlebar(&window, true, true);
         set_shadow(&window, true).expect("Unsupported platform!");
-        use window_ext::WindowExt;
-        window.set_background();
-        window.set_transparent_titlebar();
         apply_vibrancy(&window, NSVisualEffectMaterial::HudWindow, None, None)
             .expect("Unsupported platform! 'apply_vibrancy' is only supported on macOS");
     }
@@ -22,9 +21,6 @@ pub fn init(app: &mut App) -> std::result::Result<(), Box<dyn std::error::Error>
     #[cfg(target_os = "windows")]
     {
         set_shadow(&window, true).expect("Unsupported platform!");
-        use window_ext::WindowExt;
-        window.set_background();
-        window.set_transparent_titlebar();
         apply_blur(&window, Some((18, 18, 18, 125)))
             .expect("Unsupported platform! 'apply_blur' is only supported on Windows");
     }

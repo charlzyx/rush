@@ -24,13 +24,13 @@ const useOsType = () => {
 
 export const Header = () => {
   const osType = useOsType();
-  const notMac = useMemo(() => {
-    return osType !== 'Darwin';
+  const isMac = useMemo(() => {
+    return osType === 'Darwin';
   }, [osType]);
 
   const flexDirection = useMemo(() => {
-    return notMac ? 'row-reverse' : 'row';
-  }, [notMac]);
+    return !isMac ? 'row-reverse' : 'row';
+  }, [isMac]);
   return (
     <div
       style={{
@@ -43,7 +43,7 @@ export const Header = () => {
         alignItems: 'flex-start',
       }}
     >
-      {notMac ? <Win></Win> : null}
+      <Win mac={isMac}></Win>
       <div style={{ flex: 1 }}></div>
       <div
         style={{
@@ -61,7 +61,7 @@ export const Header = () => {
         <div style={css.item}>
           <Pin></Pin>
         </div>
-        <div style={notMac ? css.item : {}}>
+        <div style={!isMac ? css.item : {}}>
           <Logo></Logo>
         </div>
       </div>
