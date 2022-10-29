@@ -1,5 +1,5 @@
-#[cfg(target_os = "mac")]
-pub mod mac;
+#[cfg(target_os = "macos")]
+mod mac;
 
 use tauri::{App, Manager};
 use window_shadows::set_shadow;
