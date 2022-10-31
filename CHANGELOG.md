@@ -1,6 +1,8 @@
 # CHANGELOG
 
 
+## v2.3.0
+- macOS/Windows/Linux(test on WSL Arch) 无边框版本 ALL SUPPORTED!
 ## v2.2.9
 - macOS build fix;
 
