@@ -12,7 +12,7 @@ pub fn init(app: &mut App) -> std::result::Result<(), Box<dyn std::error::Error>
 
     #[cfg(target_os = "macos")]
     {
-        mac::set_transparent_titlebar(&window, true, true);
+        mac::set_transparent_titlebar(&window, true, false);
         set_shadow(&window, true).expect("Unsupported platform!");
         apply_vibrancy(&window, NSVisualEffectMaterial::HudWindow, None, None)
             .expect("Unsupported platform! 'apply_vibrancy' is only supported on macOS");
@@ -20,10 +20,17 @@ pub fn init(app: &mut App) -> std::result::Result<(), Box<dyn std::error::Error>
 
     #[cfg(target_os = "windows")]
     {
+        window.set_decorations(false);
         set_shadow(&window, true).expect("Unsupported platform!");
         apply_blur(&window, Some((18, 18, 18, 125)))
             .expect("Unsupported platform! 'apply_blur' is only supported on Windows");
     }
+
+    #[cfg(target_os = "linux")]
+    {
+        window.set_decorations(false);
+    }
+
 
     Ok(())
 }
