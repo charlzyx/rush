@@ -1,0 +1,1 @@
+import{_ as e,c as t,o as a,b as r}from"./app.b0d8cd25.js";const m=JSON.parse('{"title":"Thanks \u81F4\u8C22","description":"","frontmatter":{},"headers":[],"relativePath":"thanks.md","lastUpdated":1667271434000}'),n={name:"thanks.md"},i=r("",3),s=[i];function o(l,h,_,c,f,p){return a(),t("div",null,s)}const g=e(n,[["render",o]]);export{m as __pageData,g as default};

@@ -1,0 +1,35 @@
+{
+  "version": "v2.3.1",
+  "notes": "- 修复非图片文件上传",
+  "pub_date": "2022-11-01T03:24:59.108Z",
+  "platforms": {
+    "win64": {
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUMzRXcGlVREpQWEo0VmFpYy9WZFFyTzVoY0gvNC9jcUtPVUtZVTE5Wk50ck5Gd25FTVZKZkNGcDJSeVZuWXFNSlhzK1lISnF4WWlmV2VuOVNNZ0dmd0hvbis4bjBzMEFVPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNjY3MjcyNjI0CWZpbGU6UnVzaF8yLjMuMV94NjRfZW4tVVMubXNpLnppcAphR1ZhNGo3cU01NEJxMTU1NEVjVWVTMUtGSW16YVFpL01zMk9jNmhLTXhlWDNsTFk1MUorS3ZwdmQ0NTQ1Tlk1ZVRhdmFCdThZc3lnSGNIbVZ6QkhDdz09Cg==",
+      "url": "https://github.com/charlzyx/rush/releases/download/v2.3.1/Rush_2.3.1_x64_en-US.msi.zip"
+    },
+    "linux": {
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUMzRXcGlVREpQWEY2aHNDdldUeE5RZFdOaFhMem42SGloSXVJOHhqNlc1U3ZBSFFEeHhSd1FRblVlWXVBK1NhZld0dFkybCtueXRidUZ4WkZsS21icjFGY2dRQ3QwUGdRPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNjY3MjcyMzQ1CWZpbGU6cnVzaF8yLjMuMV9hbWQ2NC5BcHBJbWFnZS50YXIuZ3oKemV1QlQ2VW0rb2dJM1kxUVJHSWZVWldPK0VVNUcvSlhIUWR1Q0ZsZE9VNFdsY2lZR2FFcVMwUFZsUml6UjlKU1RDWUQydldzMTF6cFkxUFU5SnR5QUE9PQo=",
+      "url": "https://github.com/charlzyx/rush/releases/download/v2.3.1/rush_2.3.1_amd64.AppImage.tar.gz"
+    },
+    "darwin": {
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUMzRXcGlVREpQWElLdXNYOVY4NUR6MDA2LzAvTk1NaFhlcmh6NXJBODBxSXh6SXhLVk9DcjZpSjRRL2RIbUlialBLS0N5RDBOQ2Jtd3FPYjBVcDYwMUpienNxTUY3OHdjPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNjY3MjczMDM2CWZpbGU6UnVzaC5hcHAudGFyLmd6CjlBV1hISDFyZUMvdzRKTGRLbEVpUUFKTG1qUUp2T25mMFBBNklFRUFHNXl0ZTRRTWpoN2tXVkNSMWNhZ2NTdHBRUUJPa2g3Ylg3TEhoWUhVL01VNUJBPT0K",
+      "url": "https://github.com/charlzyx/rush/releases/download/v2.3.1/Rush.app.tar.gz"
+    },
+    "darwin-aarch64": {
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUMzRXcGlVREpQWElLdXNYOVY4NUR6MDA2LzAvTk1NaFhlcmh6NXJBODBxSXh6SXhLVk9DcjZpSjRRL2RIbUlialBLS0N5RDBOQ2Jtd3FPYjBVcDYwMUpienNxTUY3OHdjPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNjY3MjczMDM2CWZpbGU6UnVzaC5hcHAudGFyLmd6CjlBV1hISDFyZUMvdzRKTGRLbEVpUUFKTG1qUUp2T25mMFBBNklFRUFHNXl0ZTRRTWpoN2tXVkNSMWNhZ2NTdHBRUUJPa2g3Ylg3TEhoWUhVL01VNUJBPT0K",
+      "url": "https://github.com/charlzyx/rush/releases/download/v2.3.1/Rush.app.tar.gz"
+    },
+    "darwin-x86_64": {
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUMzRXcGlVREpQWElLdXNYOVY4NUR6MDA2LzAvTk1NaFhlcmh6NXJBODBxSXh6SXhLVk9DcjZpSjRRL2RIbUlialBLS0N5RDBOQ2Jtd3FPYjBVcDYwMUpienNxTUY3OHdjPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNjY3MjczMDM2CWZpbGU6UnVzaC5hcHAudGFyLmd6CjlBV1hISDFyZUMvdzRKTGRLbEVpUUFKTG1qUUp2T25mMFBBNklFRUFHNXl0ZTRRTWpoN2tXVkNSMWNhZ2NTdHBRUUJPa2g3Ylg3TEhoWUhVL01VNUJBPT0K",
+      "url": "https://github.com/charlzyx/rush/releases/download/v2.3.1/Rush.app.tar.gz"
+    },
+    "linux-x86_64": {
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUMzRXcGlVREpQWEY2aHNDdldUeE5RZFdOaFhMem42SGloSXVJOHhqNlc1U3ZBSFFEeHhSd1FRblVlWXVBK1NhZld0dFkybCtueXRidUZ4WkZsS21icjFGY2dRQ3QwUGdRPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNjY3MjcyMzQ1CWZpbGU6cnVzaF8yLjMuMV9hbWQ2NC5BcHBJbWFnZS50YXIuZ3oKemV1QlQ2VW0rb2dJM1kxUVJHSWZVWldPK0VVNUcvSlhIUWR1Q0ZsZE9VNFdsY2lZR2FFcVMwUFZsUml6UjlKU1RDWUQydldzMTF6cFkxUFU5SnR5QUE9PQo=",
+      "url": "https://github.com/charlzyx/rush/releases/download/v2.3.1/rush_2.3.1_amd64.AppImage.tar.gz"
+    },
+    "windows-x86_64": {
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUMzRXcGlVREpQWEo0VmFpYy9WZFFyTzVoY0gvNC9jcUtPVUtZVTE5Wk50ck5Gd25FTVZKZkNGcDJSeVZuWXFNSlhzK1lISnF4WWlmV2VuOVNNZ0dmd0hvbis4bjBzMEFVPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNjY3MjcyNjI0CWZpbGU6UnVzaF8yLjMuMV94NjRfZW4tVVMubXNpLnppcAphR1ZhNGo3cU01NEJxMTU1NEVjVWVTMUtGSW16YVFpL01zMk9jNmhLTXhlWDNsTFk1MUorS3ZwdmQ0NTQ1Tlk1ZVRhdmFCdThZc3lnSGNIbVZ6QkhDdz09Cg==",
+      "url": "https://github.com/charlzyx/rush/releases/download/v2.3.1/Rush_2.3.1_x64_en-US.msi.zip"
+    }
+  }
+}
