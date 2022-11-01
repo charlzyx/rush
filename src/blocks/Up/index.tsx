@@ -14,6 +14,8 @@ import { FPProps } from './fp';
 import { uniquName } from '@/utils';
 import { NumberEasing } from '../NumberEasing';
 
+const empty = { after: 0, before: 0 };
+
 export const Up = () => {
   const { scope, current } = usePluginSettings();
   const [files, setFiles] = useState<any[]>([]);
@@ -56,9 +58,7 @@ export const Up = () => {
     ) => {
       if (!plug) return;
       try {
-        const {
-          tiny: { before, after },
-        } = metadata;
+        const { tiny: { before, after } = empty } = metadata;
         const result = await plug.upload(file as File, current?.alias);
         await DB.insert(result);
         load(result.url);

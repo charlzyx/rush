@@ -34,7 +34,6 @@ const readable = (limit) => {
 
 const plugin = ({ addFilter, utils }) => {
   const { Type, createRoute } = utils;
-  console.log(utils);
 
   /**
    * Filters
