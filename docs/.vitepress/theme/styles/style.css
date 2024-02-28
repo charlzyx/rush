@@ -10,7 +10,7 @@
 #app .VPNavBarTitle::after {
   top: 50%;
   position: absolute;
-  rigth: -100%;
+  right: -100%;
   /* left: 0; */
   transform: translate3d(80%, -43%, 0);
   content: '';
